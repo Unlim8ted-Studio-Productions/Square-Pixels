@@ -57,7 +57,7 @@ if __name__ == "__main__":
     video_file:str = r"terraria_styled_game\\Company Animated Logo.mov"
     infoObject:object = pig.display.Info()
     screen:pig.Surface = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
-    pig.display.toggle_fullscreen()
+    #pig.display.toggle_fullscreen()
     pig.display.set_caption("terraria styledgame")
     pig.mouse.set_cursor(pig.SYSTEM_CURSOR_CROSSHAIR)
 
