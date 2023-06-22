@@ -90,7 +90,7 @@ class TerrainGenerator:
                     ),
                 )
 
-    def run(self):
+    def run(self, screen):
         clock = pg.time.Clock()
 
         self.generate_terrain()
@@ -132,7 +132,7 @@ class TerrainGenerator:
         pg.quit()
 
 
-if __name__ == "__main__":
+def start():
     pg.init()
     infoObject:object = pg.display.Info()
     screen:pg.Surface = pg.display.set_mode((infoObject.current_w, infoObject.current_h))
@@ -140,4 +140,4 @@ if __name__ == "__main__":
     pg.display.set_caption("terraria styledgame")
     pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
     terrain_generator = TerrainGenerator(800, infoObject.current_h//10)
-    terrain_generator.run()
+    terrain_generator.run(screen)

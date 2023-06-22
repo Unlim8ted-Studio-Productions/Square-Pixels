@@ -71,7 +71,8 @@ if __name__ == "__main__":
     play_intro_video(image_folder, not_skipped, screen)
 
     # Rest of game code goes here...
-    world:object = tgen.generate()
-    for square in world.tiles:
-        render.draw(screen, square)
+    tgen.start()
+    #world:object = tgen.generate()
+    #for square in world.tiles:
+    #    render.draw(screen, square)
     
