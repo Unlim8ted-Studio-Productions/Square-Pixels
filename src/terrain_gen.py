@@ -35,7 +35,7 @@ class TerrainGenerator:
             tree_x = random.randint(0, self.width - 1)
             treeypartone = random.randint(5, 10)
             tree_y = ground_levels[tree_x] - treeypartone
-            windowsdimen = pg.display.get_window_size()[1]
+            #windowsdimen = pg.display.get_window_size()[1]
             tree_height = treeypartone  # random.randint(3, 6)
             for y in range(tree_y, tree_y + tree_height):
                 self.terrain[y][tree_x] = 2  # Wood
@@ -91,8 +91,6 @@ class TerrainGenerator:
                 )
 
     def run(self):
-        pg.init()
-        screen = pg.display.set_mode((self.width * 10, self.height * 10))
         clock = pg.time.Clock()
 
         self.generate_terrain()
@@ -114,17 +112,18 @@ class TerrainGenerator:
                         vx = -1
                     elif event.key == pg.K_RIGHT or event.key == ord('d'):
                         vx = 1
-
-            if vx >= 0:
-                vx -= .1
-            if vy >= 0:
-                vy -= .1
-            if vx <= 0:
-                vx += .1
-            if vy <= 0:
-                vy += .1
             self.camera_x += vx
             self.camera_y += vy
+            vx,vy=.5,0
+            #if vx >= 0:
+            #    vx = 0
+            #if vy >= 0:
+            #    vy = 0
+            #if vx <= 0:
+            #    vx = 0
+            #if vy <= 0:
+            #    vy = 0
+            
             screen.fill((0, 0, 0))
             self.render_terrain(screen)
             pg.display.flip()
@@ -134,5 +133,11 @@ class TerrainGenerator:
 
 
 if __name__ == "__main__":
-    terrain_generator = TerrainGenerator(80, 60)
+    pg.init()
+    infoObject:object = pg.display.Info()
+    screen:pg.Surface = pg.display.set_mode((infoObject.current_w, infoObject.current_h))
+    #pg.display.toggle_fullscreen()
+    pg.display.set_caption("terraria styledgame")
+    pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
+    terrain_generator = TerrainGenerator(800, infoObject.current_h//10)
     terrain_generator.run()
