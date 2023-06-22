@@ -1,6 +1,7 @@
 import pygame as pg
 import random
 
+
 class TerrainGenerator:
     def __init__(self, width, height, pos_x=0, pos_y=0):
         self.width = width
@@ -35,7 +36,7 @@ class TerrainGenerator:
             tree_x = random.randint(0, self.width - 1)
             treeypartone = random.randint(5, 10)
             tree_y = ground_levels[tree_x] - treeypartone
-            #windowsdimen = pg.display.get_window_size()[1]
+            # windowsdimen = pg.display.get_window_size()[1]
             tree_height = treeypartone  # random.randint(3, 6)
             for y in range(tree_y, tree_y + tree_height):
                 self.terrain[y][tree_x] = 2  # Wood
@@ -53,42 +54,20 @@ class TerrainGenerator:
         for _ in range(ore_count):
             ore_type = random.choice([4, 5, 6, 7])  # Coal, Iron, Gold, Diamond
             ore_x = random.randint(0, self.width - 1)
-            ore_y = random.randint(ground_levels[ore_x] + 1, self.height - 1)
+            validnu = False
+            while not validnu:
+                try:
+                    ore_y = random.randint(ground_levels[ore_x] + 1, self.height - 1)
+                except ValueError:
+                    validnu = False
+                else:
+                    validnu = True
             ore_radius = random.randint(1, 4)
             for dx in range(-ore_radius, ore_radius + 1):
                 for dy in range(-ore_radius, ore_radius + 1):
                     if 0 <= ore_x + dx < self.width and 0 <= ore_y + dy < self.height:
                         if abs(dx) + abs(dy) <= ore_radius:
                             self.terrain[ore_y + dy][ore_x + dx] = ore_type
-
-    def render_terrain(self, screen):
-        tile_size = 10
-        colors = [
-            (100, 100, 100),  # Stone
-            (139, 69, 19),    # Dirt
-            (139, 115, 85),   # Wood
-            (34, 139, 34),    # Leaves
-            (0, 128, 0),      # Coal
-            (211, 211, 211),  # Iron
-            (255, 223, 0),    # Gold
-            (128, 128, 128),  # Diamond
-            (135, 206, 235),  # Sky (Blue)
-        ]  # Color palette for blocks
-
-        for x in range(self.width):
-            for y in range(self.height):
-                block_type = self.terrain[y][x]
-                color = colors[block_type]
-                pg.draw.rect(
-                    screen,
-                    color,
-                    (
-                        (x + self.pos_x - self.camera_x) * tile_size,
-                        (y + self.pos_y - self.camera_y) * tile_size,
-                        tile_size,
-                        tile_size,
-                    ),
-                )
 
     def run(self, screen):
         clock = pg.time.Clock()
@@ -97,47 +76,46 @@ class TerrainGenerator:
 
         vx = 0
         vy = 0
-        
-        running = True
-        while running:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    running = False
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_UP or event.key == ord('w'):
-                        vy = -1
-                    elif event.key == pg.K_DOWN or event.key == ord('s'):
-                        vy = 1
-                    elif event.key == pg.K_LEFT or event.key == ord('a'):
-                        vx = -1
-                    elif event.key == pg.K_RIGHT or event.key == ord('d'):
-                        vx = 1
-            self.camera_x += vx
-            self.camera_y += vy
-            vx,vy=.5,0
-            #if vx >= 0:
-            #    vx = 0
-            #if vy >= 0:
-            #    vy = 0
-            #if vx <= 0:
-            #    vx = 0
-            #if vy <= 0:
-            #    vy = 0
-            
-            screen.fill((0, 0, 0))
-            self.render_terrain(screen)
-            pg.display.flip()
-            clock.tick(60)
 
-        pg.quit()
+        # running = True
+        # while running:
+        #    for event in pg.event.get():
+        #        if event.type == pg.QUIT:
+        #            running = False
+        #        elif event.type == pg.KEYDOWN:
+        #            if event.key == pg.K_UP or event.key == ord('w'):
+        #                vy = -1
+        #            elif event.key == pg.K_DOWN or event.key == ord('s'):
+        #                vy = 1
+        #            elif event.key == pg.K_LEFT or event.key == ord('a'):
+        #                vx = -1
+        #            elif event.key == pg.K_RIGHT or event.key == ord('d'):
+        #                vx = 1
+        #    self.camera_x += vx
+        #    self.camera_y += vy
+        #    vx,vy=.5,0
+        # if vx >= 0:
+        #    vx = 0
+        # if vy >= 0:
+        #    vy = 0
+        # if vx <= 0:
+        #    vx = 0
+        # if vy <= 0:
+        #    vy = 0
+
+        screen.fill((0, 0, 0))
+        pg.display.flip()
+        clock.tick(60)
 
 
 def start():
     pg.init()
-    infoObject:object = pg.display.Info()
-    screen:pg.Surface = pg.display.set_mode((infoObject.current_w, infoObject.current_h))
-    #pg.display.toggle_fullscreen()
+    infoObject: object = pg.display.Info()
+    screen: pg.Surface = pg.display.set_mode(
+        (infoObject.current_w, infoObject.current_h)
+    )
+    # pg.display.toggle_fullscreen()
     pg.display.set_caption("terraria styledgame")
     pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
-    terrain_generator = TerrainGenerator(800, infoObject.current_h//10)
+    terrain_generator = TerrainGenerator(800, infoObject.current_h // 10)
     terrain_generator.run(screen)
