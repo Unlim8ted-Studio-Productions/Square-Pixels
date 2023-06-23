@@ -29,7 +29,7 @@ if __name__ == "__main__":
     logo.play_intro_video(image_folder, not_skipped, screen)
 
     # Rest of game code goes here...
-    terrain_gen = tgen.TerrainGenerator(800, infoObject.current_h // 10)
+    terrain_gen = tgen.TerrainGenerator( width = (0,800), height= infoObject.current_h // 10)
     terrain_gen.run(screen)
 
     # world:object = tgen.generate()

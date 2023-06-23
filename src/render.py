@@ -26,7 +26,7 @@ def render_terrain(
         (135, 206, 235),  # Sky (Blue)
     ]  # Color palette for blocks
 
-    for x in range(width):
+    for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
             color = colors[block_type]

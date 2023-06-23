@@ -13,27 +13,27 @@ class TerrainGenerator:
         self.camera_y = 0
 
     def generate_terrain(self):
-        self.terrain = [[0 for _ in range(self.width)] for _ in range(self.height)]
+        self.terrain = [[0 for _ in range(self.width[1])] for _ in range(self.height)]
 
         # Generate random ground
-        ground_levels = [self.height // 2] * self.width
-        for x in range(1, self.width):
+        ground_levels = [self.height // 2] * self.width[1]
+        for x in range(self.width[0],self.width[1]):
             ground_levels[x] = ground_levels[x - 1] + random.randint(-2, 2)
             ground_levels[x] = max(0, min(self.height - 1, ground_levels[x]))
 
-        for x in range(self.width):
+        for x in range(self.width[0],self.width[1]):
             for y in range(ground_levels[x], self.height):
                 self.terrain[y][x] = random.choice([0, 1])  # Stone or Dirt
 
         # Set sky blocks
-        for x in range(self.width):
+        for x in range(self.width[0],self.width[1]):
             for y in range(ground_levels[x]):
                 self.terrain[y][x] = 8  # Sky
 
         # Generate trees
-        tree_count = self.width // 10
+        tree_count = self.width[1] // 10
         for _ in range(tree_count):
-            tree_x = random.randint(0, self.width - 1)
+            tree_x = random.randint(0, self.width[1] - 1)
             treeypartone = random.randint(5, 10)
             tree_y = ground_levels[tree_x] - treeypartone
             # windowsdimen = pg.display.get_window_size()[1]
@@ -45,15 +45,15 @@ class TerrainGenerator:
             leaf_radius = random.randint(2, 4)
             for dx in range(-leaf_radius, leaf_radius + 1):
                 for dy in range(-leaf_radius, leaf_radius + 1):
-                    if 0 <= tree_x + dx < self.width and 0 <= tree_y + dy < self.height:
+                    if 0 <= tree_x + dx < self.width[1] and 0 <= tree_y + dy < self.height:
                         if abs(dx) + abs(dy) <= leaf_radius:
                             self.terrain[tree_y + dy][tree_x + dx] = 3  # Leaves
 
         # Generate ore deposits
-        ore_count = self.width // 100
+        ore_count = self.width[1] // 100
         for _ in range(ore_count):
             ore_type = random.choice([4, 5, 6, 7])  # Coal, Iron, Gold, Diamond
-            ore_x = random.randint(0, self.width - 1)
+            ore_x = random.randint(0, self.width[1] - 1)
             validnu = False
             while not validnu:
                 try:
@@ -65,7 +65,7 @@ class TerrainGenerator:
             ore_radius = random.randint(1, 4)
             for dx in range(-ore_radius, ore_radius + 1):
                 for dy in range(-ore_radius, ore_radius + 1):
-                    if 0 <= ore_x + dx < self.width and 0 <= ore_y + dy < self.height:
+                    if 0 <= ore_x + dx < self.width[1] and 0 <= ore_y + dy < self.height:
                         if abs(dx) + abs(dy) <= ore_radius:
                             self.terrain[ore_y + dy][ore_x + dx] = ore_type
 
