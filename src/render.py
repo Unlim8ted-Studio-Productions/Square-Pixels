@@ -12,7 +12,7 @@ def render_terrain(
     pos_y: float | int,
     camera_x: float | int,
     camera_y: float | int,
-):
+) -> list:
     tile_size = 10
     colors = [
         (100, 100, 100),  # Stone
@@ -25,21 +25,19 @@ def render_terrain(
         (128, 128, 128),  # Diamond
         (135, 206, 235),  # Sky (Blue)
     ]  # Color palette for blocks
-
+    colliders=[]
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
             color = colors[block_type]
+            currentblock= pig.Rect(((x + pos_x - camera_x) * tile_size, (y + pos_y - camera_y) * tile_size),  (tile_size, tile_size))
             pig.draw.rect(
                 screen,
                 color,
-                (
-                    (x + pos_x - camera_x) * tile_size,
-                    (y + pos_y - camera_y) * tile_size,
-                    tile_size,
-                    tile_size,
-                ),
+                (currentblock),
             )
+            colliders.append(currentblock)
+    return colliders
 
 
 def render_player(

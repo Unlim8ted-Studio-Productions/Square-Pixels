@@ -3,6 +3,7 @@ import terrain_gen as tgen
 import render
 import typing as tp
 import logo
+import player as pl
 
 
 if __name__ == "__main__":
@@ -21,39 +22,27 @@ if __name__ == "__main__":
 
     # Path to the folder to save the extracted frames
     image_folder = r"terraria_styled_game\\frames"
-
+    colliders = []
     # Extract frames from the video
     # logo.extract_frames(video_file, image_folder)
-
+    vx, vy = 0, 0
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen)
 
     # Rest of game code goes here...
-    terrain_gen = tgen.TerrainGenerator( width = (0,800), height= infoObject.current_h // 10)
+    terrain_gen = tgen.TerrainGenerator( width = (0,100), height= infoObject.current_h // 10)
     terrain_gen.run(screen)
-
+    player = pl.Player(vx,vy)
     # world:object = tgen.generate()
     # for square in world.tiles:
     #    render.draw(screen, square)
-    vx, vy = 0, 0
     running = True
     while running:
         for event in pig.event.get():
             if event.type == pig.QUIT:
                 running = False
-            elif event.type == pig.KEYDOWN:
-                if event.key == pig.K_UP or event.key == ord("w"):
-                    vy = -1
-                elif event.key == pig.K_DOWN or event.key == ord("s"):
-                    vy = 1
-                elif event.key == pig.K_LEFT or event.key == ord("a"):
-                    vx = -1
-                elif event.key == pig.K_RIGHT or event.key == ord("d"):
-                    vx = 1
-        terrain_gen.camera_x += vx
-        terrain_gen.camera_y += vy
         screen.fill((0, 0, 0))
-        render.render_terrain(
+        colliders = render.render_terrain(
             screen,
             terrain_gen.width,
             terrain_gen.height,
@@ -63,5 +52,11 @@ if __name__ == "__main__":
             terrain_gen.camera_x,
             terrain_gen.camera_y,
         )
+        player.move(infoObject.current_h)
+        player.update(infoObject.current_h, infoObject.current_w, colliders)#terrain_gen.colliders)
+        terrain_gen.camera_x += vx
+        terrain_gen.camera_y += vy
+        player.draw(screen)
+        player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)

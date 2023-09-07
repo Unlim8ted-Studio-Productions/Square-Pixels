@@ -29,6 +29,8 @@ def play_intro_video(image_folder, not_skipped, screen):
     for image_file in image_files:
         if not_skipped == True:
             image = pig.image.load(image_file).convert()
+            infoObject: object = pig.display.Info()
+            image = pig.transform.scale(image, (infoObject.current_w, infoObject.current_h))
             screen.blit(image, (0, 0))
             pig.display.flip()
             clock.tick(60)  # Adjust the frame rate as needed

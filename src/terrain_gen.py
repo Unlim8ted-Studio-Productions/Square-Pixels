@@ -1,6 +1,6 @@
 import pygame as pg
 import random
-
+import collision as c
 
 class TerrainGenerator:
     def __init__(self, width, height, pos_x=0, pos_y=0):
@@ -9,6 +9,7 @@ class TerrainGenerator:
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.terrain = []
+        self.colliders = []
         self.camera_x = 0
         self.camera_y = 0
 
@@ -68,6 +69,13 @@ class TerrainGenerator:
                     if 0 <= ore_x + dx < self.width[1] and 0 <= ore_y + dy < self.height:
                         if abs(dx) + abs(dy) <= ore_radius:
                             self.terrain[ore_y + dy][ore_x + dx] = ore_type
+
+         # Generate colliders based on terrain
+        for x in range(len(self.terrain[0])):
+            for y in range(len(self.terrain)):
+                if self.terrain[y][x] != 0:
+                    collider = c.Collider(x, y, 32, 32)
+                    self.colliders.append(collider)
 
     def run(self, screen):
         clock = pg.time.Clock()
