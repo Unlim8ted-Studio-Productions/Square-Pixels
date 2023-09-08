@@ -36,7 +36,8 @@ def render_terrain(
                 color,
                 (currentblock),
             )
-            colliders.append(currentblock)
+            if color != (135, 206, 235) and color != (139, 115, 85):
+                colliders.append(currentblock)
     return colliders
 
 

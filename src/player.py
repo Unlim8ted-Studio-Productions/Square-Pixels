@@ -10,6 +10,7 @@ class Player:
         self.y = y
         self.width = 5
         self.height = 5
+        self.jump = False
         self.bash_power = 3
         self.bash_cooldown = 0
         self.aiming = False
@@ -76,21 +77,45 @@ class Player:
             if event.type == pig.QUIT:
                 running = False
             elif event.type == pig.KEYDOWN:
-                if event.key == pig.K_UP and self.y == screen_height - 20:
+                if event.key == pig.K_UP or event.key == pig.K_SPACE and self.y == screen_height - 20:
                     self.velocity_y -= 3
-                elif event.key == pig.K_LEFT:
+                    self.jump = True
+                    print("jump")
+                elif event.key == pig.K_LEFT or event.key == pig.K_a:
                     self.velocity_x =- self.speed
-                elif event.key == pig.K_RIGHT:
+                elif event.key == pig.K_RIGHT or event.key == pig.K_d:
                     self.velocity_x = self.speed
         
 
     def update(self, screen_height: int, screen_width: int, colliders:list) -> None:
+       selfbounds = pig.Rect(self.x, self.y, self.width, self.width)
+    
+       # Check for collisions with colliders
+       self.gravityi = True  # Assume gravity is applied unless a collision is detected
+       
+       for collider in colliders:
+           iscolliding = selfbounds.colliderect(collider)
+           if iscolliding:
+               self.gravityi = False
+               # Adjust the player's position to be on top of the block
+               self.y = collider.y - self.height  # Place player on top of the block
+               #print('COLLISION')
+               if self.jump:
+                   self.y -= 5
+                   self.jump = False
+              # else:
+               self.velocity_y = 1
+
+               
+               
+
        if self.gravityi:
            self.velocity_y += self.gravity
       
    
        self.x += self.velocity_x
-       self.y += self.velocity_y
+       if self.gravityi:
+          self.y += self.velocity_y
    
        if self.y > screen_height - 20:
            self.y = screen_height - 20
@@ -101,23 +126,15 @@ class Player:
            self.velocity_x = -1
    
        if self.velocity_x > 0:
-           self.velocity_x -= 0.001
+           self.velocity_x -= 0.1
        if self.velocity_x < 0:
-           self.velocity_x += 0.001
+           self.velocity_x += 0.1
    
        self.trail.append((self.x, self.y))  # Add current position to trail
    
        if len(self.trail) > 20:  # Limit the trail length to 10
            self.trail.pop(0)  # Remove the oldest position
-       selfbounds=pig.Rect(self.x,self.y,self.width,self.width)
-       # Check for collisions with colliders
-       for collider in colliders:
-           iscolliding = selfbounds.colliderect(collider)
-           if iscolliding == False:
-               self.gravity = .2
-               continue
-           else:
-               self.gravity = 0
+       
                #if iscolliding[1]:
                #    if self.digging:
                #        self.dig(collider)  # Perform dig ability on collision

@@ -1,3 +1,4 @@
+from ast import Tuple
 import pygame as pig
 import terrain_gen as tgen
 import render
@@ -25,12 +26,12 @@ if __name__ == "__main__":
     colliders = []
     # Extract frames from the video
     # logo.extract_frames(video_file, image_folder)
-    vx, vy = 0, 0
+    vx, vy = 0,0#infoObject.current_w/2, 0#infoObject.current_h /2
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen)
 
     # Rest of game code goes here...
-    terrain_gen = tgen.TerrainGenerator( width = (0,100), height= infoObject.current_h // 10)
+    terrain_gen = tgen.TerrainGenerator( width = (0,infoObject.current_h // 5), height= infoObject.current_h // 10)
     terrain_gen.run(screen)
     player = pl.Player(vx,vy)
     # world:object = tgen.generate()
