@@ -25,6 +25,8 @@ class Player:
         self.trail = []
         self.inverse = False
         self.rainbow = True
+        self.platform = False
+        self.click = (0,0)
 
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
@@ -80,11 +82,13 @@ class Player:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE and self.y == screen_height - 20:
                     self.velocity_y -= 3
                     self.jump = True
-                    print("jump")
+                    #print("jump")
                 elif event.key == pig.K_LEFT or event.key == pig.K_a:
                     self.velocity_x =- self.speed
                 elif event.key == pig.K_RIGHT or event.key == pig.K_d:
                     self.velocity_x = self.speed
+            if pig.mouse.get_pressed()[0]:
+                self.click=pig.mouse.get_pos()
         
 
     def update(self, screen_height: int, screen_width: int, colliders:list) -> None:
@@ -99,10 +103,12 @@ class Player:
                self.gravityi = False
                # Adjust the player's position to be on top of the block
                self.y = collider.y - self.height  # Place player on top of the block
+               self.platform = True
                #print('COLLISION')
-               if self.jump:
+               if self.jump and self.platform:
                    self.y -= 5
                    self.jump = False
+                   self.platform = False
               # else:
                self.velocity_y = 1
 
@@ -146,6 +152,15 @@ class Player:
        # Update arrow position if aiming
        if self.aiming:
            self.arrow_end_pos = pig.mouse.get_pos()
+
+    def delete_tile(self, terrain):
+        # Check if the provided coordinates are within the bounds of the terrain
+        if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
+            # Set the value at the specified position to 8 (sky block/empty tile)
+            terrain[self.click[1]][self.click[0]] = 8
+        #else:
+         #   print("Invalid coordinates")
+
     def draw_trail(self, screen: pig.Surface) -> None:
         trail_s_num: int = 1
         trail_l_num: int = len(self.trail)

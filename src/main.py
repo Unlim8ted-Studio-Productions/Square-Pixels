@@ -37,6 +37,7 @@ if __name__ == "__main__":
     # world:object = tgen.generate()
     # for square in world.tiles:
     #    render.draw(screen, square)
+    #print(terrain_gen.terrain)
     running = True
     while running:
         for event in pig.event.get():
@@ -54,6 +55,7 @@ if __name__ == "__main__":
             terrain_gen.camera_y,
         )
         player.move(infoObject.current_h)
+        player.delete_tile(terrain_gen.terrain)
         player.update(infoObject.current_h, infoObject.current_w, colliders)#terrain_gen.colliders)
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
