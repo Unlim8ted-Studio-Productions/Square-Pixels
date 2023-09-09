@@ -2,6 +2,11 @@ import pygame as pig
 import typing
 import colorsys
 import math
+import random
+from inventory import Item
+from inventory import player_inventory
+
+selected = None
 
 
 class Player:
@@ -16,26 +21,23 @@ class Player:
         self.aiming = False
         self.arrow_pos = pig.mouse.get_pos()
         self.arrow_end_pos = pig.mouse.get_pos()
-        self.speed =2
+        self.speed = 2
         self.digging = False
         self.gravityi = True
-        self.gravity = .2
+        self.gravity = 0.2
         self.velocity_x = 0
         self.velocity_y = 0
         self.trail = []
         self.inverse = False
         self.rainbow = True
         self.platform = False
-        self.click = (0,0)
-
+        self.click = (0, 0)
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
-        if (self.x < collider.x + collider.width and
-                self.x + self.width > collider.x):
-            return ('x_axis_collision',True)
-        if (self.y < collider.y + collider.height and
-                self.y + self.height > collider.y):
-            return ('y_axis_collision',True)
+        if self.x < collider.x + collider.width and self.x + self.width > collider.x:
+            return ("x_axis_collision", True)
+        if self.y < collider.y + collider.height and self.y + self.height > collider.y:
+            return ("y_axis_collision", True)
 
     def bash(self, collider, screen):
         if self.bash_power > 0 and self.bash_cooldown == 0:
@@ -43,7 +45,7 @@ class Player:
             self.bash_cooldown = 60  # Cooldown for 60 frames (1 second)
             self.fire(collider, screen)
 
-    def dig(self, collider, colliders:list):
+    def dig(self, collider, colliders: list):
         # Perform dig ability actions here
         # ...
 
@@ -57,8 +59,10 @@ class Player:
             pig.draw.line(screen, (0, 255, 0), self.arrow_pos, self.arrow_end_pos, 2)
 
     def fire(self, collider, screen):
-        dir_vector = (self.arrow_end_pos[0] - self.arrow_pos[0],
-                      self.arrow_end_pos[1] - self.arrow_pos[1])
+        dir_vector = (
+            self.arrow_end_pos[0] - self.arrow_pos[0],
+            self.arrow_end_pos[1] - self.arrow_pos[1],
+        )
         magnitude = math.sqrt(dir_vector[0] ** 2 + dir_vector[1] ** 2)
         if magnitude != 0:
             normalized_vector = (dir_vector[0] / magnitude, dir_vector[1] / magnitude)
@@ -74,104 +78,151 @@ class Player:
     def stop_digging(self):
         self.digging = False
 
-    def move(self, screen_height):
+    def move(self, screen_height, screen):
+        global selected
+        font = pig.font.Font(pig.font.match_font("calibri"), 26)
         for event in pig.event.get():
             if event.type == pig.QUIT:
                 quit()
             elif event.type == pig.KEYDOWN:
-                if event.key == pig.K_UP or event.key == pig.K_SPACE and self.y == screen_height - 20:
+                if (
+                    event.key == pig.K_UP
+                    or event.key == pig.K_SPACE
+                    and self.y == screen_height - 20
+                ):
                     self.velocity_y -= 3
                     self.jump = True
-                    #print("jump")
+                    # print("jump")
                 elif event.key == pig.K_LEFT or event.key == pig.K_a:
-                    self.velocity_x =- self.speed
+                    self.velocity_x = -self.speed
                 elif event.key == pig.K_RIGHT or event.key == pig.K_d:
                     self.velocity_x = self.speed
                 elif event.key == pig.K_r:
                     return True
+
+                elif event.key == pig.K_e:
+                    inven = True
+                    while inven:
+                        mousex, mousey = pig.mouse.get_pos()
+                        # draw the screen
+                        screen.fill((0, 0, 0, 50))
+                        backround = pig.Surface([640, 480], pig.SRCALPHA)
+                        #
+                        screen.blit(backround, (0, 0))
+                        player_inventory.draw()
+
+                        # if holding something, draw it next to mouse
+                        if selected:
+                            screen.blit(selected[0].resize(30), (mousex, mousey))
+                            obj = font.render(str(selected[1]), True, (0, 0, 0))
+                            screen.blit(obj, (mousex + 15, mousey + 15))
+
+                        pig.display.update()
+                        for event in pig.event.get():
+                            if event.type == pig.QUIT:
+                                quit()
+                            if event.type == pig.KEYDOWN:
+                                inven = False
+
+                            if event.type == pig.MOUSEBUTTONDOWN:
+                                # if right clicked, get a random item
+                                if event.button == 3:
+                                    selected = [Item(random.randint(0, 3)), 1]
+                                elif event.button == 1:
+                                    try:
+                                        pos = player_inventory.Get_pos()
+                                        if player_inventory.In_grid(pos[0], pos[1]):
+                                            if selected:
+                                                selected = player_inventory.Add(
+                                                    selected, pos
+                                                )
+                                            elif player_inventory.items[pos[0]][pos[1]]:
+                                                selected = player_inventory.items[pos[0]][
+                                                    pos[1]
+                                                ]
+                                                player_inventory.items[pos[0]][
+                                                    pos[1]
+                                                ] = None
+                                    except:
+                                        print("clicked out of inventory")
+                                        
             if pig.mouse.get_pressed()[0]:
-                self.click=pig.mouse.get_pos()
-                #print(self.click)
-        
+                self.click = pig.mouse.get_pos()
+                # print(self.click)
 
-    def update(self, screen_height: int, screen_width: int, colliders:list) -> None:
-       selfbounds = pig.Rect(self.x, self.y, self.width, self.width)
-    
-       # Check for collisions with colliders
-       self.gravityi = True  # Assume gravity is applied unless a collision is detected
-       
-       for collider in colliders:
-           iscolliding = selfbounds.colliderect(collider)
-           if iscolliding:
-               self.gravityi = False
-               # Adjust the player's position to be on top of the block
-               self.y = collider.y - self.height  # Place player on top of the block
-               self.platform = True
-               #print('COLLISION')
-               if self.jump and self.platform:
-                   self.y -= 5
-                   self.jump = False
-                   self.platform = False
-              # else:
-               self.velocity_y = 1
+    def update(self, screen_height: int, screen_width: int, colliders: list) -> None:
+        selfbounds = pig.Rect(self.x, self.y, self.width, self.width)
 
-               
-               
+        # Check for collisions with colliders
+        self.gravityi = True  # Assume gravity is applied unless a collision is detected
 
-       if self.gravityi:
-           self.velocity_y += self.gravity
-      
-   
-       self.x += self.velocity_x
-       if self.gravityi:
-          self.y += self.velocity_y
-   
-       if self.y > screen_height - 20:
-           self.y = screen_height - 20
-           self.velocity_y = 0
-       if self.x <= 0:
-           self.velocity_x = 1
-       if self.x >= screen_width:
-           self.velocity_x = -1
-   
-       if self.velocity_x > 0:
-           self.velocity_x -= 0.1
-       if self.velocity_x < 0:
-           self.velocity_x += 0.1
-   
-       self.trail.append((self.x, self.y))  # Add current position to trail
-   
-       if len(self.trail) > 20:  # Limit the trail length to 10
-           self.trail.pop(0)  # Remove the oldest position
-       
-               #if iscolliding[1]:
-               #    if self.digging:
-               #        self.dig(collider)  # Perform dig ability on collision
-               #    if iscolliding[0] == 'y_axis_collision':
-               #        gravity = 0
-               #    #    self.bash(collider, screen)  # Perform bash ability on collision
-               
+        for collider in colliders:
+            iscolliding = selfbounds.colliderect(collider)
+            if iscolliding:
+                self.gravityi = False
+                # Adjust the player's position to be on top of the block
+                self.y = collider.y - self.height  # Place player on top of the block
+                self.platform = True
+                # print('COLLISION')
+                if self.jump and self.platform:
+                    self.y -= 5
+                    self.jump = False
+                    self.platform = False
+                # else:
+                self.velocity_y = 1
 
-       # Update arrow position if aiming
-       if self.aiming:
-           self.arrow_end_pos = pig.mouse.get_pos()
+        if self.gravityi:
+            self.velocity_y += self.gravity
+
+        self.x += self.velocity_x
+        if self.gravityi:
+            self.y += self.velocity_y
+
+        if self.y > screen_height - 20:
+            self.y = screen_height - 20
+            self.velocity_y = 0
+        if self.x <= 0:
+            self.velocity_x = 1
+        if self.x >= screen_width:
+            self.velocity_x = -1
+
+        if self.velocity_x > 0:
+            self.velocity_x -= 0.1
+        if self.velocity_x < 0:
+            self.velocity_x += 0.1
+
+        self.trail.append((self.x, self.y))  # Add current position to trail
+
+        if len(self.trail) > 20:  # Limit the trail length to 10
+            self.trail.pop(0)  # Remove the oldest position
+
+            # if iscolliding[1]:
+            #    if self.digging:
+            #        self.dig(collider)  # Perform dig ability on collision
+            #    if iscolliding[0] == 'y_axis_collision':
+            #        gravity = 0
+            #    #    self.bash(collider, screen)  # Perform bash ability on collision
+
+        # Update arrow position if aiming
+        if self.aiming:
+            self.arrow_end_pos = pig.mouse.get_pos()
 
     def delete_tile(self, terrain):
         # Check if the provided coordinates are within the bounds of the terrain
-        #if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
-            # Set the value at the specified position to 8 (sky block/empty tile)
+        # if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
+        # Set the value at the specified position to 8 (sky block/empty tile)
         try:
-            terrain[self.click[1]//10][self.click[0]//10] = 8
+            terrain[self.click[1] // 10][self.click[0] // 10] = 8
         except:
             print("tile does not exist")
-        #else:
-         #   print("Invalid coordinates")
+        # else:
+        #   print("Invalid coordinates")
 
     def draw_trail(self, screen: pig.Surface) -> None:
         trail_s_num: int = 1
         trail_l_num: int = len(self.trail)
         add_tsize: int = 1
-    
+
         if self.inverse:
             for position in self.trail:
                 pig.draw.circle(
@@ -199,7 +250,6 @@ class Player:
                         screen, (r, g, b), position, (trail_s_num + add_tsize)
                     )
                     add_tsize += 0.5
-    
+
     def clear_trail(self) -> None:
         self.trail = []  # Clear the trail
-    

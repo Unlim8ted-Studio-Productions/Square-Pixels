@@ -2,6 +2,7 @@ import pygame as pg
 import random
 import collision as c
 
+
 class TerrainGenerator:
     def __init__(self, width, height, pos_x=0, pos_y=0):
         self.width = width
@@ -18,16 +19,16 @@ class TerrainGenerator:
 
         # Generate random ground
         ground_levels = [self.height // 2] * self.width[1]
-        for x in range(self.width[0],self.width[1]):
+        for x in range(self.width[0], self.width[1]):
             ground_levels[x] = ground_levels[x - 1] + random.randint(-2, 2)
             ground_levels[x] = max(0, min(self.height - 1, ground_levels[x]))
 
-        for x in range(self.width[0],self.width[1]):
+        for x in range(self.width[0], self.width[1]):
             for y in range(ground_levels[x], self.height):
                 self.terrain[y][x] = random.choice([0, 1])  # Stone or Dirt
 
         # Set sky blocks
-        for x in range(self.width[0],self.width[1]):
+        for x in range(self.width[0], self.width[1]):
             for y in range(ground_levels[x]):
                 self.terrain[y][x] = 8  # Sky
 
@@ -46,7 +47,10 @@ class TerrainGenerator:
             leaf_radius = random.randint(2, 4)
             for dx in range(-leaf_radius, leaf_radius + 1):
                 for dy in range(-leaf_radius, leaf_radius + 1):
-                    if 0 <= tree_x + dx < self.width[1] and 0 <= tree_y + dy < self.height:
+                    if (
+                        0 <= tree_x + dx < self.width[1]
+                        and 0 <= tree_y + dy < self.height
+                    ):
                         if abs(dx) + abs(dy) <= leaf_radius:
                             self.terrain[tree_y + dy][tree_x + dx] = 3  # Leaves
 
@@ -66,40 +70,42 @@ class TerrainGenerator:
             ore_radius = random.randint(1, 4)
             for dx in range(-ore_radius, ore_radius + 1):
                 for dy in range(-ore_radius, ore_radius + 1):
-                    if 0 <= ore_x + dx < self.width[1] and 0 <= ore_y + dy < self.height:
+                    if (
+                        0 <= ore_x + dx < self.width[1]
+                        and 0 <= ore_y + dy < self.height
+                    ):
                         if abs(dx) + abs(dy) <= ore_radius:
                             self.terrain[ore_y + dy][ore_x + dx] = ore_type
 
-                    
-
-        cloud_count = random.randint(1,10)  # Adjust the cloud count as needed
+        cloud_count = random.randint(1, 10)  # Adjust the cloud count as needed
         for _ in range(cloud_count):
             cloud_width = random.randint(12, 25)  # Adjust cloud size as needed
             cloud_height = random.randint(5, 10)  # Adjust cloud size as needed
             cloud_x = random.randint(0, self.width[1] - cloud_width)
-            cloud_y_beforeOperation = tree_height-20 # Adjust cloud height as needed
-            #if cloud_y_beforeOperation <= 0:
+            cloud_y_beforeOperation = tree_height - 20  # Adjust cloud height as needed
+            # if cloud_y_beforeOperation <= 0:
             #    print("hi")
-            #else:
+            # else:
             #    print('yay')
-            #try:
+            # try:
 
-            cloud_y = random.randint(0,abs(int(tree_height-5 )))  # Adjust cloud height as needed
-            #except:
-             #   continue
+            cloud_y = random.randint(
+                0, abs(int(tree_height - 5))
+            )  # Adjust cloud height as needed
+            # except:
+            #   continue
             for x in range(cloud_x, cloud_x + cloud_width):
                 for y in range(cloud_y, cloud_y + cloud_height):
                     if 0 <= x < self.width[1] and 0 <= y < self.height:
-                        if self.terrain[y][x] == 8: #sky
+                        if self.terrain[y][x] == 8:  # sky
                             self.terrain[y][x] = 9  # Set cloud blocks
-                        
+
         # # Generate colliders based on terrain
-        #for x in range(len(self.terrain[0])):
+        # for x in range(len(self.terrain[0])):
         #    for y in range(len(self.terrain)):
         #        if self.terrain[y][x] != 0:
         #            collider = c.Collider(x, y, 32, 32)
         #            self.colliders.append(collider)
-
 
     def run(self, screen):
         clock = pg.time.Clock()
