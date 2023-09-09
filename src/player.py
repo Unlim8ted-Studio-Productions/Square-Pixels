@@ -87,6 +87,8 @@ class Player:
                     self.velocity_x =- self.speed
                 elif event.key == pig.K_RIGHT or event.key == pig.K_d:
                     self.velocity_x = self.speed
+                elif event.key == pig.K_r:
+                    return True
             if pig.mouse.get_pressed()[0]:
                 self.click=pig.mouse.get_pos()
                 #print(self.click)
