@@ -137,15 +137,15 @@ class Player:
                                                     selected, pos
                                                 )
                                             elif player_inventory.items[pos[0]][pos[1]]:
-                                                selected = player_inventory.items[pos[0]][
-                                                    pos[1]
-                                                ]
+                                                selected = player_inventory.items[
+                                                    pos[0]
+                                                ][pos[1]]
                                                 player_inventory.items[pos[0]][
                                                     pos[1]
                                                 ] = None
                                     except:
                                         print("clicked out of inventory")
-                                        
+
             if pig.mouse.get_pressed()[0]:
                 self.click = pig.mouse.get_pos()
                 # print(self.click)
