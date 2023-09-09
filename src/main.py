@@ -38,6 +38,7 @@ if __name__ == "__main__":
     # for square in world.tiles:
     #    render.draw(screen, square)
     #print(terrain_gen.terrain)
+    #quit()
     running = True
     while running:
         for event in pig.event.get():

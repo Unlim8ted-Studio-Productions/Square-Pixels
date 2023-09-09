@@ -77,7 +77,7 @@ class Player:
     def move(self, screen_height):
         for event in pig.event.get():
             if event.type == pig.QUIT:
-                running = False
+                quit()
             elif event.type == pig.KEYDOWN:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE and self.y == screen_height - 20:
                     self.velocity_y -= 3
@@ -89,6 +89,7 @@ class Player:
                     self.velocity_x = self.speed
             if pig.mouse.get_pressed()[0]:
                 self.click=pig.mouse.get_pos()
+                #print(self.click)
         
 
     def update(self, screen_height: int, screen_width: int, colliders:list) -> None:
@@ -155,9 +156,12 @@ class Player:
 
     def delete_tile(self, terrain):
         # Check if the provided coordinates are within the bounds of the terrain
-        if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
+        #if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
             # Set the value at the specified position to 8 (sky block/empty tile)
-            terrain[self.click[1]][self.click[0]] = 8
+        try:
+            terrain[self.click[1]//10][self.click[0]//10] = 8
+        except:
+            print("tile does not exist")
         #else:
          #   print("Invalid coordinates")
 
