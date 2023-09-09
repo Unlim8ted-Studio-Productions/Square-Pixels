@@ -26,7 +26,7 @@ if __name__ == "__main__":
     image_folder:str = r"terraria_styled_game\\frames"
     colliders:list = []
     # Extract frames from the video
-    # logo.extract_frames(video_file, image_folder)
+    #logo.extract_frames(video_file, image_folder)
     vx, vy = 0,0#infoObject.current_w/2, 0#infoObject.current_h /2
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen)

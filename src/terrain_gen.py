@@ -72,10 +72,10 @@ class TerrainGenerator:
 
                     
 
-        cloud_count = random.randint(1,5)  # Adjust the cloud count as needed
+        cloud_count = random.randint(1,10)  # Adjust the cloud count as needed
         for _ in range(cloud_count):
-            cloud_width = random.randint(25, 50)  # Adjust cloud size as needed
-            cloud_height = random.randint(10, 20)  # Adjust cloud size as needed
+            cloud_width = random.randint(12, 25)  # Adjust cloud size as needed
+            cloud_height = random.randint(5, 10)  # Adjust cloud size as needed
             cloud_x = random.randint(0, self.width[1] - cloud_width)
             cloud_y_beforeOperation = tree_height-20 # Adjust cloud height as needed
             #if cloud_y_beforeOperation <= 0:
@@ -83,13 +83,15 @@ class TerrainGenerator:
             #else:
             #    print('yay')
             #try:
-            cloud_y = random.randint(0,abs(int(tree_height-20 )))  # Adjust cloud height as needed
+
+            cloud_y = random.randint(0,abs(int(tree_height-5 )))  # Adjust cloud height as needed
             #except:
              #   continue
             for x in range(cloud_x, cloud_x + cloud_width):
                 for y in range(cloud_y, cloud_y + cloud_height):
                     if 0 <= x < self.width[1] and 0 <= y < self.height:
-                        self.terrain[y][x] = 9  # Set cloud blocks
+                        if self.terrain[y][x] == 8: #sky
+                            self.terrain[y][x] = 9  # Set cloud blocks
                         
         # # Generate colliders based on terrain
         #for x in range(len(self.terrain[0])):
