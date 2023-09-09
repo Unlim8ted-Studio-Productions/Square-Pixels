@@ -46,7 +46,7 @@ For detailed installation instructions, consult the Installation Guide.
 - Move your character using the **WASD** keys or arrow keys.
 - Open your inventory with the **E** key.
 - Close your inventory with any button.
-- Right-click an item in your inventory to select it.
+- Right-click in your inventory to create an item.
 - Left-click to place an item in an inventory slot.
 - Left-click on blocks to destroy them.
 
