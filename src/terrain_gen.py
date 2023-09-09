@@ -70,12 +70,34 @@ class TerrainGenerator:
                         if abs(dx) + abs(dy) <= ore_radius:
                             self.terrain[ore_y + dy][ore_x + dx] = ore_type
 
-         # Generate colliders based on terrain
-        for x in range(len(self.terrain[0])):
-            for y in range(len(self.terrain)):
-                if self.terrain[y][x] != 0:
-                    collider = c.Collider(x, y, 32, 32)
-                    self.colliders.append(collider)
+                    
+
+        cloud_count = random.randint(1,5)  # Adjust the cloud count as needed
+        for _ in range(cloud_count):
+            cloud_width = random.randint(25, 50)  # Adjust cloud size as needed
+            cloud_height = random.randint(10, 20)  # Adjust cloud size as needed
+            cloud_x = random.randint(0, self.width[1] - cloud_width)
+            cloud_y_beforeOperation = tree_height-20 # Adjust cloud height as needed
+            #if cloud_y_beforeOperation <= 0:
+            #    print("hi")
+            #else:
+            #    print('yay')
+            #try:
+            cloud_y = random.randint(0,abs(int(tree_height-20 )))  # Adjust cloud height as needed
+            #except:
+             #   continue
+            for x in range(cloud_x, cloud_x + cloud_width):
+                for y in range(cloud_y, cloud_y + cloud_height):
+                    if 0 <= x < self.width[1] and 0 <= y < self.height:
+                        self.terrain[y][x] = 9  # Set cloud blocks
+                        
+        # # Generate colliders based on terrain
+        #for x in range(len(self.terrain[0])):
+        #    for y in range(len(self.terrain)):
+        #        if self.terrain[y][x] != 0:
+        #            collider = c.Collider(x, y, 32, 32)
+        #            self.colliders.append(collider)
+
 
     def run(self, screen):
         clock = pg.time.Clock()

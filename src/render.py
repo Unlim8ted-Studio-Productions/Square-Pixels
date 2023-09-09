@@ -1,6 +1,7 @@
 import pygame as pig
 import typing as tp
 import player
+import random
 
 
 def render_terrain(
@@ -24,6 +25,7 @@ def render_terrain(
         (255, 223, 0),  # Gold
         (128, 128, 128),  # Diamond
         (135, 206, 235),  # Sky (Blue)
+        (255,255,255),   #Clouds (White)
     ]  # Color palette for blocks
     colliders=[]
     for x in range(width[0], width[1]):
@@ -31,12 +33,17 @@ def render_terrain(
             block_type = terrain[y][x]
             color = colors[block_type]
             currentblock= pig.Rect(((x + pos_x - camera_x) * tile_size, (y + pos_y - camera_y) * tile_size),  (tile_size, tile_size))
+            if color == (255,255,255):
+                if random.randint(0,1) == 1:
+                    color = (255,255,255)
+                else:
+                    color = (211,211,211)
             pig.draw.rect(
                 screen,
                 color,
                 (currentblock),
             )
-            if color != (135, 206, 235) and color != (139, 115, 85):
+            if color != (135, 206, 235) and color != (139, 115, 85) and color != (255,255,255) and color != (211,211,211):
                 colliders.append(currentblock)
     return colliders
 
