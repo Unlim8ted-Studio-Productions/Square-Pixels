@@ -1,6 +1,8 @@
 # Terraria-Styled 2D Game
 
-![Game Screenshot](screenshot.png)
+![Game Screenshot]![Screenshot 2023-09-09 190654](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55)![Screenshot 2023-09-09 190738](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/34e74d92-cece-4010-aeec-d795feb102b5)
+
+
 
 ## Table of Contents
 - [Introduction](#introduction)
