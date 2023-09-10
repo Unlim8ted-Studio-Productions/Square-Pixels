@@ -5,6 +5,7 @@ import render
 import typing as tp
 import logo
 import player as pl
+from Character_creation import main
 
 
 if __name__ == "__main__":
@@ -36,6 +37,7 @@ if __name__ == "__main__":
         width=(0, infoObject.current_h // 5), height=infoObject.current_h // 10
     )
     terrain_gen.run(screen)
+    player_sprite = main()
     player = pl.Player(vx, vy)
     # world:object = tgen.generate()
     # for square in world.tiles:

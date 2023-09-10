@@ -62,7 +62,8 @@ def render_terrain(
 def render_player(
     screen: pig.Surface, x: float | int, y: float | int, size: int, color: tuple
 ):
-    pig.draw.circle(screen, color, (x, y), size, size)
+   pig.draw.circle(screen, color, (x, y), size, size)
+   
 
 
 def render_other_players(screen: pig.Surface, players: list):
