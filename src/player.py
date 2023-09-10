@@ -224,6 +224,12 @@ class Player:
         # Set the value at the specified position to 8 (sky block/empty tile)
         try:
             terrain[self.click[1] // 10][self.click[0] // 10] = 8
+            terrain[(self.click[1] +1) // 10][(self.click[0]-1) // 10] = 8
+            terrain[(self.click[1] -1) // 10][(self.click[0]+1) // 10] = 8
+            terrain[(self.click[1] +1) // 10][self.click[0] // 10] = 8
+            terrain[(self.click[1] -1) // 10][self.click[0] // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0]-1) // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0]+1) // 10] = 8
         except:
             print("tile does not exist")
         # else:
