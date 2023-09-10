@@ -78,7 +78,7 @@ class Player:
     def stop_digging(self):
         self.digging = False
 
-    def move(self, screen_height, screen):
+    def move(self, screen_height, screen, infoObject):
         global selected
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
         for event in pig.event.get():
@@ -103,6 +103,12 @@ class Player:
                 elif event.key == pig.K_e:
                     inven = True
                     while inven:
+                        text = font.render(
+                            "Inventory", True, (255, 255, 255), (100, 100, 100)
+                        )
+                        screen.blit(
+                            text, (infoObject.current_h - 20, infoObject.current_w / 2)
+                        )
                         mousex, mousey = pig.mouse.get_pos()
                         # draw the screen
                         screen.fill((0, 0, 0, 50))
