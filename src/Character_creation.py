@@ -166,6 +166,8 @@ def finish():
         shape_sprite.rect = shape_sprite.image.get_rect()
         shape_sprite.rect.x = shape["rect"].x // 4
         shape_sprite.rect.y = shape["rect"].y // 4
+        shape_sprite.rect.width = shape["rect"].width // 4
+        shape_sprite.rect.height = shape["rect"].height // 4
         shapes_sprites.add(shape_sprite)
     shapes.clear()
     return character_sprite
