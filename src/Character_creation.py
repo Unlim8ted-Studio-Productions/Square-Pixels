@@ -140,22 +140,36 @@ def add_square():
     add_shape(x, y, width, height, color)
 
 def finish():
-    global character_sprite, shapes_sprites
+    global character_sprite, shapes_sprites, head_size, body_height, leg_length
+
+
+    pygame.draw.rect(background, (0, 0, 0, 0), pygame.Rect(500, 50, 400, 1000))
+
+
+    # Divide the character sizes by 4
+    head_size //= 4
+    body_height //= 4
+    leg_length //= 4
+
     character_sprite = pygame.sprite.GroupSingle()
     character_sprite.add(pygame.sprite.Sprite())
     character_sprite.sprite.image = background.copy()
     shapes_sprites = pygame.sprite.Group()
     for shape in shapes:
         shape_sprite = pygame.sprite.Sprite()
-        shape_sprite.image = pygame.Surface((shape["rect"].width, shape["rect"].height), pygame.SRCALPHA)
+        # Divide the shape sizes by 4
+        shape_width = shape["rect"].width // 4
+        shape_height = shape["rect"].height // 4
+        shape_sprite.image = pygame.Surface((shape_width, shape_height), pygame.SRCALPHA)
         shape_sprite.image.fill(TRANSPARENT)
-        pygame.draw.rect(shape_sprite.image, shape["color"], (0, 0, shape["rect"].width, shape["rect"].height))
+        pygame.draw.rect(shape_sprite.image, shape["color"], (0, 0, shape_width, shape_height))
         shape_sprite.rect = shape_sprite.image.get_rect()
-        shape_sprite.rect.x = shape["rect"].x
-        shape_sprite.rect.y = shape["rect"].y
+        shape_sprite.rect.x = shape["rect"].x // 4
+        shape_sprite.rect.y = shape["rect"].y // 4
         shapes_sprites.add(shape_sprite)
     shapes.clear()
     return character_sprite
+
 
 def reset_character():
     global head_size, body_height, shapes

@@ -77,7 +77,7 @@ if __name__ == "__main__":
         )  # terrain_gen.colliders)
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
-        player.draw(screen)
+        player.draw(screen, player_sprite)
         player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)

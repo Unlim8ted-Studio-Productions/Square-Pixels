@@ -1,3 +1,4 @@
+from calendar import c
 import pygame as pig
 import typing
 import colorsys
@@ -52,9 +53,9 @@ class Player:
         # Remove the collider from the list
         colliders.remove(collider)
 
-    def draw(self, screen):
-        pig.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height))
-
+    def draw(self, screen, character):
+        chrect = pig.Rect(self.x, self.y, self.width, self.height)
+        screen.blit(character.sprite.image, (self.x - 400, self.y -400, self.width/4, self.height/4))#(self.x, self.y))
         if self.aiming:
             pig.draw.line(screen, (0, 255, 0), self.arrow_pos, self.arrow_end_pos, 2)
 
@@ -224,12 +225,12 @@ class Player:
         # Set the value at the specified position to 8 (sky block/empty tile)
         try:
             terrain[self.click[1] // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] +1) // 10][(self.click[0]-1) // 10] = 8
-            terrain[(self.click[1] -1) // 10][(self.click[0]+1) // 10] = 8
-            terrain[(self.click[1] +1) // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] -1) // 10][self.click[0] // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0]-1) // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0]+1) // 10] = 8
+            terrain[(self.click[1] +5) // 10][(self.click[0]-5) // 10] = 8
+            terrain[(self.click[1] -5) // 10][(self.click[0]+5) // 10] = 8
+            terrain[(self.click[1] +5) // 10][self.click[0] // 10] = 8
+            terrain[(self.click[1] -5) // 10][self.click[0] // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0]-5) // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0]+5) // 10] = 8
         except:
             print("tile does not exist")
         # else:
