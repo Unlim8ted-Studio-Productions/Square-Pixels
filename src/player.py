@@ -80,6 +80,7 @@ class Player:
 
     def move(self, screen_height, screen, infoObject):
         global selected
+        Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
         for event in pig.event.get():
             if event.type == pig.QUIT:
@@ -103,16 +104,20 @@ class Player:
                 elif event.key == pig.K_e:
                     inven = True
                     while inven:
-                        text = font.render(
-                            "Inventory", True, (255, 255, 255), (100, 100, 100)
-                        )
-                        screen.blit(
-                            text, (infoObject.current_h - 20, infoObject.current_w / 2)
-                        )
                         mousex, mousey = pig.mouse.get_pos()
                         # draw the screen
                         screen.fill((0, 0, 0, 50))
                         backround = pig.Surface([640, 480], pig.SRCALPHA)
+                        text = Mainfont.render(
+                            "Inventory", True, (255, 255, 255), (100, 100, 100)
+                        )
+                        screen.blit(
+                            text,
+                            (
+                                infoObject.current_w / 5,
+                                infoObject.current_h - 350,
+                            ),  # (infoObject.current_h - infoObject.current_h /1.5, infoObject.current_w / 2 - 150)
+                        )
                         #
                         screen.blit(backround, (0, 0))
                         player_inventory.draw()
