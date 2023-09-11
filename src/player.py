@@ -55,7 +55,7 @@ class Player:
 
     def draw(self, screen, character):
         chrect = pig.Rect(self.x, self.y, self.width, self.height)
-        screen.blit(character.sprite.image, (self.x - 400, self.y -400, self.width/4, self.height/4))#(self.x, self.y))
+        screen.blit(character.sprite.image, pig.Rect((self.x - 400, self.y -400, 5, 5)))#(self.x, self.y))
         if self.aiming:
             pig.draw.line(screen, (0, 255, 0), self.arrow_pos, self.arrow_end_pos, 2)
 
@@ -199,9 +199,9 @@ class Player:
             self.velocity_x = -1
 
         if self.velocity_x > 0:
-            self.velocity_x -= 0.1
+            self.velocity_x -= 0.01
         if self.velocity_x < 0:
-            self.velocity_x += 0.1
+            self.velocity_x += 0.01
 
         self.trail.append((self.x, self.y))  # Add current position to trail
 
@@ -232,7 +232,8 @@ class Player:
             terrain[self.click[1] // 10][(self.click[0]-5) // 10] = 8
             terrain[self.click[1] // 10][(self.click[0]+5) // 10] = 8
         except:
-            print("tile does not exist")
+            #print("tile does not exist")
+            None
         # else:
         #   print("Invalid coordinates")
 

@@ -1,11 +1,15 @@
 import pygame
 import sys
-
+import tkinter as tk
+from tkinter import filedialog
+import os 
+path = os.getcwd()
 # Initialize Pygame
 pygame.init()
 
-# Constants
-WIDTH, HEIGHT = 800, 600
+# Initialize the screen with transparency
+infoObject = pygame.display.Info()
+WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 WHITE = (255, 255, 255)
 TRANSPARENT = (0, 0, 0, 0)
 CHARACTER_COLOR = (50, 150, 200)
@@ -13,20 +17,19 @@ CHARACTER_COLOR = (50, 150, 200)
 # Character properties
 head_size = 50
 body_height = 100
-leg_length = 100
 
 # Shapes
 shapes = []
 trails = True
 
-# Initialize the screen with transparency
-infoObject: object = pygame.display.Info()
-screen: pygame.Surface = pygame.display.set_mode(
-    (infoObject.current_w, infoObject.current_h)
-)
+# Create a tkinter root window for file dialogs
+root = tk.Tk()
+root.withdraw()  # Hide the main tkinter window
+
+# Pygame screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Character Customization")
 background = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-
 font = pygame.font.Font(None, 36)
 
 def draw_character():
@@ -57,10 +60,10 @@ def add_shape(x, y, width, height, color):
 
 def main():
     global head_size, body_height, trails
-
-    while True:
+    running = True
+    while running:
         if trails:
-            screen.fill((0,0,0))
+            screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -70,9 +73,10 @@ def main():
                 for button in buttons:
                     if button["rect"].collidepoint(event.pos):
                         if button["text"] == "Finish":
+                            running = False
                             return button["callback"]()
                         else:
-                             button["callback"]()
+                            button["callback"]()
 
                 # Check for shape dragging
                 for shape in shapes:
@@ -114,6 +118,8 @@ buttons = [
     {"rect": pygame.Rect(600, 350, 150, 50), "text": "Finish", "callback": lambda: finish()},
     {"rect": pygame.Rect(600, 410, 150, 50), "text": "Reset", "callback": lambda: reset_character()},
     {"rect": pygame.Rect(600, 470, 150, 50), "text": "Toggle Trails", "callback": lambda: toggle_trails()},
+    {"rect": pygame.Rect(600, 530, 150, 50), "text": "Export Character", "callback": lambda: save_character_dialog()},
+    {"rect": pygame.Rect(600, 590, 150, 50), "text": "Load Character", "callback": lambda: load_character_dialog()},
 ]
 
 def increase_size(part):
@@ -131,12 +137,7 @@ def decrease_size(part):
         body_height -= 10
 
 def add_square():
-    #global clear_trails
     x, y, width, height, color = 50, 400, 50, 50, (255, 0, 0)
-    
-    #if clear_trails:
-    #    background.fill(TRANSPARENT)
-    
     add_shape(x, y, width, height, color)
 
 def finish():
@@ -147,31 +148,15 @@ def finish():
 
 
     # Divide the character sizes by 4
-    head_size //= 4
-    body_height //= 4
-    leg_length //= 4
-
+    #head_size //= 8
+    #body_height //= 4
+    #leg_length //= 4
+    #draw_character()
     character_sprite = pygame.sprite.GroupSingle()
     character_sprite.add(pygame.sprite.Sprite())
     character_sprite.sprite.image = background.copy()
-    shapes_sprites = pygame.sprite.Group()
-    for shape in shapes:
-        shape_sprite = pygame.sprite.Sprite()
-        # Divide the shape sizes by 4
-        shape_width = shape["rect"].width // 4
-        shape_height = shape["rect"].height // 4
-        shape_sprite.image = pygame.Surface((shape_width, shape_height), pygame.SRCALPHA)
-        shape_sprite.image.fill(TRANSPARENT)
-        pygame.draw.rect(shape_sprite.image, shape["color"], (0, 0, shape_width, shape_height))
-        shape_sprite.rect = shape_sprite.image.get_rect()
-        shape_sprite.rect.x = shape["rect"].x // 4
-        shape_sprite.rect.y = shape["rect"].y // 4
-        shape_sprite.rect.width = shape["rect"].width // 4
-        shape_sprite.rect.height = shape["rect"].height // 4
-        shapes_sprites.add(shape_sprite)
     shapes.clear()
     return character_sprite
-
 
 def reset_character():
     global head_size, body_height, shapes
@@ -182,14 +167,29 @@ def reset_character():
 
 def toggle_trails():
     global trails
-    if trails:
-        trails = False
-    else:
-        trails = True
+    trails = not trails
+
+def save_character_dialog():
+    filename = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")],initialdir=path + r"\\terraria_styled_game\\characters\\")
+    if filename:
+        export_character(filename)
+
+def load_character_dialog():
+    filename = filedialog.askopenfilename(filetypes=[("PNG files", "*.png")],initialdir=path + r"\\terraria_styled_game\\characters\\")
+    if filename:
+        load_character(filename)
+
+def export_character(filename):
+    pygame.draw.rect(background, (0, 0, 0, 0), pygame.Rect(500, 50, 400, 1000))
+    pygame.image.save(background, filename)
+
+def load_character(filename):
+    loaded_image = pygame.image.load(filename)
+    screen.blit(loaded_image, (0, 0),(WIDTH,HEIGHT))
+    pygame.display.update()
 
 if __name__ == "__main__":
     main()
-
 
 
 #import pygame

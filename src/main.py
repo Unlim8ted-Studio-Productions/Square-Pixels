@@ -47,9 +47,6 @@ if __name__ == "__main__":
     # rect=pig.Rect((0,0),(infoObject.current_w,infoObject.current_h))
     running = True
     while running:
-        for event in pig.event.get():
-            if event.type == pig.QUIT:
-                running = False
         if reset_terrain:
             terrain_gen.run(screen)
         # pig.draw.rect(screen,(100,100,100,50),rect)
@@ -70,7 +67,7 @@ if __name__ == "__main__":
             terrain_gen.camera_x,
             terrain_gen.camera_y,
         )
-        reset_terrain = player.move(infoObject.current_h, screen, infoObject)
+        reset_terrain = player.move(infoObject.current_h, screen, infoObject) 
         player.delete_tile(terrain_gen.terrain)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders
@@ -78,6 +75,6 @@ if __name__ == "__main__":
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
-        player.draw_trail(screen)
+        #player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)
