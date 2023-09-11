@@ -3,6 +3,7 @@
 ![Game Screenshot]![Screenshot 2023-09-09 190654](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55)![Screenshot 2023-09-09 190738]![Screenshot 2023-09-10 103304](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/aa772f05-84d8-4488-b2f4-b26604ec0bab)
 
 https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/60913d36-27a7-488d-8ccb-946445185283
+![Screenshot 2023-09-11 173817](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/ef3c1316-8653-4df9-b829-ccba6d6203ab)
 
 
 
@@ -40,7 +41,7 @@ To begin your adventure, follow these steps:
 1. Clone the game repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/your-game.git
+   git clone https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game.git
    ```
 
 2. Install any necessary dependencies.
@@ -48,6 +49,8 @@ To begin your adventure, follow these steps:
 3. Launch the game executable or script.
 
 For detailed installation instructions, consult the Installation Guide.
+
+You can also go onto the releases page and download the windows executable
 
 ## How to Play
 
