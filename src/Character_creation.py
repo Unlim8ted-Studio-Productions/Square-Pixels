@@ -9,7 +9,7 @@ pygame.init()
 
 # Initialize the screen with transparency
 infoObject = pygame.display.Info()
-WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
+WIDTH, HEIGHT = 800, 600#infoObject.current_w, infoObject.current_h
 WHITE = (255, 255, 255)
 TRANSPARENT = (0, 0, 0, 0)
 CHARACTER_COLOR = (50, 150, 200)
@@ -27,7 +27,7 @@ root = tk.Tk()
 root.withdraw()  # Hide the main tkinter window
 
 # Pygame screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h))
 pygame.display.set_caption("Character Customization")
 background = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
 font = pygame.font.Font(None, 36)
