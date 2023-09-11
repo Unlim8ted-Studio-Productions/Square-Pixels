@@ -41,7 +41,7 @@ To begin your adventure, follow these steps:
 1. Clone the game repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/your-game.git
+   git clone https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game.git
    ```
 
 2. Install any necessary dependencies.
@@ -49,6 +49,8 @@ To begin your adventure, follow these steps:
 3. Launch the game executable or script.
 
 For detailed installation instructions, consult the Installation Guide.
+
+You can also go onto the releases page and download the windows executable
 
 ## How to Play
 
