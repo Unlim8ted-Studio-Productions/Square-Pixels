@@ -152,11 +152,12 @@ def finish():
     #body_height //= 4
     #leg_length //= 4
     #draw_character()
-    character_sprite = pygame.sprite.GroupSingle()
-    character_sprite.add(pygame.sprite.Sprite())
-    character_sprite.sprite.image = background.copy()
-    shapes.clear()
-    return character_sprite
+    #character_sprite = pygame.sprite.GroupSingle()
+    #character_sprite.add(pygame.sprite.Sprite())
+    #character_sprite.sprite.image = background.copy()
+    #shapes.clear()
+    export_character(path + r"\\terraria_styled_game\\characters\\current.png")
+    return path + r"\\terraria_styled_game\\characters\\current.png"
 
 def reset_character():
     global head_size, body_height, shapes
