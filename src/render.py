@@ -15,7 +15,10 @@ def render_terrain(
     camera_y: float | int,
 ) -> list:
     tile_size = 10
-    block_images = [r"terraria_styled_game\Textures\grass.jpg",r"terraria_styled_game\Textures\stone.jpg"]
+    block_images = [
+        r"terraria_styled_game\Textures\grass.jpg",
+        r"terraria_styled_game\Textures\stone.jpg",
+    ]
     colors = [
         (100, 100, 100),  # Stone
         (139, 69, 19),  # Dirt
@@ -51,7 +54,7 @@ def render_terrain(
                 (currentblock),
             )
             ## Load and blit the corresponding block image
-            #if block_type < len(block_images):
+            # if block_type < len(block_images):
             #    block_image = block_images[block_type]
             #    screen.blit(pig.image.load(block_image), currentblock)
             if (
@@ -65,11 +68,14 @@ def render_terrain(
 
 
 def render_player(
-    screen: pig.Surface, x: float | int, y: float | int, size: int, color: tuple, character
+    screen: pig.Surface,
+    x: float | int,
+    y: float | int,
+    size: int,
+    color: tuple,
+    character,
 ):
-   pig.draw.circle(screen, (0,0,0,0), (x, y), size, size)
-   
-   
+    pig.draw.circle(screen, (0, 0, 0, 0), (x, y), size, size)
 
 
 def render_other_players(screen: pig.Surface, players: list):

@@ -56,12 +56,12 @@ class Player:
     def draw(self, screen, character):
         chrect = pig.Rect(self.x, self.y, self.width, self.height)
         cim = pig.image.load(character)
-        #scale = (float("."+f"{self.width}"), float("."+f"{self.height}"))
+        # scale = (float("."+f"{self.width}"), float("."+f"{self.height}"))
         scale = (540, 400)
         image = pig.transform.scale(cim, scale)
-        #add custom character collisions here
+        # add custom character collisions here
         image.get_rect()
-        screen.blit(image,(self.x-100, self.y-150))
+        screen.blit(image, (self.x - 100, self.y - 150))
         if self.aiming:
             pig.draw.line(screen, (0, 255, 0), self.arrow_pos, self.arrow_end_pos, 2)
 
@@ -209,7 +209,7 @@ class Player:
         if self.velocity_x < 0:
             self.velocity_x += 0.01
 
-        self.trail.append((self.x+10, self.y-100))  # Add current position to trail
+        self.trail.append((self.x + 10, self.y - 100))  # Add current position to trail
 
         if len(self.trail) > 20:  # Limit the trail length to 10
             self.trail.pop(0)  # Remove the oldest position
@@ -231,14 +231,14 @@ class Player:
         # Set the value at the specified position to 8 (sky block/empty tile)
         try:
             terrain[self.click[1] // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] +5) // 10][(self.click[0]-5) // 10] = 8
-            terrain[(self.click[1] -5) // 10][(self.click[0]+5) // 10] = 8
-            terrain[(self.click[1] +5) // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] -5) // 10][self.click[0] // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0]-5) // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0]+5) // 10] = 8
+            terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10] = 8
+            terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10] = 8
+            terrain[(self.click[1] + 5) // 10][self.click[0] // 10] = 8
+            terrain[(self.click[1] - 5) // 10][self.click[0] // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0] - 5) // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0] + 5) // 10] = 8
         except:
-            #print("tile does not exist")
+            # print("tile does not exist")
             None
         # else:
         #   print("Invalid coordinates")

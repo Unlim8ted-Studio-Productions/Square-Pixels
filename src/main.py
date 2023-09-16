@@ -67,7 +67,7 @@ if __name__ == "__main__":
             terrain_gen.camera_x,
             terrain_gen.camera_y,
         )
-        reset_terrain = player.move(infoObject.current_h, screen, infoObject) 
+        reset_terrain = player.move(infoObject.current_h, screen, infoObject)
         player.delete_tile(terrain_gen.terrain)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders
