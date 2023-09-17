@@ -81,6 +81,20 @@ For comprehensive gameplay instructions and advanced tips, please refer to the U
 
 We welcome contributions to our project! If you wish to contribute, please adhere to the guidelines provided in our Contribution Guide. We greatly appreciate bug reports, feature requests, and pull requests.
 
+## ToDo
+
+- [ ] Fix collision handling
+- [ ] Finish settings
+- [ ] Add more world options
+- [ ] Add pre-built characters
+- [ ] Add item drop and implement with inventory
+- [ ] Add crafting and item placing
+- [ ] Add tools
+- [ ] Add the ability to drop items
+- [ ] Implement multiplayer
+- [ ] Implement friending
+
+
 ## License
 
 This project is distributed under the a MODIFIED CREATIVE COMMONS ATTRIBUTION-NONCOMMERCIAL 3.0 LICENSE. Refer to the LICENSE file for specifics.
