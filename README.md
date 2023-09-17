@@ -1,4 +1,4 @@
-# Terraria-Styled 2D Game
+# Flattened
 
 ![Game Screenshot]![Screenshot 2023-09-09 190654](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55)![Screenshot 2023-09-09 190738]![Screenshot 2023-09-10 103304](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/aa772f05-84d8-4488-b2f4-b26604ec0bab)
 
