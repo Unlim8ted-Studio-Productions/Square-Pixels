@@ -63,7 +63,7 @@ class Button:
 
 
 # Main Menu
-def main_menu(host_button,join_button):
+def main_menu(host_button, join_button):
     multiplayer_button = Button(
         "Multiplayer",
         WIDTH // 2 - 100,
@@ -190,6 +190,7 @@ def quit_game():
     pygame.quit()
     sys.exit()
 
+
 def mainfunc():
     global running
     # Initialize multiplayer and singleplayer buttons
@@ -199,11 +200,11 @@ def mainfunc():
     join_button = Button(
         "Join", WIDTH // 2 - 100, HEIGHT // 2 + 100, 200, 50, join_multiplayer_game
     )
-    running =True
+    running = True
     # Main game loop
     while running:
         if game_state == "menu":
-            main_menu(host_button,join_button)
+            main_menu(host_button, join_button)
         elif game_state == "multiplayer":
             if show_multiplayer_options:
                 host_button.draw()
