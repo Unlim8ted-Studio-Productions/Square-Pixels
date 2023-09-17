@@ -87,6 +87,8 @@ We welcome contributions to our project! If you wish to contribute, please adher
 - [ ] add darkness wherever the player has not yet explored and a map
 - [ ] Finish settings
 - [ ] Add more world options
+- [ ] add saving/loading game
+- [ ] add the code to load new chunks
 - [ ] Add pre-built characters
 - [ ] Add item drop and implement with inventory
 - [ ] Add crafting and item placing
