@@ -7,7 +7,6 @@ import logo
 import player as pl
 from Character_creation import main
 
-
 if __name__ == "__main__":
     pig.init()
     clock: object = pig.time.Clock()
@@ -31,6 +30,8 @@ if __name__ == "__main__":
     vx, vy = 0, 0  # infoObject.current_w/2, 0#infoObject.current_h /2
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen)
+    import MainMen
+    MainMen.mainfunc()
 
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
@@ -75,6 +76,6 @@ if __name__ == "__main__":
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
-        player.draw_trail(screen)
+        #player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)

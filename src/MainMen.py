@@ -63,7 +63,24 @@ class Button:
 
 
 # Main Menu
-def main_menu():
+def main_menu(host_button,join_button):
+    multiplayer_button = Button(
+        "Multiplayer",
+        WIDTH // 2 - 100,
+        HEIGHT // 2 + 50,
+        200,
+        50,
+        toggle_multiplayer_options,
+    )
+    singleplayer_button = Button(
+        "Singleplayer",
+        WIDTH // 2 - 100,
+        HEIGHT // 2 + 100,
+        200,
+        50,
+        start_singleplayer_game,
+    )
+    back_button = Button("Back", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, back)
     play_button = Button(
         "Play", WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, toggle_play_buttons
     )
@@ -74,7 +91,7 @@ def main_menu():
         "Quit", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, quit_game
     )
 
-    while True:
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -123,11 +140,8 @@ def start_game():
 
 # Singleplayer Game
 def start_singleplayer_game():
-    global game_state
-    game_state = "singleplayer"
-    import main
-
-    main.main()
+    global running
+    running = False
 
 
 # Host Multiplayer Game
@@ -176,48 +190,36 @@ def quit_game():
     pygame.quit()
     sys.exit()
 
+def mainfunc():
+    global running
+    # Initialize multiplayer and singleplayer buttons
+    host_button = Button(
+        "Host", WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50, host_multiplayer_game
+    )
+    join_button = Button(
+        "Join", WIDTH // 2 - 100, HEIGHT // 2 + 100, 200, 50, join_multiplayer_game
+    )
+    running =True
+    # Main game loop
+    while running:
+        if game_state == "menu":
+            main_menu(host_button,join_button)
+        elif game_state == "multiplayer":
+            if show_multiplayer_options:
+                host_button.draw()
+                join_button.draw()
+        elif game_state == "singleplayer":
+            import main
 
-# Initialize multiplayer and singleplayer buttons
-multiplayer_button = Button(
-    "Multiplayer",
-    WIDTH // 2 - 100,
-    HEIGHT // 2 + 50,
-    200,
-    50,
-    toggle_multiplayer_options,
-)
-singleplayer_button = Button(
-    "Singleplayer",
-    WIDTH // 2 - 100,
-    HEIGHT // 2 + 100,
-    200,
-    50,
-    start_singleplayer_game,
-)
-back_button = Button("Back", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, back)
-host_button = Button(
-    "Host", WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50, host_multiplayer_game
-)
-join_button = Button(
-    "Join", WIDTH // 2 - 100, HEIGHT // 2 + 100, 200, 50, join_multiplayer_game
-)
+            main.main()
+        elif game_state == "settings":
+            # Implement the settings menu here
+            pass
 
-# Main game loop
-while True:
-    if game_state == "menu":
-        main_menu()
-    elif game_state == "multiplayer":
-        if show_multiplayer_options:
-            host_button.draw()
-            join_button.draw()
-    elif game_state == "singleplayer":
-        import main
+        # Add other game states as needed
+        pygame.display.update()
+        pygame.time.Clock().tick(FPS)
 
-        main.main()
-    elif game_state == "settings":
-        # Implement the settings menu here
-        pass
 
-    # Add other game states as needed
-    pygame.display.update()
-    pygame.time.Clock().tick(FPS)
+if __name__ == "main":
+    mainfunc()
