@@ -1,4 +1,4 @@
-# Terraria-Styled 2D Game
+# Flattened
 
 ![Game Screenshot]![Screenshot 2023-09-09 190654](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55)![Screenshot 2023-09-09 190738]![Screenshot 2023-09-10 103304](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/aa772f05-84d8-4488-b2f4-b26604ec0bab)
 
@@ -80,6 +80,23 @@ For comprehensive gameplay instructions and advanced tips, please refer to the U
 ## Contribution
 
 We welcome contributions to our project! If you wish to contribute, please adhere to the guidelines provided in our Contribution Guide. We greatly appreciate bug reports, feature requests, and pull requests.
+
+## ToDo
+
+- [ ] Fix collision handling
+- [ ] add darkness wherever the player has not yet explored and a map
+- [ ] Finish settings
+- [ ] Add more world options
+- [ ] add saving/loading game
+- [ ] add the code to load new chunks
+- [ ] Add pre-built characters
+- [ ] Add item drop and implement with inventory
+- [ ] Add crafting and item placing
+- [ ] Add tools
+- [ ] Add the ability to drop items
+- [ ] Implement multiplayer
+- [ ] Implement friending
+
 
 ## License
 
