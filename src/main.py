@@ -6,7 +6,7 @@ import typing as tp
 import logo
 import player as pl
 from Character_creation import main
-
+tile = (-1,0)
 if __name__ == "__main__":
     pig.init()
     clock: object = pig.time.Clock()
@@ -69,8 +69,8 @@ if __name__ == "__main__":
             terrain_gen.camera_x,
             terrain_gen.camera_y,
         )
-        reset_terrain = player.move(infoObject.current_h, screen, infoObject)
-        player.delete_tile(terrain_gen.terrain)
+        reset_terrain = player.move(infoObject.current_h, screen, infoObject,tile)
+        tile = player.delete_tile(terrain_gen.terrain)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders
         )  # terrain_gen.colliders)

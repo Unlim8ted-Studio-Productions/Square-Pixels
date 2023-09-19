@@ -85,7 +85,7 @@ class Player:
     def stop_digging(self):
         self.digging = False
 
-    def move(self, screen_height, screen, infoObject):
+    def move(self, screen_height, screen, infoObject, terrain):
         global selected
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
@@ -141,7 +141,9 @@ class Player:
                                 quit()
                             if event.type == pig.KEYDOWN:
                                 inven = False
-
+                            if terrain != (-1,0):
+                                selected = [terrain[0],terrain[1]]
+                                terrain = (None,None)
                             if event.type == pig.MOUSEBUTTONDOWN:
                                 # if right clicked, get a random item
                                 if event.button == 3:
@@ -226,17 +228,30 @@ class Player:
             self.arrow_end_pos = pig.mouse.get_pos()
 
     def delete_tile(self, terrain):
+        y=(-1,0)
         # Check if the provided coordinates are within the bounds of the terrain
         # if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
         # Set the value at the specified position to 8 (sky block/empty tile)
-        try:
-            terrain[self.click[1] // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10] = 8
-            terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10] = 8
-            terrain[(self.click[1] + 5) // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] - 5) // 10][self.click[0] // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0] - 5) // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0] + 5) // 10] = 8
+        try: 
+            a=terrain[self.click[1] // 10][self.click[0] // 10]
+            b=terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10]
+            c=terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10]
+            d=terrain[(self.click[1] + 5) // 10][self.click[0] // 10]
+            e=terrain[(self.click[1] - 5) // 10][self.click[0] // 10]
+            f=terrain[self.click[1] // 10][(self.click[0] - 5) // 10]
+            g=terrain[self.click[1] // 10][(self.click[0] + 5) // 10]
+            blocks = [a,b,c,d,e,f,g]
+            for x in blocks:
+                if x==2:
+                    y[0]=0
+                    y[1]+=1
+                if x==0:
+                    y[0]=1
+                    y[1]+=1
+            for x in blocks:
+                x=8
+            return y
+    
         except:
             # print("tile does not exist")
             None

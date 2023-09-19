@@ -9,8 +9,14 @@ screen: pig.Surface = pig.display.set_mode((infoObject.current_w, infoObject.cur
 
 # these are the images that get shown as items, different color circle for each item
 items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(4)]
-pig.draw.circle(items[0], (255, 0, 0), (25, 25), 25)
-pig.draw.circle(items[1], (0, 255, 0), (25, 25), 25)
+wood = pig.image.load(r"terraria_styled_game\Textures\wood.png")
+scale = (25, 25)
+wood = pig.transform.scale(wood, scale)
+items[0].blit(wood, (15,15,100,100))
+stone = pig.image.load(r"terraria_styled_game\Textures\wood.png")
+stone = pig.transform.scale(stone, scale)
+items[1].blit(stone, (15,15,100,100))
+pig.draw.circle(surface=items[1], color=(0, 255, 0), center=(25, 25), radius=25)
 pig.draw.circle(items[2], (255, 255, 0), (25, 25), 25)
 pig.draw.circle(items[3], (0, 0, 255), (25, 25), 25)
 
@@ -99,11 +105,31 @@ class Inventory:
             return False
         return True
 
-
+    def get_item(self,itemId:int):
+        lookingforspot=True
+        if itemId != None:
+            item = Item(itemId)
+            #0=wood 1=stone
+            x=0
+            y=0
+            while lookingforspot:
+                if self.items[x][y]:
+                    if self.items[x][y].id == itemId:
+                        #self.items[x][y] += 1
+                        lookingforspot=False
+                    else:
+                        self.items[x][y] = item
+                        lookingforspot=False
+                else:
+                    self.items[x][y] = item
+                    lookingforspot=False
+                                
+    
 player_inventory = Inventory()
 
 # what the player is holding
 selected = None
+
 
 
 def inventory(e, truescreen):
@@ -128,11 +154,12 @@ def inventory(e, truescreen):
         if e.type == pig.K_ESCAPE:
             inven = False
 
-        if e.type == pig.MOUSEBUTTONDOWN:
+        #if e.type == pig.MOUSEBUTTONDOWN:
             # if right clicked, get a random item
-            if e.button == 3:
-                selected = [Item(random.randint(0, 3)), 1]
-            elif e.button == 1:
+            #if e.button == 3:
+            #    selected = [Item(random.randint(0, 3)), 1]
+                
+            if e.button == 1:
                 pos = player_inventory.Get_pos()
                 if player_inventory.In_grid(pos[0], pos[1]):
                     if selected:
