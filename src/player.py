@@ -250,20 +250,20 @@ class Player:
         # if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
         # Set the value at the specified position to 8 (sky block/empty tile)
         try:
-            a = terrain[self.click[1] // 10][self.click[0] // 10]
-            b = terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10]
-            c = terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10]
-            d = terrain[(self.click[1] + 5) // 10][self.click[0] // 10]
-            e = terrain[(self.click[1] - 5) // 10][self.click[0] // 10]
-            f = terrain[self.click[1] // 10][(self.click[0] - 5) // 10]
-            g = terrain[self.click[1] // 10][(self.click[0] + 5) // 10]
-            terrain[self.click[1] // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10] = 8
-            terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10] = 8
-            terrain[(self.click[1] + 5) // 10][self.click[0] // 10] = 8
-            terrain[(self.click[1] - 5) // 10][self.click[0] // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0] - 5) // 10] = 8
-            terrain[self.click[1] // 10][(self.click[0] + 5) // 10] = 8
+            a = terrain[self.click[1] //15][self.click[0] //15]
+            b = terrain[(self.click[1] + 5) //15][(self.click[0] - 5) //15]
+            c = terrain[(self.click[1] - 5) //15][(self.click[0] + 5) //15]
+            d = terrain[(self.click[1] + 5) //15][self.click[0] //15]
+            e = terrain[(self.click[1] - 5) //15][self.click[0] //15]
+            f = terrain[self.click[1] //15][(self.click[0] - 5) //15]
+            g = terrain[self.click[1] //15][(self.click[0] + 5) //15]
+            terrain[self.click[1] //15][self.click[0] //15] = 8
+            terrain[(self.click[1] + 5) //15][(self.click[0] - 5) //15] = 8
+            terrain[(self.click[1] - 5) //15][(self.click[0] + 5) //15] = 8
+            terrain[(self.click[1] + 5) //15][self.click[0] //15] = 8
+            terrain[(self.click[1] - 5) //15][self.click[0] //15] = 8
+            terrain[self.click[1] //15][(self.click[0] - 5) //15] = 8
+            terrain[self.click[1] //15][(self.click[0] + 5) //15] = 8
             blocks = [a, b, c, d, e, f, g]
             for x in blocks:
                 if x == 2 and y[0] != 1:

@@ -14,7 +14,7 @@ def render_terrain(
     camera_x: float | int,
     camera_y: float | int,
 ) -> list:
-    tile_size = 10
+    tile_size = 15
     block_images = [
         r"terraria_styled_game\Textures\grass.jpg",
         r"terraria_styled_game\Textures\stone.jpg",
