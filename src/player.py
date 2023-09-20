@@ -1,4 +1,3 @@
-from calendar import c
 import pygame as pig
 import typing
 import colorsys
@@ -8,6 +7,7 @@ from inventory import Item
 from inventory import player_inventory
 
 selected = None
+inven = False
 
 
 class Player:
@@ -85,10 +85,32 @@ class Player:
     def stop_digging(self):
         self.digging = False
 
-    def move(self, screen_height, screen, infoObject, terrain):
-        global selected
+    def move(self, screen_height, screen, infoObject, tile):
+        global selected, inven
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
+        looking = False
+        if tile != [-1, 0]:
+            looking = True
+            x = 0
+            y = 0
+            itemscollected = [Item(tile[0]), tile[1]]
+            while looking:
+                if player_inventory.items[x][y]:
+                    if player_inventory.items[x][y][0].id == itemscollected[0].id:
+                        player_inventory.items[x][y][1] += itemscollected[1]
+                        tile = [-1, 0]
+                        looking=False
+                    else:
+                        if x <= 27:
+                            x+=1
+                        else:
+                            y+=1
+                            x=0
+                else:
+                    player_inventory.Add(itemscollected,(x,y))
+                    tile = [-1, 0]
+                    looking=False
         for event in pig.event.get():
             if event.type == pig.QUIT:
                 quit()
@@ -106,68 +128,63 @@ class Player:
                 elif event.key == pig.K_RIGHT or event.key == pig.K_d:
                     self.velocity_x = self.speed
                 elif event.key == pig.K_r:
-                    return True
-
+                    return True, False
                 elif event.key == pig.K_e:
                     inven = True
-                    while inven:
-                        mousex, mousey = pig.mouse.get_pos()
-                        # draw the screen
-                        screen.fill((0, 0, 0, 50))
-                        backround = pig.Surface([640, 480], pig.SRCALPHA)
-                        text = Mainfont.render(
-                            "Inventory", True, (255, 255, 255), (100, 100, 100)
-                        )
-                        screen.blit(
-                            text,
-                            (
-                                infoObject.current_w / 5,
-                                infoObject.current_h - 350,
-                            ),  # (infoObject.current_h - infoObject.current_h /1.5, infoObject.current_w / 2 - 150)
-                        )
-                        #
-                        screen.blit(backround, (0, 0))
-                        player_inventory.draw()
 
-                        # if holding something, draw it next to mouse
-                        if selected:
-                            screen.blit(selected[0].resize(30), (mousex, mousey))
-                            obj = font.render(str(selected[1]), True, (0, 0, 0))
-                            screen.blit(obj, (mousex + 15, mousey + 15))
-
-                        pig.display.update()
-                        for event in pig.event.get():
-                            if event.type == pig.QUIT:
-                                quit()
-                            if event.type == pig.KEYDOWN:
-                                inven = False
-                            if terrain != (-1,0):
-                                selected = [terrain[0],terrain[1]]
-                                terrain = (None,None)
-                            if event.type == pig.MOUSEBUTTONDOWN:
-                                # if right clicked, get a random item
-                                if event.button == 3:
-                                    selected = [Item(random.randint(0, 3)), 1]
-                                elif event.button == 1:
-                                    try:
-                                        pos = player_inventory.Get_pos()
-                                        if player_inventory.In_grid(pos[0], pos[1]):
-                                            if selected:
-                                                selected = player_inventory.Add(
-                                                    selected, pos
-                                                )
-                                            elif player_inventory.items[pos[0]][pos[1]]:
-                                                selected = player_inventory.items[
-                                                    pos[0]
-                                                ][pos[1]]
-                                                player_inventory.items[pos[0]][
-                                                    pos[1]
-                                                ] = None
-                                    except:
-                                        print("clicked out of inventory")
-
+                while inven:
+                    mousex, mousey = pig.mouse.get_pos()
+                    # draw the screen
+                    screen.fill((0, 0, 0, 50))
+                    backround = pig.Surface([640, 480], pig.SRCALPHA)
+                    text = Mainfont.render(
+                        "Inventory", True, (255, 255, 255), (100, 100, 100)
+                    )
+                    screen.blit(
+                        text,
+                        (
+                            infoObject.current_w / 5,
+                            infoObject.current_h - 350,
+                        ),  # (infoObject.current_h - infoObject.current_h /1.5, infoObject.current_w / 2 - 150)
+                    )
+                    #
+                    screen.blit(backround, (0, 0))
+                    player_inventory.draw()
+                    # if holding something, draw it next to mouse
+                    if selected:
+                        screen.blit(selected[0].resize(30), (mousex, mousey))
+                        obj = font.render(str(selected[1]), True, (0, 0, 0))
+                        screen.blit(obj, (mousex + 15, mousey + 15))
+                    pig.display.update()
+                    for event in pig.event.get():
+                        if event.type == pig.QUIT:
+                            quit()
+                        if event.type == pig.KEYDOWN:
+                            inven = False
+                        if event.type == pig.MOUSEBUTTONDOWN:
+                            # if right clicked, get a random item
+                            if event.button == 3:
+                                selected = [Item(random.randint(0, 3)), 1]
+                            elif event.button == 1:
+                                try:
+                                    pos = player_inventory.Get_pos()
+                                    if player_inventory.In_grid(pos[0], pos[1]):
+                                        if selected:
+                                            selected = player_inventory.Add(
+                                                selected, pos
+                                            )
+                                        elif player_inventory.items[pos[0]][pos[1]]:
+                                            selected = player_inventory.items[pos[0]][
+                                                pos[1]
+                                            ]
+                                            player_inventory.items[pos[0]][
+                                                pos[1]
+                                            ] = None
+                                except:
+                                    print("clicked out of inventory")
             if pig.mouse.get_pressed()[0]:
                 self.click = pig.mouse.get_pos()
+                return False, True
                 # print(self.click)
 
     def update(self, screen_height: int, screen_width: int, colliders: list) -> None:
@@ -227,31 +244,37 @@ class Player:
         if self.aiming:
             self.arrow_end_pos = pig.mouse.get_pos()
 
-    def delete_tile(self, terrain):
-        y=(-1,0)
+    def delete_tile(self, terrain, tile):
+        y = tile
         # Check if the provided coordinates are within the bounds of the terrain
         # if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
         # Set the value at the specified position to 8 (sky block/empty tile)
-        try: 
-            a=terrain[self.click[1] // 10][self.click[0] // 10]
-            b=terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10]
-            c=terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10]
-            d=terrain[(self.click[1] + 5) // 10][self.click[0] // 10]
-            e=terrain[(self.click[1] - 5) // 10][self.click[0] // 10]
-            f=terrain[self.click[1] // 10][(self.click[0] - 5) // 10]
-            g=terrain[self.click[1] // 10][(self.click[0] + 5) // 10]
-            blocks = [a,b,c,d,e,f,g]
+        try:
+            a = terrain[self.click[1] // 10][self.click[0] // 10]
+            b = terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10]
+            c = terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10]
+            d = terrain[(self.click[1] + 5) // 10][self.click[0] // 10]
+            e = terrain[(self.click[1] - 5) // 10][self.click[0] // 10]
+            f = terrain[self.click[1] // 10][(self.click[0] - 5) // 10]
+            g = terrain[self.click[1] // 10][(self.click[0] + 5) // 10]
+            terrain[self.click[1] // 10][self.click[0] // 10] = 8
+            terrain[(self.click[1] + 5) // 10][(self.click[0] - 5) // 10] = 8
+            terrain[(self.click[1] - 5) // 10][(self.click[0] + 5) // 10] = 8
+            terrain[(self.click[1] + 5) // 10][self.click[0] // 10] = 8
+            terrain[(self.click[1] - 5) // 10][self.click[0] // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0] - 5) // 10] = 8
+            terrain[self.click[1] // 10][(self.click[0] + 5) // 10] = 8
+            blocks = [a, b, c, d, e, f, g]
             for x in blocks:
-                if x==2:
-                    y[0]=0
-                    y[1]+=1
-                if x==0:
-                    y[0]=1
-                    y[1]+=1
-            for x in blocks:
-                x=8
+                if x == 2 and y[0] != 1:
+                    y[0] = 0
+                    y[1] += 1
+                    # print("wood")
+                if x == 0 and y[0] != 0:
+                    y[0] = 1
+                    y[1] += 1
+                    # print("stone")
             return y
-    
         except:
             # print("tile does not exist")
             None

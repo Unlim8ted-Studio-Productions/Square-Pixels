@@ -6,12 +6,13 @@ import typing as tp
 import logo
 import player as pl
 from Character_creation import main
-tile = (-1,0)
+tile = [-1,0]
 if __name__ == "__main__":
     pig.init()
     clock: object = pig.time.Clock()
     not_skipped: bool = True
     reset_terrain: bool = True
+    clicked: bool = False
     # Path to your video file
     video_file: str = r"terraria_styled_game\\Company Animated Logo.mov"
     infoObject: object = pig.display.Info()
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     # logo.extract_frames(video_file, image_folder)
     vx, vy = 0, 0  # infoObject.current_w/2, 0#infoObject.current_h /2
     # Call the function to play the video
-    logo.play_intro_video(image_folder, not_skipped, screen)
+    logo.play_intro_video(image_folder, not_skipped, screen) 
     import MainMen
 
     MainMen.mainfunc()
@@ -49,6 +50,7 @@ if __name__ == "__main__":
     # rect=pig.Rect((0,0),(infoObject.current_w,infoObject.current_h))
     running = True
     while running:
+        clicked=False
         if reset_terrain:
             terrain_gen.run(screen)
         # pig.draw.rect(screen,(100,100,100,50),rect)
@@ -68,9 +70,14 @@ if __name__ == "__main__":
             terrain_gen.pos_y,
             terrain_gen.camera_x,
             terrain_gen.camera_y,
-        )
-        reset_terrain = player.move(infoObject.current_h, screen, infoObject,tile)
-        tile = player.delete_tile(terrain_gen.terrain)
+        ) 
+        result = player.move(infoObject.current_h, screen, infoObject,tile)
+        if result != None:
+            reset_terrain = result[0]
+            clicked = result[1]
+        tile = [-1,0]
+        if clicked:
+            tile = player.delete_tile(terrain_gen.terrain,tile)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders
         )  # terrain_gen.colliders)
