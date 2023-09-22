@@ -33,6 +33,51 @@ pygame.display.set_caption("Character Customization")
 background = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
 font = pygame.font.Font(None, 36)
 
+character_list = [
+    r"terraria_styled_game\characters\thumbnails\blue.gif",
+    r"terraria_styled_game\characters\thumbnails\red.gif",
+    # Add more character paths here
+]
+
+# Load pre-made character thumbnails
+character_thumbnails = []
+for character_path in character_list:
+    character_thumbnail = pygame.image.load(character_path)
+    character_thumbnail = pygame.transform.scale(character_thumbnail, (100, 100))
+    character_thumbnails.append(character_thumbnail)
+
+# Sidebar position and size
+sidebar_width = 150
+sidebar_rect = pygame.Rect(infoObject.current_w - (sidebar_width+20), 0, sidebar_width, infoObject.current_h)
+
+# Button position and size
+button_height = 100
+button_spacing = 10
+button_rects = [
+    pygame.Rect(
+        infoObject.current_w - sidebar_width-7,
+        10 + (button_height + button_spacing) * idx,
+        sidebar_width - 20,
+        button_height,
+    )
+    for idx in range(len(character_thumbnails))
+]
+
+def draw_sidebar(buttoncount):
+    color=[(100,100,100),(150,150,150)]
+    # Fill the sidebar background
+    pygame.draw.rect(background, (50, 50, 50), sidebar_rect)
+
+    # Draw character thumbnails as buttons
+    for idx, thumbnail in enumerate(character_thumbnails):
+        count=0
+        button_rect = button_rects[idx]
+        for button in buttoncount:
+            if button == idx:
+                count=1
+        pygame.draw.rect(background, (color[count]), button_rect)
+        background.blit(thumbnail, (button_rect.x + 10, button_rect.y + 10))
+
 
 def draw_character():
     # Draw head
@@ -80,6 +125,9 @@ def add_shape(x, y, width, height, color):
 def main():
     global head_size, body_height, trails
     running = True
+    buttoncount= 0
+    hoveredbuttons=[]
+    drawchar = (False,0)
     while running:
         if trails:
             screen.fill((0, 0, 0))
@@ -87,7 +135,15 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            buttoncount=0
+            hoveredbuttons=[]
+            for precharacter in button_rects:
+                if precharacter.collidepoint(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]):
+                    hoveredbuttons.append(buttoncount)
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        drawchar = (True,buttoncount)
+                buttoncount+=1
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check for button clicks
                 for button in buttons:
                     if button["rect"].collidepoint(event.pos):
@@ -111,8 +167,16 @@ def main():
         # Clear the screen with transparency
         background.fill(TRANSPARENT)
 
+        if drawchar[0]:
+            char=character_thumbnails[drawchar[1]]
+            char = pygame.transform.scale(char, (550, 550))
+            screen.blit(char,(infoObject.current_w // 20, infoObject.current_h/200, 40, body_height))
         # Draw the character
-        draw_character()
+        if not drawchar[0]:
+            draw_character()
+        
+        #Draw the sidebar
+        draw_sidebar(hoveredbuttons)
 
         # Draw shapes
         draw_shapes()
@@ -208,6 +272,7 @@ def finish():
     global character_sprite, shapes_sprites, head_size, body_height, leg_length
 
     pygame.draw.rect(background, (0, 0, 0, 0), pygame.Rect(500, 50, 400, 1000))
+    pygame.draw.rect(background, (0, 0, 0, 0), sidebar_rect)
 
     # Divide the character sizes by 4
     # head_size //= 8
