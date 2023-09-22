@@ -11,7 +11,7 @@ if __name__ == "__main__":
     pig.init()
     clock: object = pig.time.Clock()
     not_skipped: bool = True
-    reset_terrain: bool = True
+    reset_terrain: bool = False
     clicked: bool = False
     # Path to your video file
     video_file: str = r"terraria_styled_game\\Company Animated Logo.mov"
