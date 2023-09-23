@@ -34,18 +34,21 @@ class Item:
 
 # the inventory system
 class Inventory:
-    def __init__(self):
-        self.rows = 9
-        self.col = 27
+    def __init__(self,rows=9,col=27,box_size=infoObject.current_w // 30,x=50,y=50,border=3):
+        self.rows = rows
+        self.col = col
         self.items = [[None for _ in range(self.rows)] for _ in range(self.col)]
-        self.box_size = infoObject.current_w // 30
-        self.x = 50
-        self.y = 50
-        self.border = 3
+        self.box_size = box_size
+        self.x = x
+        self.y = y
+        self.border = border
 
     # draw everything
-    def draw(self):
+    def draw(self, ychange):
         # draw background
+        temp=self.y
+        if ychange[0]:
+            self.y=ychange[1]
         pig.draw.rect(
             screen,
             (100, 100, 100),
@@ -60,7 +63,7 @@ class Inventory:
             for y in range(self.rows):
                 rect = (
                     self.x + (self.box_size + self.border) * x + self.border,
-                    self.x + (self.box_size + self.border) * y + self.border,
+                    self.y + (self.box_size + self.border) * y + self.border,
                     self.box_size,
                     self.box_size,
                 )
@@ -72,6 +75,8 @@ class Inventory:
                         obj,
                         (rect[0] + self.box_size // 2, rect[1] + self.box_size // 2),
                     )
+        self.y=temp
+                
 
     # get the square that the mouse is over
     def Get_pos(self):
@@ -125,6 +130,7 @@ class Inventory:
                                 
     
 player_inventory = Inventory()
+item_bar = Inventory(1,5,x=infoObject.current_w//2.5,y=infoObject.current_h/1.2)
 
 # what the player is holding
 selected = None

@@ -89,7 +89,7 @@ class Player:
         global selected, inven
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
-        item_bar.draw()
+        item_bar.draw(ychange=(False,0))
         looking = False
         if tile != [-1, 0]:
             looking = True
@@ -150,8 +150,8 @@ class Player:
                     )
                     #
                     screen.blit(backround, (0, 0))
-                    player_inventory.draw()
-                    item_bar.draw(ychange=(True, infoObject.current_h))
+                    player_inventory.draw(ychange=(False,0))
+                    item_bar.draw(ychange=(True, infoObject.current_h/1.64))
                     # if holding something, draw it next to mouse
                     if selected:
                         screen.blit(selected[0].resize(30), (mousex, mousey))

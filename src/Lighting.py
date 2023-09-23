@@ -20,35 +20,35 @@ def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
     num14 = 206
     num15 = 235
     if num1 - Darken < 0:
-        num1 = Darken + 0
+        num1 = Darken
     if num2 - Darken < 0:
-        num2 = Darken + 0
+        num2 = Darken
     if num3 - Darken < 0:
-        num3 = Darken + 0
+        num3 = Darken
     if num4 - Darken < 0:
-        num4 = Darken + 0
+        num4 = Darken
     if num5 - Darken < 0:
-        num5 = Darken + 0
+        num5 = Darken
     if num6 - Darken < 0:
-        num6 = Darken + 0
+        num6 = Darken
     if num7 - Darken < 0:
-        num7 = Darken + 0
+        num7 = Darken
     if num8 - Darken < 0:
-        num8 = Darken + 0
+        num8 = Darken
     if num9 - Darken < 0:
-        num9 = Darken + 0
+        num9 = Darken
     if num10 - Darken < 0:
-        num10 = Darken + 0
+        num10 = Darken
     if num11 - Darken < 0:
-        num11 = Darken + 0
+        num11 = Darken
     if num12 - Darken < 0:
-        num12 = Darken + 0
+        num12 = Darken
     if num13 - Darken < 0:
-        num13 = Darken + 0
+        num13 = Darken
     if num14 - Darken < 0:
-        num14 = Darken + 0
+        num14 = Darken
     if num15 - Darken < 0:
-        num15 = Darken + 0
+        num15 = Darken
     colorslist = [        
         (num1 - Darken, num1 - Darken, num1 - Darken),
         (num2 - Darken, num3 - Darken, num4 - Darken),

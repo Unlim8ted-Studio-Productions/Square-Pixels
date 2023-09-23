@@ -54,7 +54,7 @@ def render_terrain(
                     color = (255, 255, 255)
                 else:
                     color = (211, 211, 211)
-            NewColors = Lit.LightAlgorithm(colors, x, y, (playerpos.x*15), (playerpos.y*15), DayTime)
+            NewColors = Lit.LightAlgorithm(colors, x, y, (playerpos.x), (playerpos.y), DayTime)
             if not color == (211, 211, 211):
                 color = NewColors[block_type]
             else:
