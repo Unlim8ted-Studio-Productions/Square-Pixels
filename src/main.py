@@ -31,7 +31,9 @@ colliders: list = []
 # logo.extract_frames(video_file, image_folder)
 vx, vy = 0, 0  # infoObject.current_w/2, 0#infoObject.current_h /2
 # Call the function to play the video
-logo.play_intro_video(image_folder, not_skipped, screen) 
+logo.play_intro_video(image_folder, not_skipped, screen, 0)
+image_folder: str = r"terraria_styled_game\\NewHorizonsFrames"
+logo.play_intro_video(image_folder, not_skipped, screen, 1)
 import MainMen
 MainMen.mainfunc()
 # Rest of game code goes here...
@@ -41,6 +43,9 @@ terrain_gen = tgen.TerrainGenerator(
 terrain_gen.run(screen)
 player_sprite = main()
 player = pl.Player(vx, vy)
+DayTime = 0
+Morning = 0
+
 # world:object = tgen.generate()
 # for square in world.tiles:
 #    render.draw(screen, square)
@@ -60,6 +65,12 @@ while running:
             0,
         )
     )
+    if Morning == 0:
+        DayTime = DayTime + 0.005
+    else:
+        DayTime = DayTime - 0.005
+        if DayTime <= 0:
+            Morning = 0
     colliders = render.render_terrain(
         screen,
         terrain_gen.width,
@@ -69,7 +80,12 @@ while running:
         terrain_gen.pos_y,
         terrain_gen.camera_x,
         terrain_gen.camera_y,
-    ) 
+        player,
+        DayTime,
+        Morning
+    )
+    if DayTime > 6.5:
+        Morning = 1
     result = player.move(infoObject.current_h, screen, infoObject,tile)
     if result != None:
         reset_terrain = result[0]

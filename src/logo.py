@@ -22,12 +22,14 @@ def extract_frames(video_file: str, image_folder: str) -> None:
         clip.audio.write_audiofile(image_folder + "/audio.wav")
 
 
-def play_intro_video(image_folder, not_skipped, screen):
+def play_intro_video(image_folder, not_skipped, screen, intro):
     clock: object = pig.time.Clock()
 
     # Load the images from the specified folder
-    image_files: str = sorted(glob.glob(image_folder + "/frame*.png"))
-
+    if intro == 1:
+        image_files: str = sorted(glob.glob(image_folder + "/*.jpg"))
+    else:
+        image_files: str = sorted(glob.glob(image_folder + "/frame*.png"))
     # Load the audio file
     audio_file: str = image_folder + "/audio.wav"
     pig.mixer.music.load(audio_file)
