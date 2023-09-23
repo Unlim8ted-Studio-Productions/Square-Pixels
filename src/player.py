@@ -88,6 +88,7 @@ class Player:
     def move(self, screen_height, screen, infoObject, tile):
         global selected, inven
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
+        holdobject=[Item,0]
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
         item_bar.draw(ychange=(False,0))
         looking = False
@@ -183,24 +184,32 @@ class Player:
                                                 pos[1]
                                             ] = None
                                 except:
-                                    try:
-                                        if item_bar.In_grid(pos[0], pos[1]):
-                                            if selected:
-                                                selected = item_bar.Add(
-                                                    selected, pos
-                                                )
-                                            elif item_bar.items[pos[0]][pos[1]]:
-                                                selected = item_bar.items[pos[0]][
-                                                    pos[1]
-                                                ]
-                                                item_bar.items[pos[0]][
-                                                    pos[1]
-                                                ] = None
-                                    except:
-                                        print("clicked out of inventory")
+                                    pass
+                                    #print("clicked out of inventory")
+                                try:
+                                    if item_bar.In_grid(pos[0], pos[1]):
+                                        if selected:
+                                            selected = item_bar.Add(
+                                                selected, pos
+                                            )
+                                        elif item_bar.items[pos[0]][pos[1]]:
+                                            selected = item_bar.items[pos[0]][
+                                                pos[1]
+                                            ]
+                                            item_bar.items[pos[0]][
+                                                pos[1]
+                                            ] = None
+                                except:
+                                    pass
+                                    #print("clicked out of inventory")
             if pig.mouse.get_pressed()[0]:
                 self.click = pig.mouse.get_pos()
-                return False, True
+                if event.button == 1:
+                    pos = player_inventory.Get_pos()
+                    if player_inventory.In_grid(pos[0], pos[1]):
+                        if player_inventory.items[pos[0]][pos[1]]:
+                            holdobject = player_inventory.items[pos[0]][pos[1]]
+                return False, True, holdobject
                 # print(self.click)
 
     def update(self, screen_height: int, screen_width: int, colliders: list) -> None:

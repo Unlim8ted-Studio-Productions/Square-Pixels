@@ -87,6 +87,7 @@ while running:
     if result != None:
         reset_terrain = result[0]
         clicked = result[1]
+        objectheld=result[2]
     tile = [-1, 0]
     if clicked:
         tile = player.delete_tile(terrain_gen.terrain, tile)
