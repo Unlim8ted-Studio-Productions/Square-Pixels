@@ -5,7 +5,7 @@ import math
 import random
 from inventory import Item
 from inventory import player_inventory
-from inventory import item_bar
+
 selected = None
 inven = False
 
@@ -89,7 +89,6 @@ class Player:
         global selected, inven
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
-        item_bar.draw()
         looking = False
         if tile != [-1, 0]:
             looking = True
@@ -124,9 +123,9 @@ class Player:
                     self.velocity_y -= 3
                     self.jump = True
                     # print("jump")
-                elif event.key == pig.K_LEFT or event.key == ord("a"):
+                elif event.key == pig.K_LEFT or event.key == pig.K_a:
                     self.velocity_x = -self.speed
-                elif event.key == pig.K_RIGHT or event.key == ord("d"):
+                elif event.key == pig.K_RIGHT or event.key == pig.K_d:
                     self.velocity_x = self.speed
                 elif event.key == pig.K_r:
                     return True, False
@@ -151,7 +150,6 @@ class Player:
                     #
                     screen.blit(backround, (0, 0))
                     player_inventory.draw()
-                    item_bar.draw(ychange=(True, infoObject.current_h))
                     # if holding something, draw it next to mouse
                     if selected:
                         screen.blit(selected[0].resize(30), (mousex, mousey))
@@ -183,21 +181,7 @@ class Player:
                                                 pos[1]
                                             ] = None
                                 except:
-                                    try:
-                                        if item_bar.In_grid(pos[0], pos[1]):
-                                            if selected:
-                                                selected = item_bar.Add(
-                                                    selected, pos
-                                                )
-                                            elif item_bar.items[pos[0]][pos[1]]:
-                                                selected = item_bar.items[pos[0]][
-                                                    pos[1]
-                                                ]
-                                                item_bar.items[pos[0]][
-                                                    pos[1]
-                                                ] = None
-                                    except:
-                                        print("clicked out of inventory")
+                                    print("clicked out of inventory")
             if pig.mouse.get_pressed()[0]:
                 self.click = pig.mouse.get_pos()
                 return False, True
