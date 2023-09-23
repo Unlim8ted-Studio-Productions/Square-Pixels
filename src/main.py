@@ -6,7 +6,8 @@ import typing as tp
 import logo
 import player as pl
 from Character_creation import main
-tile = [-1,0]
+
+tile = [-1, 0]
 
 pig.init()
 clock: object = pig.time.Clock()
@@ -16,10 +17,10 @@ clicked: bool = False
 # Path to your video file
 video_file: str = r"terraria_styled_game\\Company Animated Logo.mov"
 infoObject: object = pig.display.Info()
-screen: pig.Surface = pig.display.set_mode(
-    (infoObject.current_w, infoObject.current_h)
+screen: pig.Surface = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
+pygame_icon = pig.image.load(
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
 )
-pygame_icon = pig.image.load(r'terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png')
 pig.display.set_icon(pygame_icon)
 # pig.display.toggle_fullscreen()
 pig.display.set_caption("terraria styledgame")
@@ -35,6 +36,7 @@ logo.play_intro_video(image_folder, not_skipped, screen, 0)
 image_folder: str = r"terraria_styled_game\\NewHorizonsFrames"
 logo.play_intro_video(image_folder, not_skipped, screen, 1)
 import MainMen
+
 MainMen.mainfunc()
 # Rest of game code goes here...
 terrain_gen = tgen.TerrainGenerator(
@@ -54,17 +56,12 @@ Morning = 0
 # rect=pig.Rect((0,0),(infoObject.current_w,infoObject.current_h))
 running = True
 while running:
-    clicked=False
+    clicked = False
     if reset_terrain:
         terrain_gen.run(screen)
     # pig.draw.rect(screen,(100,100,100,50),rect)
-    screen.fill(
-        (
-            0,
-            0,
-            0,
-        )
-    )
+    screen.fill((135, 206, 235))
+
     if Morning == 0:
         DayTime = DayTime + 0.005
     else:
@@ -82,17 +79,17 @@ while running:
         terrain_gen.camera_y,
         player,
         DayTime,
-        Morning
+        Morning,
     )
     if DayTime > 6.5:
         Morning = 1
-    result = player.move(infoObject.current_h, screen, infoObject,tile)
+    result = player.move(infoObject.current_h, screen, infoObject, tile)
     if result != None:
         reset_terrain = result[0]
         clicked = result[1]
-    tile = [-1,0]
+    tile = [-1, 0]
     if clicked:
-        tile = player.delete_tile(terrain_gen.terrain,tile)
+        tile = player.delete_tile(terrain_gen.terrain, tile)
     player.update(
         infoObject.current_h, infoObject.current_w, colliders
     )  # terrain_gen.colliders)

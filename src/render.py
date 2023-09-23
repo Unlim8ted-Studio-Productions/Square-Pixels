@@ -33,11 +33,15 @@ def render_terrain(
         (211, 211, 211),  # Iron
         (255, 223, 0),  # Gold
         (128, 128, 128),  # Diamond
-        (135, 206, 235),  # Sky (Blue)
+        (0, 0, 0,0),  # Sky (Blue)
         (255, 255, 255),  # Clouds (White)
     ]  # Color palette for blocks
     NewColors = [] #stores colors with lighting applied, blank and a placeholder at this point in the script
     colliders = []
+    if morning == 0:
+        pig.draw.rect(
+            screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime*200), 100, 100)
+        )
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
@@ -58,7 +62,7 @@ def render_terrain(
             if not color == (211, 211, 211):
                 color = NewColors[block_type]
             else:
-                PlayerPos = [(DayTime * 25), 0]
+                PlayerPos = [(DayTime * 25), (DayTime*25)]
                 blockPos = [x, y]
                 Darken = round(math.dist(blockPos, PlayerPos))
                 Darken = Darken * DayTime
@@ -75,6 +79,7 @@ def render_terrain(
                     (0, 0, 0),
                     (currentblock),
                 )
+
             ## Load and blit the corresponding block image
             # if block_type < len(block_images):
             #    block_image = block_images[block_type]
@@ -85,12 +90,10 @@ def render_terrain(
                 and color != (139, 115, 85)
                 and color != (255, 255, 255)
                 and color != (211, 211, 211)
+                and color != (0, 0, 0,0)
             ):
                 colliders.append(currentblock)
-    if morning == 0:
-        pig.draw.rect(
-            screen, (255, 255, 51), ((DayTime * 250) + 300, 10, 100, 100)
-        )
+
     return colliders
 
 
