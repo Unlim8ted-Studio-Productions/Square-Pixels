@@ -2,8 +2,8 @@ import pygame as pig
 import typing as tp
 import player
 import random
-
-
+#import water as phwater
+water=[]
 def render_terrain(
     screen: pig.Surface,
     width: float | int,
@@ -19,6 +19,7 @@ def render_terrain(
         r"terraria_styled_game\Textures\grass.jpg",
         r"terraria_styled_game\Textures\stone.jpg",
     ]
+    global water
     colors = [
         (100, 100, 100),  # Stone
         (139, 69, 19),  # Dirt
@@ -30,6 +31,8 @@ def render_terrain(
         (128, 128, 128),  # Diamond
         (135, 206, 235),  # Sky (Blue)
         (255, 255, 255),  # Clouds (White)
+        (100,170,190), #water blue
+        (242,209,107),#sand yellow
     ]  # Color palette for blocks
     colliders = []
     for x in range(width[0], width[1]):
@@ -48,6 +51,9 @@ def render_terrain(
                     color = (255, 255, 255)
                 else:
                     color = (211, 211, 211)
+           # if color ==  (100,170,190):
+               #addwater
+               
             pig.draw.rect(
                 screen,
                 color,
@@ -62,6 +68,7 @@ def render_terrain(
                 and color != (139, 115, 85)
                 and color != (255, 255, 255)
                 and color != (211, 211, 211)
+                and color !=  (100,170,190)
             ):
                 colliders.append(currentblock)
     return colliders

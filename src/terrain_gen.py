@@ -16,9 +16,26 @@ class TerrainGenerator:
 
     def generate_terrain(self):
         self.terrain = [[0 for _ in range(self.width[1])] for _ in range(self.height)]
-
+        ground_levels = [int(self.height / 1.5)] * self.width[1]  
+        # Set sky blocks
+        for x in range(self.width[0], self.width[1]):
+            for y in range(ground_levels[x]):
+                self.terrain[y][x] = 8  # Sky
+                
+        # Generate natural water features in dips (lakes)
+        for x in range(self.width[0], self.width[1]):
+            dip_chance = random.randint(0, 100)
+            if dip_chance < 5:  # Adjust the chance as needed for less frequent lakes
+                lake_width = random.randint(10, 30)  # Random width of the lake
+                lake_depth = random.randint(5, 15)   # Random depth of the lake
+                lake_start_y = ground_levels[x]  # Start the lake at the ground level
+                for y in range(lake_start_y, lake_start_y + lake_depth):
+                    for dx in range(-lake_width // 2, lake_width // 2 + 1):
+                        if 0 <= x + dx < self.width[1] and 0 <= y < self.height:
+                            self.terrain[y][x + dx] = 10  # Water
+            
         # Generate random ground
-        ground_levels = [self.height // 2] * self.width[1]
+        ground_levels = [int(self.height / 1.5)] * self.width[1]
         for x in range(self.width[0], self.width[1]):
             ground_levels[x] = ground_levels[x - 1] + random.randint(-2, 2)
             ground_levels[x] = max(0, min(self.height - 1, ground_levels[x]))
@@ -27,10 +44,11 @@ class TerrainGenerator:
             for y in range(ground_levels[x], self.height):
                 self.terrain[y][x] = random.choice([0, 1])  # Stone or Dirt
 
-        # Set sky blocks
+        # sand
         for x in range(self.width[0], self.width[1]):
-            for y in range(ground_levels[x]):
-                self.terrain[y][x] = 8  # Sky
+            for y in range(ground_levels[x], self.height):
+                if self.terrain[y - 1][x] == 10:
+                    self.terrain[y][x] = 11  # Replace empty space with dirt
 
         # Generate trees
         tree_count = self.width[1] // 10
@@ -53,6 +71,7 @@ class TerrainGenerator:
                     ):
                         if abs(dx) + abs(dy) <= leaf_radius:
                             self.terrain[tree_y + dy][tree_x + dx] = 3  # Leaves
+                             
 
         # Generate ore deposits
         ore_count = self.width[1] // 100

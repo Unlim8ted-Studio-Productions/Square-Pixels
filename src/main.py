@@ -70,10 +70,10 @@ while running:
         terrain_gen.camera_x,
         terrain_gen.camera_y,
     ) 
-    result = player.move(infoObject.current_h, screen, infoObject,tile)
+    result = player.move(infoObject.current_h, screen, infoObject,tile)  
     if result != None:
         reset_terrain = result[0]
-        clicked = result[1]
+        clicked = result[1] 
     tile = [-1,0]
     if clicked:
         tile = player.delete_tile(terrain_gen.terrain,tile)
