@@ -1,4 +1,6 @@
 import math
+
+
 def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
     PlayerPos = [(TimeOfDay * 25), 0]
     blockPos = [x, y]
@@ -49,7 +51,7 @@ def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
         num14 = Darken
     if num15 - Darken < 0:
         num15 = Darken
-    colorslist = [        
+    colorslist = [
         (num1 - Darken, num1 - Darken, num1 - Darken),
         (num2 - Darken, num3 - Darken, num4 - Darken),
         (num2 - Darken, num5 - Darken, num6 - Darken),
@@ -58,6 +60,7 @@ def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
         (num10 - Darken, num10 - Darken, num10 - Darken),
         (num11 - Darken, num12 - Darken, num8 - Darken),
         (num9 - Darken, num9 - Darken, num9 - Darken),
-        (num13 - Darken, num14 - Darken, num15- Darken),
-        (num11 - Darken, num11 - Darken, num11 - Darken),]
+        (num13 - Darken, num14 - Darken, num15 - Darken),
+        (num11 - Darken, num11 - Darken, num11 - Darken),
+    ]
     return colorslist

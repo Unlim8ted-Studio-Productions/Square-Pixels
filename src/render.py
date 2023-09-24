@@ -5,6 +5,18 @@ import Lighting as Lit
 import random
 import math
 
+# Define global variables for screen width and height
+SCREEN_WIDTH = 800  # Adjust this to your screen width
+SCREEN_HEIGHT = 600  # Adjust this to your screen height
+black_rectangles = []
+infoObject: object = pig.display.Info()
+# Fill the screen with black rectangles
+for x in range(infoObject.current_w // 20):
+    for y in range(infoObject.current_h // 20):
+        black_rect = pig.Rect((x * 20, y * 20, 20, 20))
+        black_rectangles.append(black_rect)
+# Rest of your code...
+
 
 def render_terrain(
     screen: pig.Surface,
@@ -17,7 +29,7 @@ def render_terrain(
     camera_y: float | int,
     playerpos,
     DayTime,
-    morning
+    morning,
 ) -> list:
     tile_size = 15
     block_images = [
@@ -33,14 +45,16 @@ def render_terrain(
         (211, 211, 211),  # Iron
         (255, 223, 0),  # Gold
         (128, 128, 128),  # Diamond
-        (0, 0, 0,0),  # Sky (Blue)
+        (0, 0, 0, 0),  # Sky (Blue)
         (255, 255, 255),  # Clouds (White)
     ]  # Color palette for blocks
-    NewColors = [] #stores colors with lighting applied, blank and a placeholder at this point in the script
+    NewColors = (
+        []
+    )  # stores colors with lighting applied, blank and a placeholder at this point in the script
     colliders = []
     if morning == 0:
         pig.draw.rect(
-            screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime*200), 100, 100)
+            screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime * 200), 100, 100)
         )
     for x in range(width[0], width[1]):
         for y in range(height):
@@ -58,11 +72,13 @@ def render_terrain(
                     color = (255, 255, 255)
                 else:
                     color = (211, 211, 211)
-            NewColors = Lit.LightAlgorithm(colors, x, y, (playerpos.x), (playerpos.y), DayTime)
+            NewColors = Lit.LightAlgorithm(
+                colors, x, y, (playerpos.x), (playerpos.y), DayTime
+            )
             if not color == (211, 211, 211):
                 color = NewColors[block_type]
             else:
-                PlayerPos = [(DayTime * 25), (DayTime*25)]
+                PlayerPos = [(DayTime * 25), (DayTime * 25)]
                 blockPos = [x, y]
                 Darken = round(math.dist(blockPos, PlayerPos))
                 Darken = Darken * DayTime
@@ -90,10 +106,40 @@ def render_terrain(
                 and color != (139, 115, 85)
                 and color != (255, 255, 255)
                 and color != (211, 211, 211)
-                and color != (0, 0, 0,0)
+                and color != (0, 0, 0, 0)
             ):
                 colliders.append(currentblock)
 
+    for rect in black_rectangles:
+        # Calculate the center point of the black rectangle
+        rect_center = rect.center
+
+        # Calculate the distance from the player to the center of the black rectangle
+        distance = math.sqrt(
+            (rect_center[0] - playerpos.x) ** 2 + (rect_center[1] - playerpos.y) ** 2
+        )
+        sphere_radius = 100  # You can adjust this radius as needed
+        # Calculate the transparency based on the distance to the center
+        transparency = int(distance)
+        # Closer is less transparent
+        if transparency >= 255:
+            transparency = 255
+        if transparency <= 0:
+            transparency = abs(transparency)
+        if transparency >= 255:
+            transparency = 255
+        # Define a radius for the sphere
+
+        # Create a transparent black color
+        transparent_black = (0, 0, 0, transparency)
+        # Create a surface with the transparent black color and same dimensions as the rectangle
+        transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
+        pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
+        # Blit the transparent surface onto the main screen
+        screen.blit(transparent_surface, rect.topleft)
+        # Remove the black rectangle if it's fully transparent
+        if transparency == 0 or distance <= 60:
+            black_rectangles.remove(rect)
     return colliders
 
 

@@ -6,6 +6,7 @@ import random
 from inventory import Item
 from inventory import player_inventory
 from inventory import item_bar
+
 selected = None
 inven = False
 
@@ -88,9 +89,9 @@ class Player:
     def move(self, screen_height, screen, infoObject, tile):
         global selected, inven
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
-        holdobject=[Item,0]
+        holdobject = [Item, 0]
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
-        item_bar.draw(ychange=(False,0))
+        item_bar.draw(ychange=(False, 0))
         looking = False
         if tile != [-1, 0]:
             looking = True
@@ -102,17 +103,17 @@ class Player:
                     if player_inventory.items[x][y][0].id == itemscollected[0].id:
                         player_inventory.items[x][y][1] += itemscollected[1]
                         tile = [-1, 0]
-                        looking=False
+                        looking = False
                     else:
                         if x <= 27:
-                            x+=1
+                            x += 1
                         else:
-                            y+=1
-                            x=0
+                            y += 1
+                            x = 0
                 else:
-                    player_inventory.Add(itemscollected,(x,y))
+                    player_inventory.Add(itemscollected, (x, y))
                     tile = [-1, 0]
-                    looking=False
+                    looking = False
         for event in pig.event.get():
             if event.type == pig.QUIT:
                 quit()
@@ -151,8 +152,8 @@ class Player:
                     )
                     #
                     screen.blit(backround, (0, 0))
-                    player_inventory.draw(ychange=(False,0))
-                    item_bar.draw(ychange=(True, infoObject.current_h/1.64))
+                    player_inventory.draw(ychange=(False, 0))
+                    item_bar.draw(ychange=(True, infoObject.current_h / 1.64))
                     # if holding something, draw it next to mouse
                     if selected:
                         screen.blit(selected[0].resize(30), (mousex, mousey))
@@ -185,30 +186,26 @@ class Player:
                                             ] = None
                                 except:
                                     pass
-                                    #print("clicked out of inventory")
+                                    # print("clicked out of inventory")
                                 try:
                                     if item_bar.In_grid(pos[0], pos[1]):
                                         if selected:
-                                            selected = item_bar.Add(
-                                                selected, pos
-                                            )
+                                            selected = item_bar.Add(selected, pos)
                                         elif item_bar.items[pos[0]][pos[1]]:
-                                            selected = item_bar.items[pos[0]][
-                                                pos[1]
-                                            ]
-                                            item_bar.items[pos[0]][
-                                                pos[1]
-                                            ] = None
+                                            selected = item_bar.items[pos[0]][pos[1]]
+                                            item_bar.items[pos[0]][pos[1]] = None
                                 except:
                                     pass
-                                    #print("clicked out of inventory")
+                                    # print("clicked out of inventory")
             if pig.mouse.get_pressed()[0]:
                 self.click = pig.mouse.get_pos()
-                if event.button == 1:
-                    pos = player_inventory.Get_pos()
+                pos = player_inventory.Get_pos()
+                try:
                     if player_inventory.In_grid(pos[0], pos[1]):
                         if player_inventory.items[pos[0]][pos[1]]:
                             holdobject = player_inventory.items[pos[0]][pos[1]]
+                except:
+                    pass
                 return False, True, holdobject
                 # print(self.click)
 
@@ -275,20 +272,20 @@ class Player:
         # if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
         # Set the value at the specified position to 8 (sky block/empty tile)
         try:
-            a = terrain[self.click[1] //15][self.click[0] //15]
-            b = terrain[(self.click[1] + 5) //15][(self.click[0] - 5) //15]
-            c = terrain[(self.click[1] - 5) //15][(self.click[0] + 5) //15]
-            d = terrain[(self.click[1] + 5) //15][self.click[0] //15]
-            e = terrain[(self.click[1] - 5) //15][self.click[0] //15]
-            f = terrain[self.click[1] //15][(self.click[0] - 5) //15]
-            g = terrain[self.click[1] //15][(self.click[0] + 5) //15]
-            terrain[self.click[1] //15][self.click[0] //15] = 8
-            terrain[(self.click[1] + 5) //15][(self.click[0] - 5) //15] = 8
-            terrain[(self.click[1] - 5) //15][(self.click[0] + 5) //15] = 8
-            terrain[(self.click[1] + 5) //15][self.click[0] //15] = 8
-            terrain[(self.click[1] - 5) //15][self.click[0] //15] = 8
-            terrain[self.click[1] //15][(self.click[0] - 5) //15] = 8
-            terrain[self.click[1] //15][(self.click[0] + 5) //15] = 8
+            a = terrain[self.click[1] // 15][self.click[0] // 15]
+            b = terrain[(self.click[1] + 5) // 15][(self.click[0] - 5) // 15]
+            c = terrain[(self.click[1] - 5) // 15][(self.click[0] + 5) // 15]
+            d = terrain[(self.click[1] + 5) // 15][self.click[0] // 15]
+            e = terrain[(self.click[1] - 5) // 15][self.click[0] // 15]
+            f = terrain[self.click[1] // 15][(self.click[0] - 5) // 15]
+            g = terrain[self.click[1] // 15][(self.click[0] + 5) // 15]
+            terrain[self.click[1] // 15][self.click[0] // 15] = 8
+            terrain[(self.click[1] + 5) // 15][(self.click[0] - 5) // 15] = 8
+            terrain[(self.click[1] - 5) // 15][(self.click[0] + 5) // 15] = 8
+            terrain[(self.click[1] + 5) // 15][self.click[0] // 15] = 8
+            terrain[(self.click[1] - 5) // 15][self.click[0] // 15] = 8
+            terrain[self.click[1] // 15][(self.click[0] - 5) // 15] = 8
+            terrain[self.click[1] // 15][(self.click[0] + 5) // 15] = 8
             blocks = [a, b, c, d, e, f, g]
             for x in blocks:
                 if x == 2 and y[0] != 1:
