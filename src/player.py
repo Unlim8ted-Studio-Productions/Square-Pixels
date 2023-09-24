@@ -9,8 +9,8 @@ from inventory import item_bar
 
 selected = None
 inven = False
-
-
+holdobject = [Item, 999999999999999999]
+unaturalblocks = []
 class Player:
     def __init__(self, x, y):
         self.x = x
@@ -23,7 +23,7 @@ class Player:
         self.aiming = False
         self.arrow_pos = pig.mouse.get_pos()
         self.arrow_end_pos = pig.mouse.get_pos()
-        self.speed = 2
+        self.speed = 3
         self.digging = False
         self.gravityi = True
         self.gravity = 0.2
@@ -87,9 +87,9 @@ class Player:
         self.digging = False
 
     def move(self, screen_height, screen, infoObject, tile):
-        global selected, inven
+        global selected, inven,holdobject
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
-        holdobject = [Item, 0]
+        
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
         item_bar.draw(ychange=(False, 0))
         looking = False
@@ -199,14 +199,19 @@ class Player:
                                     # print("clicked out of inventory")
             if pig.mouse.get_pressed()[0]:
                 self.click = pig.mouse.get_pos()
-                pos = player_inventory.Get_pos()
+                pos = item_bar.Get_pos()
                 try:
-                    if player_inventory.In_grid(pos[0], pos[1]):
-                        if player_inventory.items[pos[0]][pos[1]]:
-                            holdobject = player_inventory.items[pos[0]][pos[1]]
+                    if item_bar.In_grid(pos[0], pos[1]):
+                        if item_bar.items[pos[0]][pos[1]]:
+                            holdobject = item_bar.items[pos[0]][pos[1]]
+                            print("hi")
                 except:
                     pass
                 return False, True, holdobject
+            if pig.mouse.get_pressed()[2] and holdobject != [Item, 999999999999999999]:
+                self.click = pig.mouse.get_pos()
+                self.placeitem(holdobject, screen)
+    
                 # print(self.click)
 
     def update(self, screen_height: int, screen_width: int, colliders: list) -> None:
@@ -302,7 +307,21 @@ class Player:
             None
         # else:
         #   print("Invalid coordinates")
-
+    def placeitem(self, object,screen):
+        global unaturalblocks
+        item_ids = {
+            "0":pig.image.load(r"terraria_styled_game\Textures\wood.png"),
+            "1":pig.image.load(r"terraria_styled_game\Textures\stone.jpg"),        
+        }
+        texture = item_ids[f"{object[0].id}"]
+        screen.blit(texture,self.click,20,20)
+        object[1] -= 1
+        if object[1] == 0:
+            object = [Item, 999999999999999999]
+    
+    def breakunaturalblock():
+        pass
+        
     def draw_trail(self, screen: pig.Surface) -> None:
         trail_s_num: int = 1
         trail_l_num: int = len(self.trail)
