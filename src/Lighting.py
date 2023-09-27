@@ -2,9 +2,9 @@ import math
 
 
 def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
-    PlayerPos = [(TimeOfDay * 25), 0]
+    SunPos = [(TimeOfDay * 25), TimeOfDay*10]
     blockPos = [x, y]
-    Darken = round(math.dist(blockPos, PlayerPos))
+    Darken = round(math.dist(blockPos, SunPos))
     Darken = Darken * TimeOfDay
     num1 = 100
     num2 = 139

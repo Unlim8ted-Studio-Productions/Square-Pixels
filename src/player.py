@@ -121,7 +121,6 @@ class Player:
                 if (
                     event.key == pig.K_UP
                     or event.key == pig.K_SPACE
-                    and self.y == screen_height - 20
                 ):
                     self.velocity_y -= 3
                     self.jump = True

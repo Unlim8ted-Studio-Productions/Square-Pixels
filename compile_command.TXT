@@ -1,0 +1,1 @@
+main.py --onefile --noconsole --add-data="terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png;" --icon="terraria_styled_game\PE EXE file compile recources\icons scalable.ico"
