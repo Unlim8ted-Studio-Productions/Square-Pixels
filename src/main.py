@@ -23,7 +23,7 @@ pygame_icon = pig.image.load(
 )
 pig.display.set_icon(pygame_icon)
 # pig.display.toggle_fullscreen()
-pig.display.set_caption("terraria styledgame")
+pig.display.set_caption("Square Pixel")
 pig.mouse.set_cursor(pig.SYSTEM_CURSOR_CROSSHAIR)
 # Path to the folder to save the extracted frames
 image_folder: str = r"terraria_styled_game\\frames"
