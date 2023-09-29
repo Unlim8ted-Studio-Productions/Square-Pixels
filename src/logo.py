@@ -38,7 +38,7 @@ def play_intro_video(image_folder, not_skipped, screen, intro):
     pig.mixer.music.play()
 
     # Load each image and display it on the screen
-
+    credits_font = pig.font.Font("terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50)
     for image_file in image_files:
         if not_skipped == True:
             image = pig.image.load(image_file).convert()
@@ -47,6 +47,16 @@ def play_intro_video(image_folder, not_skipped, screen, intro):
                 image, (infoObject.current_w, infoObject.current_h)
             )
             screen.blit(image, (0, 0))
+            text_surface = credits_font.render(
+                "press anything to skip", True, (200, 200, 200)
+            )
+            screen.blit(
+                text_surface,
+                (
+                    infoObject.current_w // 4 - text_surface.get_width() // 2,
+                    infoObject.current_h - 60,
+                ),
+            )
             pig.display.flip()
             clock.tick(60)  # Adjust the frame rate as needed
             for event in pig.event.get():

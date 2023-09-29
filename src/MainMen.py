@@ -1,5 +1,6 @@
 import pygame
 import sys
+import credits_Easteregg as egg
 
 # Initialize Pygame
 pygame.init()
@@ -87,6 +88,11 @@ def main_menu(host_button, join_button):
     settings_button = Button(
         "Settings", WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50, open_settings
     )
+
+    settings_button = Button(
+        "Credits", WIDTH // 2 - 100, HEIGHT // 4 + 50, 200, 50, egg.start
+    )
+
     quit_button = Button(
         "Quit", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, quit_game
     )
