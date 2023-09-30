@@ -81,6 +81,7 @@ while running:
         DayTime,
         Morning,
     )
+
     if DayTime > 6.5:
         Morning = 1
     result = player.move(infoObject.current_h, screen, infoObject, tile)

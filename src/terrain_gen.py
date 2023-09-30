@@ -153,7 +153,7 @@ def start():
         (infoObject.current_w, infoObject.current_h)
     )
     # pg.display.toggle_fullscreen()
-    pg.display.set_caption("terraria styledgame")
+    pg.display.set_caption("Square Pixel")
     pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
     terrain_generator = TerrainGenerator(800, infoObject.current_h // 10)
     terrain_generator.run(screen)
