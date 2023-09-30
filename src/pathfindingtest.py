@@ -1,17 +1,43 @@
 import pygame
 from collections import deque
+import terrain_gen as tgen
+import render
+import player
 
 # Define your grid size and cell size
 GRID_SIZE = 20
 CELL_SIZE = 30
-
+# Initialize Pygame
+pygame.init()
+infoObject: object = pygame.display.Info()
+screen: pygame.Surface = pygame.display.set_mode((infoObject.current_w, infoObject.current_h))
 # Define your start and end points
 start = (1, 1)
 end = (18, 18)
 
 # Create a list of obstacles as (x, y) coordinates
-obstacles = [(5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (15, 15), (15, 16), (15, 17), (15, 18)]
+terrain_gen = tgen.TerrainGenerator(
+    width=(20, 200), height=50
+)
+terrain_gen.run(screen)
 
+colliders = render.render_terrain(
+        screen,
+        terrain_gen.width,
+        terrain_gen.height,
+        terrain_gen.terrain,
+        terrain_gen.pos_x,
+        terrain_gen.pos_y,
+        terrain_gen.camera_x,
+        terrain_gen.camera_y,
+        player.Player(0,0),
+        1,
+        0,
+    )
+
+obstacles = []
+for rect in colliders:
+    obstacles.append((rect.x,rect.y))
 # Breadth-First Search (BFS) Pathfinding
 def bfs(start, goal, obstacles):
     queue = deque([(start, [])])
@@ -35,9 +61,6 @@ def bfs(start, goal, obstacles):
 
     return None
 
-# Initialize Pygame
-pygame.init()
-screen = pygame.display.set_mode((GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE))
 
 while True:
     for event in pygame.event.get():
@@ -46,19 +69,14 @@ while True:
             quit()
 
     # Find the path
-    # Get the current mouse position
-    mouse_x, mouse_y = pygame.mouse.get_pos()
+    mouse_x,mouse_y = pygame.mouse.get_pos()
     end = (mouse_x // CELL_SIZE, mouse_y // CELL_SIZE)
     path = bfs(start, end, obstacles)
     screen.fill((0, 0, 0))
 
     # Draw grid and obstacles
-    for x in range(GRID_SIZE):
-        for y in range(GRID_SIZE):
-            rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            pygame.draw.rect(screen, (255, 255, 255), rect)
-            if (x, y) in obstacles:
-                pygame.draw.rect(screen, (0, 0, 0), rect)
+    for rect in colliders:
+        pygame.draw.rect(screen,(200,200,100),rect)
     
     # Render the path
     if path:
