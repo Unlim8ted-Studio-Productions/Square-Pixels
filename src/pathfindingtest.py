@@ -1,113 +1,73 @@
 import pygame
-from pathfinding.core.grid import Grid
-from pathfinding.finder.a_star import AStarFinder
-import terrain_gen as tgen
-import render
-import player
+from collections import deque
 
-# Constants for display
-WIDTH, HEIGHT = 1000, 800
-matrix = [[1 for _ in range(HEIGHT)] for _ in range(WIDTH)]
-CELL_SIZE = 20
+# Define your grid size and cell size
+GRID_SIZE = 20
+CELL_SIZE = 30
 
+# Define your start and end points
+start = (1, 1)
+end = (18, 18)
 
-infoObject: object = pygame.display.Info()
-screen: pygame.Surface = pygame.display.set_mode((infoObject.current_w, infoObject.current_h))
-pygame_icon = pygame.image.load(
-    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
-)
-pygame.display.set_icon(pygame_icon)
-# pygame.display.toggle_fullscreen()
-pygame.display.set_caption("Square Pixel")
-pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
-# Path to the folder to save the extracted frames
-image_folder: str = r"terraria_styled_game\\frames"
-colliders: list = []
-# Extract frames from the video
-# logo.extract_frames(video_file, image_folder)
-vx, vy = 0, 0  # infoObject.current_w/2, 0#infoObject.current_h /2
-# Call the function to play the video
+# Create a list of obstacles as (x, y) coordinates
+obstacles = [(5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (15, 15), (15, 16), (15, 17), (15, 18)]
 
-# Rest of game code goes here...
-terrain_gen = tgen.TerrainGenerator(
-    width=(0, infoObject.current_w // 10), height=infoObject.current_h // 15
-)
-terrain_gen.run(screen)
+# Breadth-First Search (BFS) Pathfinding
+def bfs(start, goal, obstacles):
+    queue = deque([(start, [])])
+    visited = set()
 
-colliders = render.render_terrain(
-        screen,
-        terrain_gen.width,
-        terrain_gen.height,
-        terrain_gen.terrain,
-        terrain_gen.pos_x,
-        terrain_gen.pos_y,
-        terrain_gen.camera_x,
-        terrain_gen.camera_y,
-        player.Player(0,0),
-        1,
-        0,
-    )
+    while queue:
+        current, path = queue.popleft()
 
-positions=[]
-# Define the positions you want to change to '0'
-for rect in colliders:
-    positions.append((rect.x,rect.y))
+        if current == goal:
+            return path
 
-# Call the function to update the grid
-for x, y in positions:
-    if 0 <= y < len(matrix) and 0 <= x < len(matrix[0]):
-        matrix[y][x] = 0
+        if current in visited:
+            continue
 
-grid = Grid(matrix=matrix)
+        visited.add(current)
 
-# Get start and end point
-start = grid.node(100, 200)
-end = grid.node(500, 300)
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+            neighbor = (current[0] + dx, current[1] + dy)
+            if neighbor not in obstacles and neighbor not in visited:
+                queue.append((neighbor, path + [neighbor]))
 
-# Create a finder with the movement style
-finder = AStarFinder()
-
-# Returns a list with the path and the amount of times the finder had to run to get the path
-path, runs = finder.find_path(start, end, grid)
+    return None
 
 # Initialize Pygame
 pygame.init()
+screen = pygame.display.set_mode((GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE))
 
-
-# Create a Pygame window
-
-# Main loop
-running = True
-while running:
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            # Translate mouse coordinates to matrix coordinates
-            end = grid.node(mouse_x // CELL_SIZE, mouse_y // CELL_SIZE)
-            path, runs = finder.find_path(start, end, grid)  # Recalculate the path
-            print(path, runs)
+            pygame.quit()
+            quit()
 
-    # Draw the grid
-    screen.fill((255, 255, 255))
-    for y, row in enumerate(matrix):
-        for x, value in enumerate(row):
-            color = (0, 0, 0) if value == 1 else (255, 0, 0)
-            pygame.draw.rect(
-                screen, color, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            )
-    for rect in colliders:
-        pygame.draw.rect(screen,(200,100,200),rect)
-    # Draw the path
+    # Find the path
+    # Get the current mouse position
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    end = (mouse_x // CELL_SIZE, mouse_y // CELL_SIZE)
+    path = bfs(start, end, obstacles)
+    screen.fill((0, 0, 0))
+
+    # Draw grid and obstacles
+    for x in range(GRID_SIZE):
+        for y in range(GRID_SIZE):
+            rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+            pygame.draw.rect(screen, (255, 255, 255), rect)
+            if (x, y) in obstacles:
+                pygame.draw.rect(screen, (0, 0, 0), rect)
+    
+    # Render the path
     if path:
-        for x, y in path:
-            pygame.draw.rect(
-                screen,
-                (0, 255, 0),
-                (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE),
-            )
-
+        for point in path:
+            x, y = point
+            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+    
+    # Draw start and end points
+    pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(start[0] * CELL_SIZE, start[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+    pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(end[0] * CELL_SIZE, end[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+    
     pygame.display.flip()
-
-pygame.quit()
