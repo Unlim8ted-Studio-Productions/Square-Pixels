@@ -11,6 +11,8 @@ selected = None
 inven = False
 holdobject = [Item, 999999999999999999]
 unaturalblocks = []
+
+
 class Player:
     def __init__(self, x, y):
         self.x = x
@@ -34,6 +36,7 @@ class Player:
         self.rainbow = True
         self.platform = False
         self.click = (0, 0)
+        self.place = (0,0)
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
         if self.x < collider.x + collider.width and self.x + self.width > collider.x:
@@ -86,12 +89,16 @@ class Player:
     def stop_digging(self):
         self.digging = False
 
-    def move(self, screen_height, screen, infoObject, tile):
-        global selected, inven,holdobject
+    def move(self, screen, infoObject, tile, terrain):
+        global selected, inven, holdobject
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
-        
+
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
         item_bar.draw(ychange=(False, 0))
+        if selected:
+            screen.blit(selected[0].resize(30), (mousex, mousey))
+            obj = font.render(str(selected[1]), True, (0, 0, 0))
+            screen.blit(obj, (mousex + 15, mousey + 15))
         looking = False
         if tile != [-1, 0]:
             looking = True
@@ -114,14 +121,28 @@ class Player:
                     player_inventory.Add(itemscollected, (x, y))
                     tile = [-1, 0]
                     looking = False
+
         for event in pig.event.get():
             if event.type == pig.QUIT:
                 quit()
+            elif event.type == pig.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.click = pig.mouse.get_pos()
+                    pos = item_bar.Get_pos()
+                    try:
+                        if item_bar.In_grid(pos[0], pos[1]):
+                            if item_bar.items[pos[0]][pos[1]]:
+                                selected = item_bar.items[pos[0]][pos[1]]
+                                holdobject = item_bar.items[pos[0]][pos[1]]
+                                print("Item selected:", selected)
+                    except:
+                        None
+                    return False, True, holdobject
+                if event.button == 3 and holdobject != [Item, 999999999999999999]:
+                    self.place = pig.mouse.get_pos()
+                    self.placeitem(holdobject, terrain)
             elif event.type == pig.KEYDOWN:
-                if (
-                    event.key == pig.K_UP
-                    or event.key == pig.K_SPACE
-                ):
+                if event.key == pig.K_UP or event.key == pig.K_SPACE:
                     self.velocity_y -= 3
                     self.jump = True
                     # print("jump")
@@ -131,7 +152,7 @@ class Player:
                     self.velocity_x = self.speed
                 elif event.key == pig.K_r:
                     return True, False
-                elif event.key == pig.K_e:
+                elif event.key == pig.K_e or event.key == ord("e"):
                     inven = True
 
                 while inven:
@@ -184,7 +205,7 @@ class Player:
                                                 pos[1]
                                             ] = None
                                 except:
-                                    pass
+                                    None
                                     # print("clicked out of inventory")
                                 try:
                                     if item_bar.In_grid(pos[0], pos[1]):
@@ -196,21 +217,7 @@ class Player:
                                 except:
                                     pass
                                     # print("clicked out of inventory")
-            if pig.mouse.get_pressed()[0]:
-                self.click = pig.mouse.get_pos()
-                pos = item_bar.Get_pos()
-                try:
-                    if item_bar.In_grid(pos[0], pos[1]):
-                        if item_bar.items[pos[0]][pos[1]]:
-                            holdobject = item_bar.items[pos[0]][pos[1]]
-                            print("hi")
-                except:
-                    pass
-                return False, True, holdobject
-            if pig.mouse.get_pressed()[2] and holdobject != [Item, 999999999999999999]:
-                self.click = pig.mouse.get_pos()
-                self.placeitem(holdobject, screen)
-    
+
                 # print(self.click)
 
     def update(self, screen_height: int, screen_width: int, colliders: list) -> None:
@@ -306,21 +313,23 @@ class Player:
             None
         # else:
         #   print("Invalid coordinates")
-    def placeitem(self, object,screen):
+
+    def placeitem(self, object, terrain):
         global unaturalblocks
         item_ids = {
-            "0":pig.image.load(r"terraria_styled_game\Textures\wood.png"),
-            "1":pig.image.load(r"terraria_styled_game\Textures\stone.jpg"),        
+            "0": 10,
+            "1": 11,
         }
-        texture = item_ids[f"{object[0].id}"]
-        screen.blit(texture,self.click,20,20)
-        object[1] -= 1
-        if object[1] == 0:
-            object = [Item, 999999999999999999]
-    
+        if terrain[self.place[1] // 15][self.place[0] // 15] == 8:
+            block = item_ids[f"{object[0].id}"]
+            terrain[self.place[1] // 15][self.place[0] // 15] = block
+            object[1] -= 1
+            if object[1] == 0:
+                object = [Item, 999999999999999999]
+
     def breakunaturalblock():
         pass
-        
+
     def draw_trail(self, screen: pig.Surface) -> None:
         trail_s_num: int = 1
         trail_l_num: int = len(self.trail)

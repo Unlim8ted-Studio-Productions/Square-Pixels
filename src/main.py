@@ -84,7 +84,7 @@ while running:
 
     if DayTime > 6.5:
         Morning = 1
-    result = player.move(infoObject.current_h, screen, infoObject, tile)
+    result = player.move(screen, infoObject, tile, terrain_gen.terrain)
     if result != None:
         reset_terrain = result[0]
         clicked = result[1]

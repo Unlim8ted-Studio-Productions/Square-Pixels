@@ -35,6 +35,7 @@ def render_terrain(
     block_images = [
         r"terraria_styled_game\Textures\grass.jpg",
         r"terraria_styled_game\Textures\stone.jpg",
+        r"terraria_styled_game\Textures\wood.png"
     ]
     colors = [
         (100, 100, 100),  # Stone
@@ -52,6 +53,7 @@ def render_terrain(
         []
     )  # stores colors with lighting applied, blank and a placeholder at this point in the script
     colliders = []
+    place_blocks = [13,] 
     if morning == 0:
         pig.draw.rect(
             screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime * 200), 100, 100)
@@ -59,55 +61,62 @@ def render_terrain(
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
-            color = colors[block_type]
             currentblock = pig.Rect(
-                (
-                    (x + pos_x - camera_x) * tile_size,
-                    (y + pos_y - camera_y) * tile_size,
-                ),
-                (tile_size, tile_size),
-            )
-            if color == (255, 255, 255):
-                if random.randint(0, 1) == 1:
-                    color = (255, 255, 255)
+                    (
+                        (x + pos_x - camera_x) * tile_size,
+                        (y + pos_y - camera_y) * tile_size,
+                    ),
+                    (tile_size, tile_size),
+                )
+            if not block_type in place_blocks:
+                color = colors[block_type]
+                if color == (255, 255, 255):
+                    if random.randint(0, 1) == 1:
+                        color = (255, 255, 255)
+                    else:
+                        color = (211, 211, 211)
+                NewColors = Lit.LightAlgorithm(
+                    colors, x, y, (playerpos.x), (playerpos.y), DayTime
+                )
+                if not color == (211, 211, 211):
+                    color = NewColors[block_type]
                 else:
-                    color = (211, 211, 211)
-            NewColors = Lit.LightAlgorithm(
-                colors, x, y, (playerpos.x), (playerpos.y), DayTime
-            )
-            if not color == (211, 211, 211):
-                color = NewColors[block_type]
-            else:
-                PlayerPos = [(DayTime * 25), (DayTime * 25)]
-                blockPos = [x, y]
-                Darken = round(math.dist(blockPos, PlayerPos))
-                Darken = Darken * DayTime
-                color = (211 - Darken, 211 - Darken, 211 - Darken)
-            try:
-                pig.draw.rect(
-                    screen,
-                    color,
-                    (currentblock),
-                )
-            except:
-                pig.draw.rect(
-                    screen,
-                    (0, 0, 0),
-                    (currentblock),
-                )
+                    PlayerPos = [(DayTime * 25), (DayTime * 25)]
+                    blockPos = [x, y]
+                    Darken = round(math.dist(blockPos, PlayerPos))
+                    Darken = Darken * DayTime
+                    color = (211 - Darken, 211 - Darken, 211 - Darken)
+                try:
+                    pig.draw.rect(
+                        screen,
+                        color,
+                        (currentblock),
+                    )
+                except:
+                    pig.draw.rect(
+                        screen,
+                        (0, 0, 0),
+                        (currentblock),
+                    )
 
-            ## Load and blit the corresponding block image
-            # if block_type < len(block_images):
-            #    block_image = block_images[block_type]
-            #    screen.blit(pig.image.load(block_image), currentblock)
-            color = colors[block_type]
-            if (
-                color != (135, 206, 235)
-                and color != (139, 115, 85)
-                and color != (255, 255, 255)
-                and color != (211, 211, 211)
-                and color != (0, 0, 0, 0)
-            ):
+                ## Load and blit the corresponding block image
+                # if block_type < len(block_images):
+                #    block_image = block_images[block_type]
+                #    screen.blit(pig.image.load(block_image), currentblock)
+                color = colors[block_type]
+                if (
+                    color != (135, 206, 235)
+                    and color != (139, 115, 85)
+                    and color != (255, 255, 255)
+                    and color != (211, 211, 211)
+                    and color != (0, 0, 0, 0)
+                ):
+                    colliders.append(currentblock)
+            else:
+                if block_type == 10:
+                    screen.blit(block_images[2],currentblock)
+                if block_type == 11:
+                    screen.blit(block_images[1],currentblock)
                 colliders.append(currentblock)
 
     for rect in black_rectangles:
