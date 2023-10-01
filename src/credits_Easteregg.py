@@ -101,7 +101,9 @@ def start():
     # Game loop
     running = True
     won = False
-    credits_font = pygame.font.Font("terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50)
+    credits_font = pygame.font.Font(
+        "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50
+    )
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -212,5 +214,7 @@ def start():
     # Quit Pygame
     pygame.quit()
     sys.exit()
+
+
 if __name__ == "__main__":
     start()
