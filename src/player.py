@@ -36,7 +36,7 @@ class Player:
         self.rainbow = True
         self.platform = False
         self.click = (0, 0)
-        self.place = (0,0)
+        self.place = (0, 0)
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
         if self.x < collider.x + collider.width and self.x + self.width > collider.x:
@@ -91,56 +91,24 @@ class Player:
 
     def move(self, screen, infoObject, tile, terrain):
         global selected, inven, holdobject
+        mousex, mousey = pig.mouse.get_pos()
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
 
         font = pig.font.Font(pig.font.match_font("calibri"), 26)
         item_bar.draw(ychange=(False, 0))
         if selected:
-            screen.blit(selected[0].resize(30), (mousex, mousey))
-            obj = font.render(str(selected[1]), True, (0, 0, 0))
-            screen.blit(obj, (mousex + 15, mousey + 15))
+            self.render_selection(screen, mousex, mousey, font)
         looking = False
         if tile != [-1, 0]:
-            looking = True
-            x = 0
-            y = 0
-            itemscollected = [Item(tile[0]), tile[1]]
-            while looking:
-                if player_inventory.items[x][y]:
-                    if player_inventory.items[x][y][0].id == itemscollected[0].id:
-                        player_inventory.items[x][y][1] += itemscollected[1]
-                        tile = [-1, 0]
-                        looking = False
-                    else:
-                        if x <= 27:
-                            x += 1
-                        else:
-                            y += 1
-                            x = 0
-                else:
-                    player_inventory.Add(itemscollected, (x, y))
-                    tile = [-1, 0]
-                    looking = False
+            self.get_item(tile)
 
         for event in pig.event.get():
             if event.type == pig.QUIT:
                 quit()
             elif event.type == pig.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    self.click = pig.mouse.get_pos()
-                    pos = item_bar.Get_pos()
-                    try:
-                        if item_bar.In_grid(pos[0], pos[1]):
-                            if item_bar.items[pos[0]][pos[1]]:
-                                selected = item_bar.items[pos[0]][pos[1]]
-                                holdobject = item_bar.items[pos[0]][pos[1]]
-                                print("Item selected:", selected)
-                    except:
-                        None
-                    return False, True, holdobject
-                if event.button == 3 and holdobject != [Item, 999999999999999999]:
-                    self.place = pig.mouse.get_pos()
-                    self.placeitem(holdobject, terrain)
+                tmp = self.handle_item_bar(event, terrain, holdobject)
+                if tmp != None:
+                    return tmp
             elif event.type == pig.KEYDOWN:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE:
                     self.velocity_y -= 3
@@ -154,70 +122,7 @@ class Player:
                     return True, False
                 elif event.key == pig.K_e or event.key == ord("e"):
                     inven = True
-
-                while inven:
-                    mousex, mousey = pig.mouse.get_pos()
-                    # draw the screen
-                    screen.fill((0, 0, 0, 50))
-                    backround = pig.Surface([640, 480], pig.SRCALPHA)
-                    text = Mainfont.render(
-                        "Inventory", True, (255, 255, 255), (100, 100, 100)
-                    )
-                    screen.blit(
-                        text,
-                        (
-                            infoObject.current_w / 5,
-                            infoObject.current_h - 350,
-                        ),  # (infoObject.current_h - infoObject.current_h /1.5, infoObject.current_w / 2 - 150)
-                    )
-                    #
-                    screen.blit(backround, (0, 0))
-                    player_inventory.draw(ychange=(False, 0))
-                    item_bar.draw(ychange=(True, infoObject.current_h / 1.64))
-                    # if holding something, draw it next to mouse
-                    if selected:
-                        screen.blit(selected[0].resize(30), (mousex, mousey))
-                        obj = font.render(str(selected[1]), True, (0, 0, 0))
-                        screen.blit(obj, (mousex + 15, mousey + 15))
-                    pig.display.update()
-                    for event in pig.event.get():
-                        if event.type == pig.QUIT:
-                            quit()
-                        if event.type == pig.KEYDOWN:
-                            inven = False
-                        if event.type == pig.MOUSEBUTTONDOWN:
-                            # if right clicked, get a random item
-                            if event.button == 3:
-                                selected = [Item(random.randint(0, 3)), 1]
-                            elif event.button == 1:
-                                try:
-                                    pos = player_inventory.Get_pos()
-                                    if player_inventory.In_grid(pos[0], pos[1]):
-                                        if selected:
-                                            selected = player_inventory.Add(
-                                                selected, pos
-                                            )
-                                        elif player_inventory.items[pos[0]][pos[1]]:
-                                            selected = player_inventory.items[pos[0]][
-                                                pos[1]
-                                            ]
-                                            player_inventory.items[pos[0]][
-                                                pos[1]
-                                            ] = None
-                                except:
-                                    None
-                                    # print("clicked out of inventory")
-                                try:
-                                    if item_bar.In_grid(pos[0], pos[1]):
-                                        if selected:
-                                            selected = item_bar.Add(selected, pos)
-                                        elif item_bar.items[pos[0]][pos[1]]:
-                                            selected = item_bar.items[pos[0]][pos[1]]
-                                            item_bar.items[pos[0]][pos[1]] = None
-                                except:
-                                    pass
-                                    # print("clicked out of inventory")
-
+                    self.open_inventory(screen, infoObject, Mainfont, font)
                 # print(self.click)
 
     def update(self, screen_height: int, screen_width: int, colliders: list) -> None:
@@ -329,6 +234,107 @@ class Player:
 
     def breakunaturalblock():
         pass
+
+    def handle_item_bar(self, event, terrain, holdobject):
+        if event.button == 1:
+            self.click = pig.mouse.get_pos()
+            pos = item_bar.Get_pos()
+            try:
+                if item_bar.In_grid(pos[0], pos[1]):
+                    if item_bar.items[pos[0]][pos[1]]:
+                        selected = item_bar.items[pos[0]][pos[1]]
+                        holdobject = item_bar.items[pos[0]][pos[1]]
+                        print("Item selected:", selected)
+            except:
+                None
+            return False, True, holdobject
+        if event.button == 3 and holdobject != [Item, 999999999999999999]:
+            self.place = pig.mouse.get_pos()
+            self.placeitem(holdobject, terrain)
+
+    def render_selection(self, screen, mousex, mousey, font):
+        screen.blit(selected[0].resize(30), (mousex, mousey))
+        obj = font.render(str(selected[1]), True, (0, 0, 0))
+        screen.blit(obj, (mousex + 15, mousey + 15))
+
+    def get_item(self, tile):
+        looking = True
+        x = 0
+        y = 0
+        itemscollected = [Item(tile[0]), tile[1]]
+        while looking:
+            if player_inventory.items[x][y]:
+                if player_inventory.items[x][y][0].id == itemscollected[0].id:
+                    player_inventory.items[x][y][1] += itemscollected[1]
+                    tile = [-1, 0]
+                    looking = False
+                else:
+                    if x <= 27:
+                        x += 1
+                    else:
+                        y += 1
+                        x = 0
+            else:
+                player_inventory.Add(itemscollected, (x, y))
+                tile = [-1, 0]
+                looking = False
+
+    def open_inventory(self, screen, infoObject, Mainfont, font):
+        global inven, selected
+        while inven:
+            mousex, mousey = pig.mouse.get_pos()
+            # draw the screen
+            screen.fill((0, 0, 0, 50))
+            backround = pig.Surface([640, 480], pig.SRCALPHA)
+            text = Mainfont.render("Inventory", True, (255, 255, 255), (100, 100, 100))
+            screen.blit(
+                text,
+                (
+                    infoObject.current_w / 5,
+                    infoObject.current_h - 350,
+                ),  # (infoObject.current_h - infoObject.current_h /1.5, infoObject.current_w / 2 - 150)
+            )
+            #
+            screen.blit(backround, (0, 0))
+            player_inventory.draw(ychange=(False, 0))
+            item_bar.draw(ychange=(True, infoObject.current_h / 1.64))
+            # if holding something, draw it next to mouse
+            if selected:
+                screen.blit(selected[0].resize(30), (mousex, mousey))
+                obj = font.render(str(selected[1]), True, (0, 0, 0))
+                screen.blit(obj, (mousex + 15, mousey + 15))
+            pig.display.update()
+            for event in pig.event.get():
+                if event.type == pig.QUIT:
+                    quit()
+                if event.type == pig.KEYDOWN:
+                    inven = False
+                if event.type == pig.MOUSEBUTTONDOWN:
+                    # if right clicked, get a random item
+                    if event.button == 3:
+                        selected = [Item(random.randint(0, 3)), 1]
+                    elif event.button == 1:
+                        try:
+                            pos = player_inventory.Get_pos()
+                            if player_inventory.In_grid(pos[0], pos[1]):
+                                if selected:
+                                    selected = player_inventory.Add(selected, pos)
+                                elif player_inventory.items[pos[0]][pos[1]]:
+                                    selected = player_inventory.items[pos[0]][pos[1]]
+                                    player_inventory.items[pos[0]][pos[1]] = None
+                        except:
+                            None
+                            # print("clicked out of inventory")
+                        try:
+                            if item_bar.In_grid(pos[0], pos[1]):
+                                if selected:
+                                    selected = item_bar.Add(selected, pos)
+                                elif item_bar.items[pos[0]][pos[1]]:
+                                    selected = item_bar.items[pos[0]][pos[1]]
+                                    item_bar.items[pos[0]][pos[1]] = None
+                        except:
+                            pass
+                            # print("clicked out of inventory")
 
     def draw_trail(self, screen: pig.Surface) -> None:
         trail_s_num: int = 1

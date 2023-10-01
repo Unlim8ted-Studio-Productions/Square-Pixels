@@ -35,7 +35,7 @@ def render_terrain(
     block_images = [
         r"terraria_styled_game\Textures\grass.jpg",
         r"terraria_styled_game\Textures\stone.jpg",
-        r"terraria_styled_game\Textures\wood.png"
+        r"terraria_styled_game\Textures\wood.png",
     ]
     colors = [
         (100, 100, 100),  # Stone
@@ -53,7 +53,9 @@ def render_terrain(
         []
     )  # stores colors with lighting applied, blank and a placeholder at this point in the script
     colliders = []
-    place_blocks = [13,] 
+    place_blocks = [
+        13,
+    ]
     if morning == 0:
         pig.draw.rect(
             screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime * 200), 100, 100)
@@ -62,12 +64,12 @@ def render_terrain(
         for y in range(height):
             block_type = terrain[y][x]
             currentblock = pig.Rect(
-                    (
-                        (x + pos_x - camera_x) * tile_size,
-                        (y + pos_y - camera_y) * tile_size,
-                    ),
-                    (tile_size, tile_size),
-                )
+                (
+                    (x + pos_x - camera_x) * tile_size,
+                    (y + pos_y - camera_y) * tile_size,
+                ),
+                (tile_size, tile_size),
+            )
             if not block_type in place_blocks:
                 color = colors[block_type]
                 if color == (255, 255, 255):
@@ -114,9 +116,9 @@ def render_terrain(
                     colliders.append(currentblock)
             else:
                 if block_type == 10:
-                    screen.blit(block_images[2],currentblock)
+                    screen.blit(block_images[2], currentblock)
                 if block_type == 11:
-                    screen.blit(block_images[1],currentblock)
+                    screen.blit(block_images[1], currentblock)
                 colliders.append(currentblock)
 
     for rect in black_rectangles:

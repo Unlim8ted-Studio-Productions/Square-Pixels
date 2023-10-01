@@ -38,7 +38,9 @@ def play_intro_video(image_folder, not_skipped, screen, intro):
     pig.mixer.music.play()
 
     # Load each image and display it on the screen
-    credits_font = pig.font.Font("terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50)
+    credits_font = pig.font.Font(
+        "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50
+    )
     for image_file in image_files:
         if not_skipped == True:
             image = pig.image.load(image_file).convert()
