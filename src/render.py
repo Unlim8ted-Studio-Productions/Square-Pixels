@@ -129,7 +129,6 @@ def render_terrain(
         distance = math.sqrt(
             (rect_center[0] - playerpos.x) ** 2 + (rect_center[1] - playerpos.y) ** 2
         )
-        sphere_radius = 100  # You can adjust this radius as needed
         # Calculate the transparency based on the distance to the center
         transparency = int(distance)
         # Closer is less transparent
@@ -147,7 +146,7 @@ def render_terrain(
         transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
         pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
         # Blit the transparent surface onto the main screen
-        screen.blit(transparent_surface, rect.topleft)
+        #  screen.blit(transparent_surface, rect.topleft)
         # Remove the black rectangle if it's fully transparent
         if transparency == 0 or distance <= 60:
             black_rectangles.remove(rect)

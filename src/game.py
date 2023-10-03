@@ -17,12 +17,14 @@ def game(
     DayTime,
     tile,
 ):
+    enemyx = 200
+    enemyy = 500
     while running:
         clicked = False
         if reset_terrain:
             terrain_gen.run(screen)
-        # pig.draw.rect(screen,(100,100,100,50),rect)
-        screen.fill((135, 206, 235))
+        # pig.draw.rect(screen,(.100,.100,.100,50),rect)
+        screen.fill((0.035, 206, 235))
 
         if Morning == 0:
             DayTime = DayTime + 0.005
@@ -60,6 +62,28 @@ def game(
         player.update(
             infoObject.current_h, infoObject.current_w, colliders
         )  # terrain_gen.colliders)
+        for block in colliders:
+            if enemyx < player.x:
+                if not block.collidepoint(enemyx + 0.01, enemyy - 16):
+                    enemyy += 0.01
+                if not block.collidepoint(
+                    (enemyx + 0.01, enemyy)
+                ) and block.collidepoint((enemyx + 0.01, enemyy + 16)):
+                    enemyx += 0.01
+                else:
+                    if not block.collidepoint((enemyx + 0.01, enemyy + 16)):
+                        enemyy -= 0.01
+                        enemyx += 0.01
+            else:
+                if not block.collidepoint(
+                    (enemyx - 0.01, enemyy)
+                ) and block.collidepoint((enemyx - 0.01, enemyy + 16)):
+                    enemyx -= 0.01
+                else:
+                    if not block.collidepoint((enemyx + 0.01, enemyy + 16)):
+                        enemyy -= 0.01
+                        enemyx -= 0.01
+        pig.draw.rect(screen, (200, 0, 0), (enemyx, enemyy, 20, 20))
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)

@@ -13,7 +13,7 @@ FPS = 60
 
 # Initialize the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Your Game")
+pygame.display.set_caption("Square Pixel")
 
 # Define fonts
 font = pygame.font.Font(None, 36)
