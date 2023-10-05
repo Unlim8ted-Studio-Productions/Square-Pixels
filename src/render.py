@@ -53,6 +53,7 @@ def render_terrain(
         []
     )  # stores colors with lighting applied, blank and a placeholder at this point in the script
     colliders = []
+    sky = []
     place_blocks = [
         13,
     ]
@@ -106,6 +107,8 @@ def render_terrain(
                 #    block_image = block_images[block_type]
                 #    screen.blit(pig.image.load(block_image), currentblock)
                 color = colors[block_type]
+                if color == (0, 0, 0, 0):
+                    sky.append(currentblock)
                 if (
                     color != (135, 206, 235)
                     and color != (139, 115, 85)
@@ -150,7 +153,7 @@ def render_terrain(
         # Remove the black rectangle if it's fully transparent
         if transparency == 0 or distance <= 60:
             black_rectangles.remove(rect)
-    return colliders
+    return sky, colliders
 
 
 def render_player(
