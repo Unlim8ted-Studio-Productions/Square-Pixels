@@ -1,5 +1,6 @@
 import render
 import pygame as pig
+import enemy_manager
 
 
 def game(
@@ -17,6 +18,7 @@ def game(
     DayTime,
     tile,
 ):
+    enemymanager = enemy_manager.enemy_manager([(0, infoObject.current_w // 10)])
     while running:
         clicked = False
         if reset_terrain:
@@ -60,6 +62,7 @@ def game(
         player.update(
             infoObject.current_h, infoObject.current_w, colliders
         )  # terrain_gen.colliders)
+        enemymanager.update(player.x, player.y, sky, infoObject, colliders, screen)
 
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy

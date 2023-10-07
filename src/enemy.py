@@ -12,6 +12,8 @@ class enemy:
         damaged=False,
         defence=random.randint(1, 4),
         passive=False,
+        damageamount=random.randint(2, 5),
+        attackstrength=random.randint(2, 5),
     ):
         self.enemyy = enemyy
         self.enemyx = enemyx
@@ -19,6 +21,8 @@ class enemy:
         self.damaged = damaged
         self.defence = defence
         self.passive = passive
+        self.attackstrength = attackstrength
+        self.damageamount = damageamount
 
     def roundtoblock(self, x, base=15):
         return base * round(x / base)
@@ -30,12 +34,12 @@ class enemy:
         if distance <= 30:  # two blocks
             self.attack()
         if self.damaged:
-            self.attacked(None, None)
+            self.attacked()
 
     def attacked(self, damage, strength):
         pass
 
-    def attack(self, damage, strength):
+    def attack(self):
         pass
 
     def move(self, x, colliders, sky):
