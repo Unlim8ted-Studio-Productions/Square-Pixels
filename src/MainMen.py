@@ -216,9 +216,9 @@ def mainfunc():
                 host_button.draw()
                 join_button.draw()
         elif game_state == "singleplayer":
-            import main
+            import SquarePixel
 
-            main.main()
+            SquarePixel.main()
         elif game_state == "settings":
             # Implement the settings menu here
             pass

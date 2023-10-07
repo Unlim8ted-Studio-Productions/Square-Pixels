@@ -18,7 +18,7 @@ def game(
     DayTime,
     tile,
 ):
-    enemymanager = enemy_manager.enemy_manager([(0, infoObject.current_w // 10)])
+    enemymanager = enemy_manager.enemy_manager([(0, infoObject.current_w)])
     while running:
         clicked = False
         if reset_terrain:
