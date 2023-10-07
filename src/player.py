@@ -37,6 +37,47 @@ class Player:
         self.platform = False
         self.click = (0, 0)
         self.place = (0, 0)
+        self.current_health = 200
+        self.target_health = 500
+        self.max_health = 1000
+        self.health_bar_length = 400
+        self.health_ratio = self.max_health / self.health_bar_length
+        self.health_change_speed = 5
+
+    def get_damage(self, amount):
+        if self.target_health > 0:
+            self.target_health -= amount
+        if self.target_health < 0:
+            self.target_health = 0
+
+    def get_health(self, amount):
+        if self.target_health < self.max_health:
+            self.target_health += amount
+        if self.target_health > self.max_health:
+            self.target_health = self.max_health
+
+    def advanced_health(self, screen):
+        transition_width = 0
+        transition_color = (255, 0, 0)
+        if self.current_health < self.target_health:
+            self.current_health += self.health_change_speed
+            transition_width = int(
+                (self.target_health - self.current_health) / self.health_ratio
+            )
+            transition_color = (0, 255, 0)
+        if self.current_health > self.target_health:
+            self.current_health -= self.health_change_speed
+            transition_width = int(
+                (self.target_health - self.current_health) / self.health_ratio
+            )
+            transition_color = (255, 255, 0)
+        health_bar_width = int(self.current_health / self.health_ratio)
+        health_bar = pig.Rect(10, 45, health_bar_width, 25)
+        transition_bar = pig.Rect(health_bar.right, 45, transition_width, 25)
+
+        pig.draw.rect(screen, (255, 0, 0), health_bar)
+        pig.draw.rect(screen, transition_color, transition_bar)
+        pig.draw.rect(screen, (255, 255, 255), (10, 45, self.health_bar_length, 25), 4)
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
         if self.x < collider.x + collider.width and self.x + self.width > collider.x:
@@ -125,9 +166,11 @@ class Player:
                     self.open_inventory(screen, infoObject, Mainfont, font)
                 # print(self.click)
 
-    def update(self, screen_height: int, screen_width: int, colliders: list) -> None:
+    def update(
+        self, screen_height: int, screen_width: int, colliders: list, screen
+    ) -> None:
         selfbounds = pig.Rect(self.x, self.y, self.width, self.width)
-
+        self.advanced_health(screen)
         # Check for collisions with colliders
         self.gravityi = True  # Assume gravity is applied unless a collision is detected
 

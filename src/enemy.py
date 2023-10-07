@@ -27,20 +27,20 @@ class enemy:
     def roundtoblock(self, x, base=15):
         return base * round(x / base)
 
-    def update(self, x, y, colliders, sky):
+    def update(self, x, y, colliders, sky, player):
         self.move(x, colliders, sky)
         # Calculate the distance from the player to the enemy
         distance = math.sqrt((self.enemyx - x) ** 2 + (self.enemyy - y) ** 2)
         if distance <= 30:  # two blocks
-            self.attack()
+            self.attack(player)
         if self.damaged:
             self.attacked()
 
-    def attacked(self, damage, strength):
+    def attacked(self):
         pass
 
-    def attack(self):
-        pass
+    def attack(self, player):
+        player.get_damage(random.randint(3, 7))
 
     def move(self, x, colliders, sky):
         if not self.passive:

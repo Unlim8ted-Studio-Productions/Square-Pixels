@@ -13,7 +13,7 @@ class enemy_manager:
         self.active_chunks = active_chunks
         self.creatures = creatures
 
-    def update(self, x, y, air, objectinfo, colliders, screen):
+    def update(self, x, y, air, objectinfo, colliders, screen, player):
         for i in self.active_chunks:
             if len(self.creatures) <= rand(3, 13):
                 spawned = False
@@ -26,5 +26,5 @@ class enemy_manager:
                         )
                         spawned = True
         for creature in self.creatures:
-            creature.update(x, y, colliders, air)
+            creature.update(x, y, colliders, air, player)
             creature.draw(screen)

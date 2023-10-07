@@ -1,6 +1,7 @@
 import render
 import pygame as pig
 import enemy_manager
+import death
 
 
 def game(
@@ -60,10 +61,13 @@ def game(
         if clicked:
             tile = player.delete_tile(terrain_gen.terrain, tile)
         player.update(
-            infoObject.current_h, infoObject.current_w, colliders
+            infoObject.current_h, infoObject.current_w, colliders, screen
         )  # terrain_gen.colliders)
-        enemymanager.update(player.x, player.y, sky, infoObject, colliders, screen)
-
+        enemymanager.update(
+            player.x, player.y, sky, infoObject, colliders, screen, player
+        )
+        if player.current_health <= 0:
+            death.death_screen()
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
