@@ -14,7 +14,7 @@ unaturalblocks = []
 
 
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, x, y, health_bar_length):
         self.x = x
         self.y = y
         self.width = 5
@@ -40,7 +40,7 @@ class Player:
         self.current_health = 200
         self.target_health = 500
         self.max_health = 1000
-        self.health_bar_length = 400
+        self.health_bar_length = health_bar_length
         self.health_ratio = self.max_health / self.health_bar_length
         self.health_change_speed = 5
 
@@ -57,6 +57,16 @@ class Player:
             self.target_health = self.max_health
 
     def advanced_health(self, screen):
+        screen.blit(
+            pig.transform.scale(
+                pig.image.load(r"terraria_styled_game\ui\icons\healthbar\health.png"),
+                (
+                    25,
+                    25,
+                ),
+            ),
+            pig.Rect(3, 45, 10, 10),
+        )
         transition_width = 0
         transition_color = (255, 0, 0)
         if self.current_health < self.target_health:
@@ -72,12 +82,12 @@ class Player:
             )
             transition_color = (255, 255, 0)
         health_bar_width = int(self.current_health / self.health_ratio)
-        health_bar = pig.Rect(10, 45, health_bar_width, 25)
+        health_bar = pig.Rect(30, 45, health_bar_width, 25)
         transition_bar = pig.Rect(health_bar.right, 45, transition_width, 25)
 
         pig.draw.rect(screen, (255, 0, 0), health_bar)
         pig.draw.rect(screen, transition_color, transition_bar)
-        pig.draw.rect(screen, (255, 255, 255), (10, 45, self.health_bar_length, 25), 4)
+        pig.draw.rect(screen, (255, 255, 255), (30, 45, self.health_bar_length, 25), 4)
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
         if self.x < collider.x + collider.width and self.x + self.width > collider.x:

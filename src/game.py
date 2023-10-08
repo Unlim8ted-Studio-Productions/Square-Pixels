@@ -67,7 +67,7 @@ def game(
             player.x, player.y, sky, infoObject, colliders, screen, player
         )
         if player.current_health <= 0:
-            death.death_screen()
+            death.draw_death_screen(screen, infoObject.current_w, infoObject.current_h)
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
