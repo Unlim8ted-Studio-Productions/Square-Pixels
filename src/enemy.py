@@ -99,12 +99,16 @@ class enemy:
     def draw(self, screen):
         if self.direction:
             if len(self.right) != 0:
-                screen.blit(self.right[0], (self.enemyx, self.enemyy, 25, 25))
+                screen.blit(
+                    pig.transform.scale(self.right[0], (40, 15)),
+                    (self.enemyx, self.enemyy, 25, 25),
+                )
+                self.rspitattack.pop(0)
                 self.right.pop(0)
                 if self.spit:
                     if len(self.rspitattack) != 0:
                         screen.blit(
-                            pig.transform.scale(self.rspitattack[0], (100, 100)),
+                            pig.transform.scale(self.rspitattack[0], (40, 15)),
                             (self.enemyx, self.enemyy, 25, 25),
                         )
                         self.rspitattack.pop(0)
@@ -116,18 +120,17 @@ class enemy:
                 self.right = load_gif_animation(
                     r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1).gif"
                 )
-
         else:
             if len(self.left) != 0:
                 screen.blit(
-                    pig.transform.scale(self.left[0], (100, 100)),
+                    pig.transform.scale(self.left[0], (40, 15)),
                     (self.enemyx, self.enemyy, 25, 25),
                 )
                 self.left.pop(0)
                 if self.spit:
                     if len(self.lspitattack) != 0:
                         screen.blit(
-                            pig.transform.scale(self.lspitattack[0], (100, 100)),
+                            pig.transform.scale(self.lspitattack[0], (40, 15)),
                             (self.enemyx, self.enemyy, 25, 25),
                         )
                         self.lspitattack.pop(0)
