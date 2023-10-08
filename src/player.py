@@ -44,6 +44,24 @@ class Player:
         self.health_ratio = self.max_health / self.health_bar_length
         self.health_change_speed = 5
 
+    def respawn(self, sky, infoObject, active_chunks=[(int, int)]):
+        player_inventory.items = [
+            [None for _ in range(player_inventory.rows)]
+            for _ in range(player_inventory.col)
+        ]
+        self.current_health = 200
+        self.target_health = 500
+        respawned = False
+        for i in active_chunks:
+            while not respawned:
+                placey = random.randint(0, infoObject.current_h)
+                placex = random.randint(i[0], i[1])
+                if any(a.collidepoint(placex, placey) for a in sky):
+                    respawned = True
+                    self.x = placex
+                    self.y = placey
+                    return None
+
     def get_damage(self, amount):
         if self.target_health > 0:
             self.target_health -= amount

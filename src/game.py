@@ -2,6 +2,7 @@ import render
 import pygame as pig
 import enemy_manager
 import death
+import MainMen
 
 
 def game(
@@ -67,7 +68,13 @@ def game(
             player.x, player.y, sky, infoObject, colliders, screen, player
         )
         if player.current_health <= 0:
-            death.draw_death_screen(screen, infoObject.current_w, infoObject.current_h)
+            if death.draw_death_screen(
+                screen, infoObject.current_w, infoObject.current_h
+            ):
+                player.respawn(sky, infoObject, [(0, infoObject.current_w)])
+            else:
+                player.respawn(sky, infoObject, [(0, infoObject.current_w)])
+                MainMen.mainfunc()
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)

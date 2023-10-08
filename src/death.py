@@ -24,6 +24,8 @@ def draw_death_screen(screen, width, height):
             respawn_text = death_text.render("Respawn", True, (0, 0, 0))
             respawn_text_rect = respawn_text.get_rect(center=respawn_button.center)
             screen.blit(respawn_text, respawn_text_rect)
+            if pig.mouse.get_pressed()[0]:
+                return True
         else:
             pig.draw.rect(screen, (255, 255, 255), respawn_button)
             respawn_text = death_text.render("Respawn", True, (0, 0, 0))
@@ -35,6 +37,8 @@ def draw_death_screen(screen, width, height):
             menu_text = death_text.render("Main Menu", True, (0, 0, 0))
             menu_text_rect = menu_text.get_rect(center=menu_button.center)
             screen.blit(menu_text, menu_text_rect)
+            if pig.mouse.get_pressed()[0]:
+                return False
         else:
             pig.draw.rect(screen, (255, 255, 255), menu_button)
             menu_text = death_text.render("Main Menu", True, (0, 0, 0))

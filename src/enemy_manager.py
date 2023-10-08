@@ -26,5 +26,4 @@ class enemy_manager:
                         )
                         spawned = True
         for creature in self.creatures:
-            creature.update(x, y, colliders, air, player)
-            creature.draw(screen)
+            creature.update(x, y, colliders, air, player, screen)
