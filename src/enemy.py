@@ -23,6 +23,29 @@ class enemy:
         self.passive = passive
         self.attackstrength = attackstrength
         self.damageamount = damageamount
+        self.direction = False  # left
+        self.spit = False
+        self.left = pig.transform(
+            pig.image.load(
+                r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(5).gif"
+            ),
+            25,
+            25,
+        )
+        self.right = pig.transform(
+            pig.image.load(
+                r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1).gif"
+            ),
+            25,
+            25,
+        )
+        self.spitattack = pig.transform(
+            pig.image.load(
+                r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(5).gif"
+            ),
+            25,
+            25,
+        )
 
     def roundtoblock(self, x, base=15):
         return base * round(x / base)
@@ -41,6 +64,8 @@ class enemy:
 
     def attack(self, player):
         player.get_damage(random.randint(3, 7))
+        self.spit = True
+        self.draw()
 
     def move(self, x, colliders, sky):
         if not self.passive:
@@ -54,7 +79,9 @@ class enemy:
                     self.enemyy -= 5
                     if self.enemyx <= x:
                         self.enemyx += 1
+                        self.direction = True
                     else:
+                        self.direction = False
                         self.enemyx -= 1
                 else:
                     self.enemyx = self.roundtoblock(self.enemyx)
@@ -69,4 +96,12 @@ class enemy:
             pass
 
     def draw(self, screen):
+        if self.direction:
+            screen.blit()
+            # right
+        else:
+            screen.blit()
+        if self.spit:
+            screen.blit()
+
         pig.draw.rect(screen, (200, 0, 0), (self.enemyx - 10, self.enemyy - 15, 20, 20))
