@@ -15,7 +15,7 @@ class enemy_manager:
 
     def update(self, x, y, air, objectinfo, colliders, screen, player):
         for i in self.active_chunks:
-            if len(self.creatures) <= rand(3, 13):
+            if len(self.creatures) <= rand(1, 2):
                 spawned = False
                 while not spawned:
                     placey = rand(0, objectinfo.current_h)

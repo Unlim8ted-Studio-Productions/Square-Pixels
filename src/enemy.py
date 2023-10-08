@@ -13,6 +13,7 @@ def load_gif_animation(gif_path):
     for frame in ImageSequence.Iterator(gif_image):
         frame_surface = pig.image.fromstring(frame.tobytes(), frame.size, frame.mode)
         frames.append(frame_surface)
+    frames.pop(0)
     return frames
 
 
@@ -99,47 +100,50 @@ class enemy:
     def draw(self, screen):
         if self.direction:
             if len(self.right) != 0:
-                screen.blit(
-                    pig.transform.scale(self.right[0], (40, 15)),
-                    (self.enemyx, self.enemyy, 25, 25),
-                )
-                self.rspitattack.pop(0)
-                self.right.pop(0)
-                if self.spit:
-                    if len(self.rspitattack) != 0:
-                        screen.blit(
-                            pig.transform.scale(self.rspitattack[0], (40, 15)),
-                            (self.enemyx, self.enemyy, 25, 25),
-                        )
-                        self.rspitattack.pop(0)
-                    else:
-                        self.rspitattack = load_gif_animation(
-                            r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1)(1).gif"
-                        )
+                if not self.spit:
+                    screen.blit(
+                        pig.transform.scale(self.right[0], (75, 30)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.right.pop(0)
+
             else:
                 self.right = load_gif_animation(
                     r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1).gif"
                 )
+            if self.spit:
+                if len(self.rspitattack) != 0:
+                    screen.blit(
+                        pig.transform.scale(self.rspitattack[0], (100, 100)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.rspitattack.pop(0)
+                else:
+                    self.rspitattack = load_gif_animation(
+                        r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1)(1).gif"
+                    )
         else:
             if len(self.left) != 0:
-                screen.blit(
-                    pig.transform.scale(self.left[0], (40, 15)),
-                    (self.enemyx, self.enemyy, 25, 25),
-                )
-                self.left.pop(0)
-                if self.spit:
-                    if len(self.lspitattack) != 0:
-                        screen.blit(
-                            pig.transform.scale(self.lspitattack[0], (40, 15)),
-                            (self.enemyx, self.enemyy, 25, 25),
-                        )
-                        self.lspitattack.pop(0)
-                    else:
-                        self.lspitattack = load_gif_animation(
-                            r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1).gif"
-                        )
+                if not self.spit:
+                    screen.blit(
+                        pig.transform.scale(self.left[0], (75, 30)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.left.pop(0)
 
             else:
                 self.left = load_gif_animation(
                     r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(5).gif"
                 )
+
+            if self.spit:
+                if len(self.lspitattack) != 0:
+                    screen.blit(
+                        pig.transform.scale(self.lspitattack[0], (100, 80)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.lspitattack.pop(0)
+                else:
+                    self.lspitattack = load_gif_animation(
+                        r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1).gif"
+                    )
