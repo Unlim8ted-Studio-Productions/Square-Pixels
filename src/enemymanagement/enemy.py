@@ -111,6 +111,12 @@ class enemy:
                 self.right = load_gif_animation(
                     r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(2)(1).gif"
                 )
+                if not self.spit:
+                    screen.blit(
+                        pig.transform.scale(self.right[0], (65, 30)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.right.pop(0)
             if self.spit:
                 if len(self.rspitattack) != 0:
                     screen.blit(
@@ -122,6 +128,11 @@ class enemy:
                     self.rspitattack = load_gif_animation(
                         r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1)(1).gif"
                     )
+                    screen.blit(
+                        pig.transform.scale(self.rspitattack[0], (100, 100)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.rspitattack.pop(0)
         else:
             if len(self.left) != 0:
                 if not self.spit:
@@ -135,6 +146,12 @@ class enemy:
                 self.left = load_gif_animation(
                     r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1)(1).gif"
                 )
+                if not self.spit:
+                    screen.blit(
+                        pig.transform.scale(self.left[0], (65, 30)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.left.pop(0)
 
             if self.spit:
                 if len(self.lspitattack) != 0:
@@ -147,3 +164,8 @@ class enemy:
                     self.lspitattack = load_gif_animation(
                         r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1).gif"
                     )
+                    screen.blit(
+                        pig.transform.scale(self.lspitattack[0], (100, 80)),
+                        (self.enemyx, self.enemyy, 25, 25),
+                    )
+                    self.lspitattack.pop(0)
