@@ -3,7 +3,7 @@ from pygame import RESIZABLE
 import socket
 import threading
 import ipaddress
-import client
+import multiplayer.client as client
 
 SERVER_PORT = 12345
 TIMEOUT = 1.0  # Timeout value for socket operations

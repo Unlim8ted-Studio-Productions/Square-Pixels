@@ -3,9 +3,10 @@ import typing
 import colorsys
 import math
 import random
-from inventory import Item
-from inventory import player_inventory
-from inventory import item_bar
+from uimanagement.inventory import Item
+from uimanagement.inventory import player_inventory
+from uimanagement.inventory import item_bar
+import soundmanagement.music as music
 
 selected = None
 inven = False
@@ -182,11 +183,29 @@ class Player:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE:
                     self.velocity_y -= 3
                     self.jump = True
+                    music.play_music(
+                        r"terraria_styled_game\sounds\player\jump.mp3",
+                        1,
+                        channel=3,
+                        volume=5,
+                    )
                     # print("jump")
                 elif event.key == pig.K_LEFT or event.key == ord("a"):
                     self.velocity_x = -self.speed
+                    music.play_music(
+                        r"terraria_styled_game\sounds\player\run.mp3",
+                        1,
+                        channel=2,
+                        volume=5,
+                    )
                 elif event.key == pig.K_RIGHT or event.key == ord("d"):
                     self.velocity_x = self.speed
+                    music.play_music(
+                        r"terraria_styled_game\sounds\player\run.mp3",
+                        1,
+                        channel=2,
+                        volume=5,
+                    )
                 elif event.key == pig.K_r:
                     return True, False
                 elif event.key == pig.K_e or event.key == ord("e"):

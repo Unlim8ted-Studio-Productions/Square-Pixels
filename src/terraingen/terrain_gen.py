@@ -1,6 +1,5 @@
 import pygame as pg
 import random
-import collision as c
 
 
 class TerrainGenerator:

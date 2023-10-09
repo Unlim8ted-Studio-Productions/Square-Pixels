@@ -1,6 +1,6 @@
 import pygame as a
 import typing as b
-import player as c
+import player.player as c
 
 
 def d(
@@ -11,7 +11,7 @@ def d(
     i: b.Union[float, int],
     j: b.Union[float, int],
     k: b.Union[float, int],
-    l: b.Union[float, int]
+    l: b.Union[float, int],
 ):
     m = 10
     n = [
@@ -41,17 +41,13 @@ def d(
             )
 
 
-def s(
-    e: a.Surface, o: float | int, p: float | int, q: int, r: tuple
-):
+def s(e: a.Surface, o: float | int, p: float | int, q: int, r: tuple):
     a.draw.circle(e, r, (o, p), q, q)
 
 
 def t(e: a.Surface, u: list):
     for v in u:
-        a.draw.circle(
-            e, v.color, (v.x, v.y), v.size, v.size
-        )
+        a.draw.circle(e, v.color, (v.x, v.y), v.size, v.size)
 
 
 def y(ab: b.Dict[str, int]) -> b.List[b.Tuple[str, int]]:
@@ -59,9 +55,7 @@ def y(ab: b.Dict[str, int]) -> b.List[b.Tuple[str, int]]:
     return ac
 
 
-def z(
-    ae: b.List[str], af: int, ag: a.Surface
-) -> None:
+def z(ae: b.List[str], af: int, ag: a.Surface) -> None:
     font = a.font.Font(None, 20)
     for i, ah in enumerate(ae):
         ai = font.render(ah, True, (255, 255, 255))
@@ -96,9 +90,7 @@ def as_hitboxes(ai: b.Dict[str, int]) -> dict:
     return aq
 
 
-def au(
-    hitboxes: dict, u: list, ag, ab: dict, ax: list
-) -> tuple:
+def au(hitboxes: dict, u: list, ag, ab: dict, ax: list) -> tuple:
     for hitbox in hitboxes:
         if hitboxes[hitbox].collidepoint(a.mouse.get_pos()):
             a.draw.rect(ag, (255, 0, 0), rect=hitboxes[hitbox])

@@ -2,7 +2,7 @@ import pygame
 import sys
 import random
 from collections import deque
-from music import play_music
+from soundmanagement.music import play_music
 
 
 # Function to generate a random maze using Recursive Backtracking algorithm

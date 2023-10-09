@@ -1,4 +1,4 @@
-import enemy
+import enemymanagement.enemy as enemy
 from random import randint as rand
 
 active_chunks = [(int, int)]

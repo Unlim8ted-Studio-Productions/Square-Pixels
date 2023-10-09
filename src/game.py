@@ -1,8 +1,9 @@
-import render
+import render.render as render
 import pygame as pig
-import enemy_manager
-import death
-import MainMen
+import enemymanagement.enemy_manager as enemy_manager
+import uimanagement.death as death
+import uimanagement.MainMen as MainMen
+import soundmanagement.music as music
 
 
 def game(
@@ -20,6 +21,9 @@ def game(
     DayTime,
     tile,
 ):
+    music.play_music(
+        r"terraria_styled_game\sounds\music\ingame\music\Ingame1.mp3", volume=0.2
+    )
     enemymanager = enemy_manager.enemy_manager([(0, infoObject.current_w)])
     while running:
         clicked = False
@@ -60,6 +64,12 @@ def game(
                 pass
         tile = [-1, 0]
         if clicked:
+            music.play_music(
+                r"terraria_styled_game\sounds\block break\block break.mp3",
+                1,
+                channel=1,
+                volume=5,
+            )
             tile = player.delete_tile(terrain_gen.terrain, tile)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders, screen

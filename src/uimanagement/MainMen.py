@@ -1,7 +1,7 @@
 import pygame
 import sys
-import credits_Easteregg as egg
-from music import play_music
+import eastereggs.credits_Easteregg as egg
+from soundmanagement.music import play_music
 
 # Initialize Pygame
 pygame.init()
@@ -154,7 +154,7 @@ def start_singleplayer_game():
 
 # Host Multiplayer Game
 def host_multiplayer_game():
-    import server_ui
+    import uimanagement.server_ui as server_ui
 
     server_ui.load_servers()
     server_ui.load_mplayers()
@@ -163,7 +163,7 @@ def host_multiplayer_game():
 
 # Join Multiplayer Game
 def join_multiplayer_game():
-    import client_ui
+    import uimanagement.client_ui as client_ui
 
     client_ui.find_servers()
     client_ui.main()

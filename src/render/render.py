@@ -1,7 +1,7 @@
 import pygame as pig
 import typing as tp
-import player
-import Lighting as Lit
+import player.player as player
+import render.Lighting as Lit
 import random
 import math
 

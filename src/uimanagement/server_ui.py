@@ -1,6 +1,6 @@
 import pygame
 import sys
-import server
+import multiplayer.server as server
 
 # Initialize Pygame
 pygame.init()

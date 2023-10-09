@@ -1,10 +1,12 @@
 if __name__ == "__main__":
     import pygame as pig
-    import terrain_gen as tgen
-    import logo
-    import player as pl
-    from Character_creation import main
+    import terraingen.terrain_gen as tgen
+    import uimanagement.logo as logo
+    import player.player as pl
+    from uimanagement.Character_creation import main
     from game import game
+    import uimanagement.MainMen as MainMen
+    from soundmanagement.music import play_music
 
     tile = [-1, 0]
 
@@ -36,8 +38,7 @@ if __name__ == "__main__":
     logo.play_intro_video(image_folder, not_skipped, screen, 0)
     image_folder: str = r"terraria_styled_game\\NewHorizonsFrames"
     logo.play_intro_video(image_folder, not_skipped, screen, 1)
-    import MainMen
-
+    play_music(r"terraria_styled_game\sounds\music\Menu.mp3")
     MainMen.mainfunc()
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
