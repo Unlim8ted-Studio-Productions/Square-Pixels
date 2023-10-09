@@ -66,8 +66,22 @@ class Player:
     def get_damage(self, amount):
         if self.target_health > 0:
             self.target_health -= amount
+            if not pig.mixer.Channel(4).get_busy():
+                music.play_music(
+                    r"terraria_styled_game\sounds\player\take damage.mp3",
+                    0,
+                    channel=4,
+                    volume=4,
+                )
         if self.target_health < 0:
             self.target_health = 0
+            if not pig.mixer.Channel(4).get_busy():
+                music.play_music(
+                    r"terraria_styled_game\sounds\player\death.mp3",
+                    0,
+                    channel=4,
+                    volume=1,
+                )
 
     def get_health(self, amount):
         if self.target_health < self.max_health:
@@ -193,7 +207,7 @@ class Player:
                 elif event.key == pig.K_LEFT or event.key == ord("a"):
                     self.velocity_x = -self.speed
                     music.play_music(
-                        r"terraria_styled_game\sounds\player\run.mp3",
+                        r"terraria_styled_game\sounds\player\running.mp3",
                         1,
                         channel=2,
                         volume=5,
@@ -201,7 +215,7 @@ class Player:
                 elif event.key == pig.K_RIGHT or event.key == ord("d"):
                     self.velocity_x = self.speed
                     music.play_music(
-                        r"terraria_styled_game\sounds\player\run.mp3",
+                        r"terraria_styled_game\sounds\player\running.mp3",
                         1,
                         channel=2,
                         volume=5,
