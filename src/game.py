@@ -4,6 +4,7 @@ import enemymanagement.enemy_manager as enemy_manager
 import uimanagement.death as death
 import uimanagement.MainMen as MainMen
 import soundmanagement.music as music
+import random
 
 
 def game(
@@ -64,12 +65,20 @@ def game(
                 pass
         tile = [-1, 0]
         if clicked:
-            music.play_music(
-                r"terraria_styled_game\sounds\block break\block break.mp3",
-                1,
-                channel=1,
-                volume=5,
-            )
+            if random.randint(0, 1) == 1:
+                music.play_music(
+                    r"terraria_styled_game\sounds\block break\block break.mp3",
+                    0,
+                    channel=1,
+                    volume=5,
+                )
+            else:
+                music.play_music(
+                    r"terraria_styled_game\sounds\block break\blockbreak1.mp3",
+                    0,
+                    channel=1,
+                    volume=5,
+                )
             tile = player.delete_tile(terrain_gen.terrain, tile)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders, screen
