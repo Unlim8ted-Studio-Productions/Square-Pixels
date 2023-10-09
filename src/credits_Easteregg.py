@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 from collections import deque
+from music import play_music
 
 
 # Function to generate a random maze using Recursive Backtracking algorithm
@@ -164,6 +165,7 @@ def start():
 
         # Scroll credits down the screen if the player won
         if won:
+            play_music(r"terraria_styled_game\sounds\music\EndCredits.mp3")
             text_surface = credits_font.render(
                 "press anything to skip", True, (100, 100, 100)
             )
@@ -185,6 +187,12 @@ def start():
                 "Sounds by [Augustus R. Angelides]",
                 "Software Developers: [Teo, Augustus R. Angelides]",
                 "Playtesters: [Augustus R. Angelides, Ada, Abe]",
+                "Music from #Uppbeat (free for Creators!):",
+                "https://uppbeat.io/t/michael-grubb/threshold",
+                "License code: AVGIIL4ZOS36UYVZ ",
+                "Music from #Uppbeat (free for Creators!):",
+                "https://uppbeat.io/t/kevin-macleod/cyborg-ninja",
+                "License code: CYD3DXMQBEOXDEAY",
             ]
             credits_font = pygame.font.Font(None, 36)
 
