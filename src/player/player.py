@@ -210,7 +210,7 @@ class Player:
                         r"terraria_styled_game\sounds\player\running.mp3",
                         1,
                         channel=2,
-                        volume=5,
+                        volume=15,
                     )
                 elif event.key == pig.K_RIGHT or event.key == ord("d"):
                     self.velocity_x = self.speed
@@ -218,7 +218,7 @@ class Player:
                         r"terraria_styled_game\sounds\player\running.mp3",
                         1,
                         channel=2,
-                        volume=5,
+                        volume=15,
                     )
                 elif event.key == pig.K_r:
                     return True, False

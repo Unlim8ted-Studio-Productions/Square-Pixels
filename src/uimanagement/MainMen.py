@@ -14,7 +14,10 @@ FPS = 60
 # Initialize the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Square Pixel")
-
+pygame_icon = pygame.image.load(
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+)
+pygame.display.set_icon(pygame_icon)
 # Define fonts
 font = pygame.font.Font(None, 36)
 
