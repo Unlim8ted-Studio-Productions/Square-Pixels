@@ -38,10 +38,10 @@ class enemy:
         self.direction = False  # left
         self.spit = False
         self.left = load_gif_animation(
-            r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(5).gif"
+            r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1)(1).gif"
         )
         self.right = load_gif_animation(
-            r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1).gif"
+            r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(2)(1).gif"
         )
         self.rspitattack = load_gif_animation(
             r"terraria_styled_game\creatures\enemies\Little Demon\attack\Little demon(1)(1).gif"
@@ -102,14 +102,14 @@ class enemy:
             if len(self.right) != 0:
                 if not self.spit:
                     screen.blit(
-                        pig.transform.scale(self.right[0], (75, 30)),
+                        pig.transform.scale(self.right[0], (65, 30)),
                         (self.enemyx, self.enemyy, 25, 25),
                     )
                     self.right.pop(0)
 
             else:
                 self.right = load_gif_animation(
-                    r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1).gif"
+                    r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(2)(1).gif"
                 )
             if self.spit:
                 if len(self.rspitattack) != 0:
@@ -126,14 +126,14 @@ class enemy:
             if len(self.left) != 0:
                 if not self.spit:
                     screen.blit(
-                        pig.transform.scale(self.left[0], (75, 30)),
+                        pig.transform.scale(self.left[0], (65, 30)),
                         (self.enemyx, self.enemyy, 25, 25),
                     )
                     self.left.pop(0)
 
             else:
                 self.left = load_gif_animation(
-                    r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(5).gif"
+                    r"terraria_styled_game\creatures\enemies\Little Demon\wall climbing\Little demon(1)(1)(1).gif"
                 )
 
             if self.spit:

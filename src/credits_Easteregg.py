@@ -218,6 +218,8 @@ def start():
                     if event.type == pygame.KEYDOWN:
                         return None
                 pygame.time.delay(50)
+            if not credits_y >= -len(credits_text) * 40:
+                return None
 
     # Quit Pygame
     pygame.quit()

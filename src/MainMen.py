@@ -1,10 +1,10 @@
 import pygame
 import sys
 import credits_Easteregg as egg
+from music import play_music
 
 # Initialize Pygame
 pygame.init()
-
 # Constants
 infoObject: object = pygame.display.Info()
 WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
@@ -24,6 +24,7 @@ BUTTON_COLOR = (50, 50, 50)
 BUTTON_HOVER_COLOR = (100, 100, 100)
 
 # Game state
+play_music(r"terraria_styled_game\sounds\music\Menu.mp3")
 game_state = "menu"  # Initial state is the main menu
 show_play_buttons = False  # Flag to control visibility of play buttons
 show_multiplayer_options = False  # Flag to control visibility of multiplayer options
@@ -147,6 +148,7 @@ def start_game():
 # Singleplayer Game
 def start_singleplayer_game():
     global running
+    pygame.mixer.music.fadeout(2)
     running = False
 
 
