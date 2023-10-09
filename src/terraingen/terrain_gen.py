@@ -14,6 +14,31 @@ class TerrainGenerator:
         self.camera_y = 0
 
     def generate_terrain(self):
+        """
+        Generates a random terrain for a 2D game world.
+
+        This method generates terrain consisting of ground, sky, trees, ore deposits,
+        and clouds. It populates the `self.terrain` 2D array with numeric values
+        representing different terrain elements.
+
+        The generated terrain includes the following elements:
+        - Ground, which can be stone or dirt (0 or 1).
+        - Sky (8).
+        - Trees, made of wood (2) and leaves (3).
+        - Ore deposits, including coal (4), iron (5), gold (6), or diamond (7).
+        - Clouds in the sky (9).
+
+        This method uses randomization to create a varied and interesting terrain.
+
+        Note: This method assumes that the necessary attributes like `self.width`,
+        `self.height`, and `self.terrain` are properly initialized in the class.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.terrain = [[0 for _ in range(self.width[1])] for _ in range(self.height)]
 
         # Generate random ground

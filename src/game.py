@@ -25,7 +25,7 @@ def game(
     music.play_music(
         r"terraria_styled_game\sounds\music\ingame\music\Ingame1.mp3", volume=0.2
     )
-    enemymanager = enemy_manager.enemy_manager([(0, infoObject.current_w)])
+    enemymanager = enemy_manager.Enemy_manager([(0, infoObject.current_w)])
     while running:
         clicked = False
         if reset_terrain:

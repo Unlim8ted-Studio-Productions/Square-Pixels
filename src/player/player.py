@@ -15,7 +15,20 @@ unaturalblocks = []
 
 
 class Player:
+    """
+    Represents the player character in the game.
+    """
+
     def __init__(self, x, y, health_bar_length):
+        """
+        Initializes the Player object.
+
+        Parameters:
+        - x (int): The initial x-coordinate of the player.
+        - y (int): The initial y-coordinate of the player.
+        - health_bar_length (int): The length of the health bar displayed on the screen.
+        """
+        # Initialize player attributes
         self.x = x
         self.y = y
         self.width = 5
@@ -46,10 +59,23 @@ class Player:
         self.health_change_speed = 5
 
     def respawn(self, sky, infoObject, active_chunks=[(int, int)]):
+        """
+        Respawns the player character on the screen.
+
+        Parameters:
+        - sky (list): A list of sky objects.
+        - infoObject: Pygame display information object.
+        - active_chunks (list of tuples): List of active chunks.
+
+        Returns:
+        None
+        """
+        # Reset player inventory
         player_inventory.items = [
             [None for _ in range(player_inventory.rows)]
             for _ in range(player_inventory.col)
         ]
+        # Reset player health and find a respawn location
         self.current_health = 200
         self.target_health = 500
         respawned = False
@@ -64,6 +90,15 @@ class Player:
                     return None
 
     def get_damage(self, amount):
+        """
+        Apply damage to the player character.
+
+        Parameters:
+        - amount (int): The amount of damage to apply.
+
+        Returns:
+        None
+        """
         if self.target_health > 0:
             self.target_health -= amount
             if not pig.mixer.Channel(4).get_busy():
@@ -84,12 +119,31 @@ class Player:
                 )
 
     def get_health(self, amount):
+        """
+        Increase the player character's health.
+
+        Parameters:
+        - amount (int): The amount of health to add.
+
+        Returns:
+        None
+        """
         if self.target_health < self.max_health:
             self.target_health += amount
         if self.target_health > self.max_health:
             self.target_health = self.max_health
 
     def advanced_health(self, screen):
+        """
+        Display the player's health on the screen.
+
+        Parameters:
+        - screen: Pygame display surface.
+
+        Returns:
+        None
+        """
+        # Display health bar and transition color
         screen.blit(
             pig.transform.scale(
                 pig.image.load(r"terraria_styled_game\ui\icons\healthbar\health.png"),
@@ -123,18 +177,47 @@ class Player:
         pig.draw.rect(screen, (255, 255, 255), (30, 45, self.health_bar_length, 25), 4)
 
     def is_colliding(self, collider) -> typing.Tuple[str, bool]:
+        """
+        Check if the player is colliding with a given collider.
+
+        Parameters:
+        - collider: The object to check for collision.
+
+        Returns:
+        Tuple[str, bool]: A tuple containing a collision description and a boolean indicating if there is a collision.
+        """
         if self.x < collider.x + collider.width and self.x + self.width > collider.x:
             return ("x_axis_collision", True)
         if self.y < collider.y + collider.height and self.y + self.height > collider.y:
             return ("y_axis_collision", True)
 
     def bash(self, collider, screen):
+        """
+        Perform a bash ability on a collider.
+
+        Parameters:
+        - collider: The object to perform the bash on.
+        - screen: Pygame display surface.
+
+        Returns:
+        None
+        """
         if self.bash_power > 0 and self.bash_cooldown == 0:
             self.bash_power -= 1
             self.bash_cooldown = 60  # Cooldown for 60 frames (1 second)
             self.fire(collider, screen)
 
     def dig(self, collider, colliders: list):
+        """
+        Perform dig ability actions on a collider.
+
+        Parameters:
+        - collider: The object to perform the dig ability on.
+        - colliders (list): List of colliders in the game.
+
+        Returns:
+        None
+        """
         # Perform dig ability actions here
         # ...
 
@@ -142,6 +225,16 @@ class Player:
         colliders.remove(collider)
 
     def draw(self, screen, character):
+        """
+        Draw the player character on the screen.
+
+        Parameters:
+        - screen: Pygame display surface.
+        - character (str): The path to the character image to be drawn.
+
+        Returns:
+        None
+        """
         chrect = pig.Rect(self.x, self.y, self.width, self.height)
         cim = pig.image.load(character)
         # scale = (float("."+f"{self.width}"), float("."+f"{self.height}"))
@@ -154,6 +247,16 @@ class Player:
             pig.draw.line(screen, (0, 255, 0), self.arrow_pos, self.arrow_end_pos, 2)
 
     def fire(self, collider, screen):
+        """
+        Fire an arrow from the player character.
+
+        Parameters:
+        - collider: The object to fire at.
+        - screen: Pygame display surface.
+
+        Returns:
+        None
+        """
         dir_vector = (
             self.arrow_end_pos[0] - self.arrow_pos[0],
             self.arrow_end_pos[1] - self.arrow_pos[1],
@@ -165,15 +268,37 @@ class Player:
             dx = normalized_vector[0] * speed
             dy = normalized_vector[1] * speed
 
-            #
-
     def start_digging(self):
+        """
+        Start the digging action.
+
+        Returns:
+        None
+        """
         self.digging = True
 
     def stop_digging(self):
+        """
+        Stop the digging action.
+
+        Returns:
+        None
+        """
         self.digging = False
 
     def move(self, screen, infoObject, tile, terrain):
+        """
+        Move the player character and handle user inputs.
+
+        Parameters:
+        - screen: Pygame display surface.
+        - infoObject: Pygame display information object.
+        - tile: The current tile the player is interacting with.
+        - terrain: The terrain map of the game.
+
+        Returns:
+        Tuple[bool, bool, object]: A tuple containing game state information and the current held object.
+        """
         global selected, inven, holdobject
         mousex, mousey = pig.mouse.get_pos()
         Mainfont = pig.font.Font(pig.font.match_font("Impact"), 300)
@@ -203,7 +328,6 @@ class Player:
                         channel=3,
                         volume=5,
                     )
-                    # print("jump")
                 elif event.key == pig.K_LEFT or event.key == ord("a"):
                     self.velocity_x = -self.speed
                     music.play_music(
@@ -225,11 +349,22 @@ class Player:
                 elif event.key == pig.K_e or event.key == ord("e"):
                     inven = True
                     self.open_inventory(screen, infoObject, Mainfont, font)
-                # print(self.click)
 
     def update(
         self, screen_height: int, screen_width: int, colliders: list, screen
     ) -> None:
+        """
+        Update the player character's position and perform collision detection.
+
+        Parameters:
+        - screen_height (int): The height of the game screen.
+        - screen_width (int): The width of the game screen.
+        - colliders (list): List of colliders in the game.
+        - screen: Pygame display surface.
+
+        Returns:
+        None
+        """
         selfbounds = pig.Rect(self.x, self.y, self.width, self.width)
         self.advanced_health(screen)
         # Check for collisions with colliders
@@ -242,12 +377,10 @@ class Player:
                 # Adjust the player's position to be on top of the block
                 self.y = collider.y - self.height  # Place player on top of the block
                 self.platform = True
-                # print('COLLISION')
                 if self.jump and self.platform:
                     self.y -= 5
                     self.jump = False
                     self.platform = False
-                # else:
                 self.velocity_y = 1
 
         if self.gravityi:
@@ -287,6 +420,16 @@ class Player:
             self.arrow_end_pos = pig.mouse.get_pos()
 
     def delete_tile(self, terrain, tile):
+        """
+        Delete a tile from the terrain.
+
+        Parameters:
+        - terrain (list): The terrain map of the game.
+        - tile: The tile to delete.
+
+        Returns:
+        object: The modified tile.
+        """
         y = tile
         # Check if the provided coordinates are within the bounds of the terrain
         # if 0 <= self.click[1] < len(terrain) and 0 <= self.click[0] < len(terrain[self.click[1]]):
@@ -311,11 +454,9 @@ class Player:
                 if x == 2 and y[0] != 1:
                     y[0] = 0
                     y[1] += 1
-                    # print("wood")
                 if x == 0 and y[0] != 0:
                     y[0] = 1
                     y[1] += 1
-                    # print("stone")
             return y
         except:
             # print("tile does not exist")
@@ -324,6 +465,16 @@ class Player:
         #   print("Invalid coordinates")
 
     def placeitem(self, object, terrain):
+        """
+        Place an item in the game world.
+
+        Parameters:
+        - object: The item to place.
+        - terrain (list): The terrain map of the game.
+
+        Returns:
+        None
+        """
         global unaturalblocks
         item_ids = {
             "0": 10,
@@ -340,6 +491,17 @@ class Player:
         pass
 
     def handle_item_bar(self, event, terrain, holdobject):
+        """
+        Handle interactions with the item bar.
+
+        Parameters:
+        - event: The pygame event object.
+        - terrain (list): The terrain map of the game.
+        - holdobject: The object currently held by the player.
+
+        Returns:
+        Tuple[bool, bool, object]: A tuple containing game state information and the current held object.
+        """
         if event.button == 1:
             self.click = pig.mouse.get_pos()
             pos = item_bar.Get_pos()
@@ -357,11 +519,32 @@ class Player:
             self.placeitem(holdobject, terrain)
 
     def render_selection(self, screen, mousex, mousey, font):
+        """
+        Render the selected item next to the mouse cursor.
+
+        Parameters:
+        - screen: Pygame display surface.
+        - mousex: X-coordinate of the mouse cursor.
+        - mousey: Y-coordinate of the mouse cursor.
+        - font: Pygame font for rendering text.
+
+        Returns:
+        None
+        """
         screen.blit(selected[0].resize(30), (mousex, mousey))
         obj = font.render(str(selected[1]), True, (0, 0, 0))
         screen.blit(obj, (mousex + 15, mousey + 15))
 
     def get_item(self, tile):
+        """
+        Get an item and add it to the player's inventory.
+
+        Parameters:
+        - tile: The item to add to the inventory.
+
+        Returns:
+        None
+        """
         looking = True
         x = 0
         y = 0
@@ -384,6 +567,18 @@ class Player:
                 looking = False
 
     def open_inventory(self, screen, infoObject, Mainfont, font):
+        """
+        Open the player's inventory screen.
+
+        Parameters:
+        - screen: Pygame display surface.
+        - infoObject: Pygame display information object.
+        - Mainfont: Pygame font for rendering main titles.
+        - font: Pygame font for rendering text.
+
+        Returns:
+        None
+        """
         global inven, selected
         while inven:
             mousex, mousey = pig.mouse.get_pos()
@@ -441,6 +636,15 @@ class Player:
                             # print("clicked out of inventory")
 
     def draw_trail(self, screen: pig.Surface) -> None:
+        """
+        Draw the trail of the object on the specified Pygame screen.
+
+        Args:
+            screen (pygame.Surface): The Pygame surface on which to draw the trail.
+
+        Returns:
+            None
+        """
         trail_s_num: int = 1
         trail_l_num: int = len(self.trail)
         add_tsize: int = 1
@@ -474,4 +678,10 @@ class Player:
                     add_tsize += 0.5
 
     def clear_trail(self) -> None:
+        """
+        Clear the trail of the object.
+    
+        Returns:
+            None
+        """
         self.trail = []  # Clear the trail

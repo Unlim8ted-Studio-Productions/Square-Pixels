@@ -4,7 +4,9 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 
+# Get the current working directory
 path = os.getcwd()
+
 # Initialize Pygame
 pygame.init()
 
@@ -30,9 +32,14 @@ root.withdraw()  # Hide the main tkinter window
 # Pygame screen
 screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h))
 pygame.display.set_caption("Character Customization")
+pygame_icon = pygame.image.load(
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+)
+pygame.display.set_icon(pygame_icon)
 background = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
 font = pygame.font.Font(None, 36)
 
+# List of character paths
 character_list = [
     r"terraria_styled_game\characters\thumbnails\blue.gif",
     r"terraria_styled_game\characters\thumbnails\red.gif",
@@ -48,14 +55,16 @@ for character_path in character_list:
 
 # Sidebar position and size
 sidebar_width = 150
-sidebar_rect = pygame.Rect(infoObject.current_w - (sidebar_width+20), 0, sidebar_width, infoObject.current_h)
+sidebar_rect = pygame.Rect(
+    infoObject.current_w - (sidebar_width + 20), 0, sidebar_width, infoObject.current_h
+)
 
 # Button position and size
 button_height = 100
 button_spacing = 10
 button_rects = [
     pygame.Rect(
-        infoObject.current_w - sidebar_width-7,
+        infoObject.current_w - sidebar_width - 7,
         10 + (button_height + button_spacing) * idx,
         sidebar_width - 20,
         button_height,
@@ -63,23 +72,39 @@ button_rects = [
     for idx in range(len(character_thumbnails))
 ]
 
+
 def draw_sidebar(buttoncount):
-    color=[(100,100,100),(150,150,150)]
+    """
+    Draw the sidebar with character thumbnails as buttons.
+
+    Args:
+        buttoncount (int): Index of the currently selected character thumbnail.
+
+    Returns:
+        None
+    """
+    color = [(100, 100, 100), (150, 150, 150)]
     # Fill the sidebar background
     pygame.draw.rect(background, (50, 50, 50), sidebar_rect)
 
     # Draw character thumbnails as buttons
     for idx, thumbnail in enumerate(character_thumbnails):
-        count=0
+        count = 0
         button_rect = button_rects[idx]
         for button in buttoncount:
             if button == idx:
-                count=1
+                count = 1
         pygame.draw.rect(background, (color[count]), button_rect)
         background.blit(thumbnail, (button_rect.x + 10, button_rect.y + 10))
 
 
 def draw_character():
+    """
+    Draw the character's head, body, and legs on the background.
+
+    Returns:
+        None
+    """
     # Draw head
     pygame.draw.circle(background, CHARACTER_COLOR, (WIDTH // 2, 150), head_size)
 
@@ -98,6 +123,12 @@ def draw_character():
 
 
 def draw_shapes():
+    """
+    Draw shapes and buttons on the background.
+
+    Returns:
+        None
+    """
     for shape in shapes:
         pygame.draw.rect(background, shape["color"], shape["rect"])
 
@@ -114,6 +145,19 @@ def draw_shapes():
 
 
 def add_shape(x, y, width, height, color):
+    """
+    Add a shape to the list of shapes.
+
+    Args:
+        x (int): X-coordinate of the shape's top-left corner.
+        y (int): Y-coordinate of the shape's top-left corner.
+        width (int): Width of the shape.
+        height (int): Height of the shape.
+        color (tuple): RGB color of the shape.
+
+    Returns:
+        None
+    """
     shape = {
         "rect": pygame.Rect(x, y, width, height),
         "color": color,
@@ -123,11 +167,17 @@ def add_shape(x, y, width, height, color):
 
 
 def main():
+    """
+    Main game loop for character customization.
+
+    Returns:
+        None
+    """
     global head_size, body_height, trails
     running = True
-    buttoncount= 0
-    hoveredbuttons=[]
-    drawchar = (False,0)
+    buttoncount = 0
+    hoveredbuttons = []
+    drawchar = (False, 0)
     while running:
         if trails:
             screen.fill((0, 0, 0))
@@ -135,14 +185,16 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            buttoncount=0
-            hoveredbuttons=[]
+            buttoncount = 0
+            hoveredbuttons = []
             for precharacter in button_rects:
-                if precharacter.collidepoint(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]):
+                if precharacter.collidepoint(
+                    pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
+                ):
                     hoveredbuttons.append(buttoncount)
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        drawchar = (True,buttoncount)
-                buttoncount+=1
+                        drawchar = (True, buttoncount)
+                buttoncount += 1
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check for button clicks
                 for button in buttons:
@@ -168,14 +220,22 @@ def main():
         background.fill(TRANSPARENT)
 
         if drawchar[0]:
-            char=character_thumbnails[drawchar[1]]
+            char = character_thumbnails[drawchar[1]]
             char = pygame.transform.scale(char, (550, 550))
-            screen.blit(char,(infoObject.current_w // 20, infoObject.current_h/200, 40, body_height))
+            screen.blit(
+                char,
+                (
+                    infoObject.current_w // 20,
+                    infoObject.current_h / 200,
+                    40,
+                    body_height,
+                ),
+            )
         # Draw the character
         if not drawchar[0]:
             draw_character()
-        
-        #Draw the sidebar
+
+        # Draw the sidebar
         draw_sidebar(hoveredbuttons)
 
         # Draw shapes
@@ -248,6 +308,15 @@ buttons = [
 
 
 def increase_size(part):
+    """
+    Increase the size of the character's head or body.
+
+    Args:
+        part (str): Either 'head' or 'body' to specify which part to increase.
+
+    Returns:
+        None
+    """
     global head_size, body_height
     if part == "head":
         head_size += 5
@@ -256,6 +325,15 @@ def increase_size(part):
 
 
 def decrease_size(part):
+    """
+    Decrease the size of the character's head or body.
+
+    Args:
+        part (str): Either 'head' or 'body' to specify which part to decrease.
+
+    Returns:
+        None
+    """
     global head_size, body_height
     if part == "head":
         head_size -= 5
@@ -264,11 +342,24 @@ def decrease_size(part):
 
 
 def add_square():
+    """
+    Add a square shape to the character.
+
+    Returns:
+        None
+    """
     x, y, width, height, color = 50, 400, 50, 50, (255, 0, 0)
     add_shape(x, y, width, height, color)
 
 
 def finish():
+    """
+    Finish character customization and export the character.
+
+    Returns:
+        str: Path to the exported character image.
+
+    """
     global character_sprite, shapes_sprites, head_size, body_height, leg_length
 
     pygame.draw.rect(background, (0, 0, 0, 0), pygame.Rect(500, 50, 400, 1000))
@@ -288,6 +379,12 @@ def finish():
 
 
 def reset_character():
+    """
+    Reset the character's head size, body height, and clear all shapes.
+
+    Returns:
+        None
+    """
     global head_size, body_height, shapes
     head_size = 50
     body_height = 100
@@ -296,11 +393,23 @@ def reset_character():
 
 
 def toggle_trails():
+    """
+    Toggle the trails effect.
+
+    Returns:
+        None
+    """
     global trails
     trails = not trails
 
 
 def save_character_dialog():
+    """
+    Open a file dialog for saving the character image.
+
+    Returns:
+        None
+    """
     filename = filedialog.asksaveasfilename(
         defaultextension=".png",
         filetypes=[("PNG files", "*.png")],
@@ -311,6 +420,12 @@ def save_character_dialog():
 
 
 def load_character_dialog():
+    """
+    Open a file dialog for loading a character image.
+
+    Returns:
+        None
+    """
     filename = filedialog.askopenfilename(
         filetypes=[("PNG files", "*.png")],
         initialdir=path + r"\\terraria_styled_game\\characters\\",
@@ -320,11 +435,29 @@ def load_character_dialog():
 
 
 def export_character(filename):
+    """
+    Export the character image to the specified file.
+
+    Args:
+        filename (str): The path where the character image will be saved.
+
+    Returns:
+        None
+    """
     pygame.draw.rect(background, (0, 0, 0, 0), pygame.Rect(500, 50, 400, 1000))
     pygame.image.save(background, filename)
 
 
 def load_character(filename):
+    """
+    Load a character image from the specified file and display it.
+
+    Args:
+        filename (str): The path of the character image to load.
+
+    Returns:
+        None
+    """
     loaded_image = pygame.image.load(filename)
     screen.blit(loaded_image, (0, 0), (WIDTH, HEIGHT))
     pygame.display.update()

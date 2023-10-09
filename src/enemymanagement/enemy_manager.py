@@ -8,12 +8,32 @@ placey = int
 placex = int
 
 
-class enemy_manager:
+class Enemy_manager:
     def __init__(self, active_chunks=[(int, int)], creatures=[]) -> None:
+        """
+        Initializes an Enemy_manager object.
+
+        Parameters:
+        - active_chunks (list of tuples): List of active chunks represented as tuples of two integers.
+        - creatures (list): List to store Enemy objects.
+
+        Returns:
+        None
+        """
         self.active_chunks = active_chunks
         self.creatures = creatures
 
-    def update(self, x, y, air, objectinfo, colliders, screen, player):
+    def spawn(self, air, objectinfo):
+        """
+        Spawns enemy creatures within active chunks.
+
+        Parameters:
+        - air (list): List of rectangles representing empty spaces.
+        - objectinfo (object): Object with information about the game environment.
+
+        Returns:
+        None
+        """
         for i in self.active_chunks:
             if len(self.creatures) <= rand(1, 2):
                 spawned = False
@@ -21,9 +41,27 @@ class enemy_manager:
                     placey = rand(0, objectinfo.current_h)
                     placex = rand(i[0], i[1])
                     if any(a.collidepoint(placex, placey) for a in air):
-                        self.creatures.append(
-                            enemy.enemy(placey, placex),
-                        )
+                        self.creatures.append(enemy.Enemy(placey, placex))
                         spawned = True
+
+    def update(self, x, y, air, objectinfo, colliders, screen, player):
+        """
+        Updates the state of the enemy manager.
+
+        Parameters:
+        - x (int): X-coordinate of the player character.
+        - y (int): Y-coordinate of the player character.
+        - air (list): List of rectangles representing empty spaces.
+        - objectinfo (object): Object with information about the game environment.
+        - colliders (list): List of collidable objects.
+        - screen (object): Object representing the game screen.
+        - player (object): Object representing the player character.
+
+        Returns:
+        None
+        """
+        if len(self.creatures) <= rand(1, 2):
+            self.spawn(air, objectinfo)
+
         for creature in self.creatures:
             creature.update(x, y, colliders, air, player, screen)

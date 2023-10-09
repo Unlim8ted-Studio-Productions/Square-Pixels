@@ -31,6 +31,25 @@ def render_terrain(
     DayTime,
     morning,
 ) -> list:
+    """
+    Render the game terrain.
+
+    Args:
+        screen (pig.Surface): The game screen surface.
+        width (float | int): The width of the terrain.
+        height (float | int): The height of the terrain.
+        terrain (list): The terrain data.
+        pos_x (float | int): X-coordinate position of the player.
+        pos_y (float | int): Y-coordinate position of the player.
+        camera_x (float | int): X-coordinate of the camera.
+        camera_y (float | int): Y-coordinate of the camera.
+        playerpos: Player position.
+        DayTime: The current time of day.
+        morning: Indicates whether it's morning or not.
+
+    Returns:
+        list: A list containing sky and colliders.
+    """
     tile_size = 15
     block_images = [
         r"terraria_styled_game\Textures\grass.jpg",
@@ -164,10 +183,34 @@ def render_player(
     color: tuple,
     character,
 ):
+    """
+    Render the player character on the screen.
+
+    Args:
+        screen (pig.Surface): The game screen surface.
+        x (float | int): X-coordinate of the player character.
+        y (float | int): Y-coordinate of the player character.
+        size (int): Size of the player character.
+        color (tuple): Color of the player character.
+        character: Character data.
+
+    Returns:
+        None
+    """
     pig.draw.circle(screen, (0, 0, 0, 0), (x, y), size, size)
 
 
 def render_other_players(screen: pig.Surface, players: list):
+    """
+    Render other player characters on the screen.
+
+    Args:
+        screen (pig.Surface): The game screen surface.
+        players (list): List of other player data.
+
+    Returns:
+        None
+    """
     for player in players:
         pig.draw.circle(
             screen, player.color, (player.x, player.y), player.size, player.size
@@ -175,6 +218,15 @@ def render_other_players(screen: pig.Surface, players: list):
 
 
 def sort_leaderboard(allpoints: tp.Dict[str, int]) -> tp.List[tp.Tuple[str, int]]:
+    """
+    Sort the leaderboard based on player points.
+
+    Args:
+        allpoints (tp.Dict[str, int]): Dictionary of player names and their points.
+
+    Returns:
+        tp.List[tp.Tuple[str, int]]: Sorted list of player names and points as tuples.
+    """
     sorted_points = sorted(allpoints.items(), key=lambda x: x[1], reverse=True)
     return sorted_points
 
@@ -182,6 +234,17 @@ def sort_leaderboard(allpoints: tp.Dict[str, int]) -> tp.List[tp.Tuple[str, int]
 def render_chat(
     chat_messages: tp.List[str], screen_height: int, screen: pig.Surface
 ) -> None:
+    """
+    Render chat messages on the screen.
+
+    Args:
+        chat_messages (tp.List[str]): List of chat messages.
+        screen_height (int): Height of the game screen.
+        screen (pig.Surface): The game screen surface.
+
+    Returns:
+        None
+    """
     # Render the chat messages
     font = pig.font.Font(None, 20)
     for i, message in enumerate(chat_messages):
@@ -199,6 +262,16 @@ def render_chat(
 
 
 def render_scores(allpoints: tp.Dict[str, int], screen: pig.Surface) -> None:
+    """
+    Render the leaderboard on the screen.
+
+    Args:
+        allpoints (tp.Dict[str, int]): Dictionary of player names and their points.
+        screen (pig.Surface): The game screen surface.
+
+    Returns:
+        None
+    """
     # sort scores
     sorted_points = sort_leaderboard(allpoints)
     # Render the leaderboard
@@ -212,6 +285,15 @@ def render_scores(allpoints: tp.Dict[str, int], screen: pig.Surface) -> None:
 
 
 def score_hitboxes(allpoints: tp.Dict[str, int]) -> dict:
+    """
+    Generate hitboxes for leaderboard entries.
+
+    Args:
+        allpoints (tp.Dict[str, int]): Dictionary of player names and their points.
+
+    Returns:
+        dict: Dictionary of hitboxes for leaderboard entries.
+    """
     # sort scores
     sorted_points = sort_leaderboard(allpoints)
     playeronlead = {}
@@ -224,6 +306,19 @@ def score_hitboxes(allpoints: tp.Dict[str, int]) -> dict:
 def kick_players(
     hitboxes: dict, players: list, screen, points: dict, kicked: list
 ) -> tuple:
+    """
+    Kick players from the game based on hitboxes.
+
+    Args:
+        hitboxes (dict): Dictionary of hitboxes for player entries in the leaderboard.
+        players (list): List of player data.
+        screen: The game screen.
+        points (dict): Dictionary of player names and their points.
+        kicked (list): List of kicked players.
+
+    Returns:
+        tuple: Updated players, points, and kicked lists.
+    """
     for hitbox in hitboxes:
         if hitboxes[hitbox].collidepoint(pig.mouse.get_pos()):
             pig.draw.rect(screen, (255, 0, 0), rect=hitboxes[hitbox])
@@ -253,9 +348,24 @@ def kick_players(
 # Define nametag class
 class Nametag:
     def __init__(self, player: player.Player):
+        """
+        Initialize a Nametag instance.
+
+        Args:
+            player (player.Player): The player associated with the nametag.
+        """
         self.player: player.Player = player
 
     def draw(self, screen: pig.Surface) -> None:
+        """
+        Draw the nametag on the screen.
+
+        Args:
+            screen (pig.Surface): The game screen surface.
+
+        Returns:
+            None
+        """
         font = pig.font.Font(None, 20)
         text = font.render(self.player.name, True, (255, 255, 255))
         text_rect = text.get_rect(center=(self.player.x, self.player.y - 15))
