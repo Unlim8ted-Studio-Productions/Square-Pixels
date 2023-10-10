@@ -1,5 +1,4 @@
 import pygame as pig
-import random
 
 
 pig.init()
@@ -12,10 +11,10 @@ items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(4)]
 wood = pig.image.load(r"terraria_styled_game\Textures\wood.png")
 scale = (25, 25)
 wood = pig.transform.scale(wood, scale)
-items[0].blit(wood, (15,15,100,100))
+items[0].blit(wood, (15, 15, 100, 100))
 stone = pig.image.load(r"terraria_styled_game\Textures\stone.jpg")
 stone = pig.transform.scale(stone, scale)
-items[1].blit(stone, (15,15,100,100))
+items[1].blit(stone, (15, 15, 100, 100))
 pig.draw.circle(items[2], (255, 255, 0), (25, 25), 25)
 pig.draw.circle(items[3], (0, 0, 255), (25, 25), 25)
 
@@ -34,7 +33,9 @@ class Item:
 
 # the inventory system
 class Inventory:
-    def __init__(self,rows=9,col=27,box_size=infoObject.current_w // 30,x=50,y=50,border=3):
+    def __init__(
+        self, rows=9, col=27, box_size=infoObject.current_w // 30, x=50, y=50, border=3
+    ):
         self.rows = rows
         self.col = col
         self.items = [[None for _ in range(self.rows)] for _ in range(self.col)]
@@ -46,9 +47,9 @@ class Inventory:
     # draw everything
     def draw(self, ychange):
         # draw background
-        temp=self.y
+        temp = self.y
         if ychange[0]:
-            self.y=ychange[1]
+            self.y = ychange[1]
         pig.draw.rect(
             screen,
             (100, 100, 100),
@@ -75,8 +76,7 @@ class Inventory:
                         obj,
                         (rect[0] + self.box_size // 2, rect[1] + self.box_size // 2),
                     )
-        self.y=temp
-                
+        self.y = temp
 
     # get the square that the mouse is over
     def Get_pos(self):
@@ -109,32 +109,31 @@ class Inventory:
             return False
         return True
 
-    def get_item(self,itemId:int):
-        lookingforspot=True
+    def get_item(self, itemId: int):
+        lookingforspot = True
         if itemId != None:
             item = Item(itemId)
-            #0=wood 1=stone
-            x=0
-            y=0
+            # 0=wood 1=stone
+            x = 0
+            y = 0
             while lookingforspot:
                 if self.items[x][y]:
                     if self.items[x][y].id == itemId:
-                        #self.items[x][y] += 1
-                        lookingforspot=False
+                        # self.items[x][y] += 1
+                        lookingforspot = False
                     else:
                         self.items[x][y] = item
-                        lookingforspot=False
+                        lookingforspot = False
                 else:
                     self.items[x][y] = item
-                    lookingforspot=False
-                                
-    
+                    lookingforspot = False
+
+
 player_inventory = Inventory()
-item_bar = Inventory(1,5,x=infoObject.current_w//2.5,y=infoObject.current_h/1.2)
+item_bar = Inventory(1, 5, x=infoObject.current_w // 2.5, y=infoObject.current_h / 1.2)
 
 # what the player is holding
 selected = None
-
 
 
 def inventory(e, truescreen):
@@ -159,11 +158,11 @@ def inventory(e, truescreen):
         if e.type == pig.K_ESCAPE:
             inven = False
 
-        #if e.type == pig.MOUSEBUTTONDOWN:
+            # if e.type == pig.MOUSEBUTTONDOWN:
             # if right clicked, get a random item
-            #if e.button == 3:
+            # if e.button == 3:
             #    selected = [Item(random.randint(0, 3)), 1]
-                
+
             if e.button == 1:
                 pos = player_inventory.Get_pos()
                 if player_inventory.In_grid(pos[0], pos[1]):

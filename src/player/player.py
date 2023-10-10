@@ -320,14 +320,7 @@ class Player:
                     return tmp
             elif event.type == pig.KEYDOWN:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE:
-                    self.velocity_y -= 3
-                    self.jump = True
-                    music.play_music(
-                        r"terraria_styled_game\sounds\player\jump.mp3",
-                        1,
-                        channel=3,
-                        volume=5,
-                    )
+                    self.player_jump
                 elif event.key == pig.K_LEFT or event.key == ord("a"):
                     self.velocity_x = -self.speed
                     music.play_music(
@@ -481,11 +474,13 @@ class Player:
             "1": 11,
         }
         if terrain[self.place[1] // 15][self.place[0] // 15] == 8:
+            print("<_-.-_>")
             block = item_ids[f"{object[0].id}"]
             terrain[self.place[1] // 15][self.place[0] // 15] = block
             object[1] -= 1
             if object[1] == 0:
                 object = [Item, 999999999999999999]
+            return terrain
 
     def breakunaturalblock():
         pass
@@ -513,10 +508,22 @@ class Player:
                         print("Item selected:", selected)
             except:
                 None
+                # clicked out of inventory
             return False, True, holdobject
         if event.button == 3 and holdobject != [Item, 999999999999999999]:
             self.place = pig.mouse.get_pos()
-            self.placeitem(holdobject, terrain)
+            return self.placeitem(holdobject, terrain)
+
+    def player_jump(self):
+        """makes the player jump"""
+        self.velocity_y -= 3
+        self.jump = True
+        music.play_music(
+            r"terraria_styled_game\sounds\player\jump.mp3",
+            1,
+            channel=3,
+            volume=5,
+        )
 
     def render_selection(self, screen, mousex, mousey, font):
         """
@@ -680,7 +687,7 @@ class Player:
     def clear_trail(self) -> None:
         """
         Clear the trail of the object.
-    
+
         Returns:
             None
         """

@@ -57,12 +57,15 @@ def game(
             Morning = 1
         result = player.move(screen, infoObject, tile, terrain_gen.terrain)
         if result != None:
-            reset_terrain = result[0]
-            clicked = result[1]
-            try:
-                objectheld = result[2]
-            except:
-                pass
+            if len(result) <= 5:
+                reset_terrain = result[0]
+                clicked = result[1]
+                try:
+                    objectheld = result[2]
+                except:
+                    pass
+            else:
+                terrain_gen.terrain = result
         tile = [-1, 0]
         if clicked:
             if random.randint(0, 1) == 1:

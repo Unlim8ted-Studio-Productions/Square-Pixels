@@ -4,7 +4,7 @@ if __name__ == "__main__":
     import uimanagement.logo as logo
     import player.player as pl
     from uimanagement.Character_creation import main
-    from game import game
+    from game.game import game
     import uimanagement.MainMen as MainMen
     from soundmanagement.music import play_music
 
