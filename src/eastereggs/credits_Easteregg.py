@@ -227,21 +227,34 @@ def start():
                 "     ) ) ( (  /\) )  ( (    ) )   )    (    ) \ \  _  ( (          ) )        | |      / _ \    ( (        | |   __  ",
                 " ___/ /   \ \_\ \/    ) \__/ (   /  /\  \  ( ( \ \_))  \ \___     ( (        _| |__  _/ / \ \_   \ \___  __| |___) ) ",
                 "/____/     \___\ \_   \______/  /__(  )__\  )_) \__/    \____\    /__\      /_____( (__/   \__)   \____\ \________/  ",
-                "                \__)   ",
+                "                \__)                                                                                                 ",
             ]
-            credits_font = pygame.font.Font(None, 36)
+            credits_font = pygame.font.Font(
+                r"terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 36
+            )
+            asciiartfont = pygame.font.SysFont("monospace", 20)
 
             while credits_y >= -len(credits_text) * 40 and won:
                 screen.fill(WHITE)
                 for i, text in enumerate(credits_text):
-                    text_surface = credits_font.render(text, True, RED)
-                    screen.blit(
-                        text_surface,
-                        (
-                            WIDTH // 2 - text_surface.get_width() // 2,
-                            credits_y + i * 40,
-                        ),
-                    )
+                    if i <= 41:
+                        text_surface = credits_font.render(text, True, RED)
+                        screen.blit(
+                            text_surface,
+                            (
+                                WIDTH // 2 - text_surface.get_width() // 2,
+                                credits_y + i * 40,
+                            ),
+                        )
+                    else:
+                        text_surface = asciiartfont.render(text, True, (100, 255, 100))
+                        screen.blit(
+                            text_surface,
+                            (
+                                WIDTH // 2 - text_surface.get_width() // 2,
+                                credits_y + i * 40,
+                            ),
+                        )
                 pygame.display.flip()
                 credits_y -= 2
                 for event in pygame.event.get():
