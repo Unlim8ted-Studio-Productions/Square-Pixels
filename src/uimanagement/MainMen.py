@@ -137,6 +137,7 @@ def main_menu(host_button, join_button):
             play_button.handle_event(event)
             settings_button.handle_event(event)
             quit_button.handle_event(event)
+            credits_button.handle_event(event)
             if show_play_buttons:
                 singleplayer_button.handle_event(event)
                 multiplayer_button.handle_event(event)
@@ -150,6 +151,7 @@ def main_menu(host_button, join_button):
 
         # Draw buttons
         if not show_play_buttons:
+            credits_button.draw()
             play_button.draw()
             settings_button.draw()
             quit_button.draw()
