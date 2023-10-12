@@ -2,16 +2,20 @@ import pygame
 import sys
 import eastereggs.credits_Easteregg as egg
 from soundmanagement.music import play_music
+import random
 
 # Initialize Pygame
 pygame.init()
-
 # Constants
 infoObject: object = pygame.display.Info()
 WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 BACKGROUND_COLOR = (0, 0, 0)
 FPS = 60
 
+backround = pygame.transform.scale(
+    pygame.image.load(r"terraria_styled_game\ui\mainmen\backround\cover.png"),
+    (infoObject.current_w + 20, infoObject.current_h + 20),
+)
 # Initialize the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Square Pixel")
@@ -28,6 +32,43 @@ WHITE = (255, 255, 255)
 BUTTON_COLOR = (50, 50, 50)
 BUTTON_HOVER_COLOR = (100, 100, 100)
 
+white = (255, 255, 255)
+
+
+# Cloud class
+class Cloud:
+    def __init__(self, x, y, image, speed):
+        self.x = x
+        self.y = y
+        self.image = image
+        self.speed = speed
+        self.alpha = 0
+
+    def move(self):
+        self.x -= self.speed
+        self.alpha += 1
+        if self.alpha >= 255:
+            self.alpha = 255
+
+    def draw(self):
+        self.image.set_alpha(self.alpha)
+        screen.blit(self.image, (self.x, self.y))
+
+
+# Load cloud images
+cloud_images = [
+    pygame.transform.scale(
+        pygame.image.load(r"terraria_styled_game\ui\mainmen\backround\clouds1.png"),
+        (infoObject.current_w / 4, infoObject.current_h / 4),
+    ),
+    pygame.transform.scale(
+        pygame.image.load(r"terraria_styled_game\ui\mainmen\backround\clouds2.png"),
+        (infoObject.current_w / 4, infoObject.current_h / 4),
+    ),
+]
+
+# Create a list to hold cloud objects
+clouds = []
 # Game state
 play_music(r"terraria_styled_game\sounds\music\Menu.mp3")
 game_state = "menu"  # Initial state is the main menu
@@ -128,6 +169,24 @@ def main_menu(host_button, join_button):
     )
 
     while running:
+        global clouds
+        if len(clouds) <= 6:
+            if random.randint(0, 100) < 2:
+                cloud_image = random.choice(cloud_images)
+                cloud_x = random.randint(0, infoObject.current_w)
+                cloud_y = random.randint(0, 200)
+                cloud_speed = random.uniform(0.1, 20)  # Random speed between 1 and 4
+                new_cloud = Cloud(cloud_x, cloud_y, cloud_image, cloud_speed)
+                clouds.append(new_cloud)
+
+        # Remove clouds that are off-screen
+        for cloud in clouds:
+            if cloud.image == cloud_images[1]:
+                if cloud.x <= -300:
+                    clouds.remove(cloud)
+            else:
+                if cloud.x <= -500:
+                    clouds.remove(cloud)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -150,6 +209,13 @@ def main_menu(host_button, join_button):
         screen.fill(BACKGROUND_COLOR)
 
         # Draw buttons
+        screen.blit(
+            backround, (0, 0, infoObject.current_w / 20, infoObject.current_h / 20)
+        )
+        # Move and draw clouds
+        for cloud in clouds:
+            cloud.move()
+            cloud.draw()
         if not show_play_buttons:
             credits_button.draw()
             play_button.draw()
@@ -272,6 +338,7 @@ def mainfunc():
     running = True
     # Main game loop
     while running:
+        # Generate a random cloud
         if game_state == "menu":
             main_menu(host_button, join_button)
         elif game_state == "multiplayer":
