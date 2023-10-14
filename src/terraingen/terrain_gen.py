@@ -12,8 +12,17 @@ class TerrainGenerator:
         self.colliders = []
         self.camera_x = 0
         self.camera_y = 0
+        self.progress = 0  # Initialize progress to 0
 
-    def generate_terrain(self):
+    def draw_progress_bar(self, screen, progress):
+        bar_width = progress / 3000
+        bar_height = 20
+        bar_x = 20
+        bar_y = self.height - 30
+        # progress_width = int(bar_width * progress)
+        pg.draw.rect(screen, (0, 255, 0), (bar_x, bar_y, bar_width, bar_height))
+
+    def generate_terrain(self, screen):
         """
         Generates a random terrain for a 2D game world.
 
@@ -40,21 +49,33 @@ class TerrainGenerator:
             None
         """
         self.terrain = [[0 for _ in range(self.width[1])] for _ in range(self.height)]
-
+        e = 0
         # Generate random ground
         ground_levels = [self.height // 2] * self.width[1]
         for x in range(self.width[0], self.width[1]):
             ground_levels[x] = ground_levels[x - 1] + random.randint(-2, 2)
             ground_levels[x] = max(0, min(self.height - 1, ground_levels[x]))
+            e += 1
+        screen.fill((0, 0, 0))
+        self.draw_progress_bar(screen, e)
+        pg.display.flip()
 
         for x in range(self.width[0], self.width[1]):
             for y in range(ground_levels[x], self.height):
                 self.terrain[y][x] = random.choice([0, 1])  # Stone or Dirt
+                e += 1
+        screen.fill((0, 0, 0))
+        self.draw_progress_bar(screen, e)
+        pg.display.flip()
 
         # Set sky blocks
         for x in range(self.width[0], self.width[1]):
             for y in range(ground_levels[x]):
                 self.terrain[y][x] = 8  # Sky
+                e += 1
+        screen.fill((0, 0, 0))
+        self.draw_progress_bar(screen, e)
+        pg.display.flip()
 
         # Generate trees
         tree_count = self.width[1] // 10
@@ -66,6 +87,7 @@ class TerrainGenerator:
             tree_height = treeypartone  # random.randint(3, 6)
             for y in range(tree_y, tree_y + tree_height):
                 self.terrain[y][tree_x] = 2  # Wood
+                e += 1
 
             # Generate tree leaves
             leaf_radius = random.randint(2, 4)
@@ -77,6 +99,10 @@ class TerrainGenerator:
                     ):
                         if abs(dx) + abs(dy) <= leaf_radius:
                             self.terrain[tree_y + dy][tree_x + dx] = 3  # Leaves
+                    e += 1
+        screen.fill((0, 0, 0))
+        self.draw_progress_bar(screen, e)
+        pg.display.flip()
 
         # Generate ore deposits
         ore_count = self.width[1] // 100
@@ -87,6 +113,7 @@ class TerrainGenerator:
             while not validnu:
                 try:
                     ore_y = random.randint(ground_levels[ore_x] + 1, self.height - 1)
+                    e += 1
                 except ValueError:
                     validnu = False
                 else:
@@ -100,6 +127,10 @@ class TerrainGenerator:
                     ):
                         if abs(dx) + abs(dy) <= ore_radius:
                             self.terrain[ore_y + dy][ore_x + dx] = ore_type
+                    e += 1
+            screen.fill((0, 0, 0))
+            self.draw_progress_bar(screen, e)
+            pg.display.flip()
 
         cloud_count = random.randint(1, 10)  # Adjust the cloud count as needed
         for _ in range(cloud_count):
@@ -123,6 +154,10 @@ class TerrainGenerator:
                     if 0 <= x < self.width[1] and 0 <= y < self.height:
                         if self.terrain[y][x] == 8:  # sky
                             self.terrain[y][x] = 9  # Set cloud blocks
+                    e += 1
+        screen.fill((0, 0, 0))
+        self.draw_progress_bar(screen, e)
+        pg.display.flip()
 
         # # Generate colliders based on terrain
         # for x in range(len(self.terrain[0])):
@@ -130,6 +165,7 @@ class TerrainGenerator:
         #        if self.terrain[y][x] != 0:
         #            collider = c.Collider(x, y, 32, 32)
         #            self.colliders.append(collider)
+        return e
 
     def run(self, screen):
         clock = pg.time.Clock()
@@ -179,5 +215,11 @@ def start():
     # pg.display.toggle_fullscreen()
     pg.display.set_caption("Square Pixel")
     pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
-    terrain_generator = TerrainGenerator(800, infoObject.current_h // 10)
-    terrain_generator.run(screen)
+    terrain_generator = TerrainGenerator((0, 10000), infoObject.current_h // 10)
+    # terrain_generator.run(screen)
+    e = terrain_generator.generate_terrain(screen)
+    print(e)
+
+
+if __name__ == "__main__":
+    start()

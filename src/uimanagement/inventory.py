@@ -22,6 +22,7 @@ pig.draw.circle(items[3], (0, 0, 255), (25, 25), 25)
 
 font = pig.font.Font(pig.font.match_font("calibri"), 26)
 
+
 class Item:
     """
     Represents an item with an associated image and ID.
@@ -50,6 +51,7 @@ class Item:
         """
         return pig.transform.scale(self.surface, (size, size))
 
+
 class Inventory:
     """
     Represents an inventory for managing items.
@@ -63,7 +65,9 @@ class Inventory:
         border (int): The border size around each inventory slot.
     """
 
-    def __init__(self, rows=9, col=27, box_size=infoObject.current_w // 30, x=50, y=50, border=3):
+    def __init__(
+        self, rows=9, col=27, box_size=infoObject.current_w // 30, x=50, y=50, border=3
+    ):
         self.rows = rows
         self.col = col
         self.items = [[None for _ in range(self.rows)] for _ in range(self.col)]
@@ -71,7 +75,6 @@ class Inventory:
         self.x = x
         self.y = y
         self.border = border
-
 
     def draw(self, ychange):
         """
@@ -185,10 +188,10 @@ class Inventory:
                     self.items[x][y] = item
                     lookingforspot = False
 
-    def place_item_in_crafting_grid(self,item, x, y):
+    def place_item_in_crafting_grid(self, item, x, y):
         """
         Place an item in the crafting grid at the specified position.
-        
+
         Args:
             item (Item): The item to place in the grid.
             x (int): The x-coordinate of the grid position.
@@ -196,27 +199,27 @@ class Inventory:
         """
         crafting_grid[y][x] = item
 
-    def get_item_from_crafting_grid(self,x, y):
+    def get_item_from_crafting_grid(self, x, y):
         """
         Get the item from the crafting grid at the specified position.
-    
+
         Args:
             x (int): The x-coordinate of the grid position.
             y (int): The y-coordinate of the grid position.
-    
+
         Returns:
             Item: The item in the grid position, or None if no item is present.
         """
         return crafting_grid[y][x]
-    
-    def count_item(self,item_id, inventory):
+
+    def count_item(self, item_id, inventory):
         """
         Count the number of items with the specified item ID in the inventory.
-    
+
         Args:
             item_id (int): The ID of the item to count.
             inventory (Inventory): The inventory to search.
-    
+
         Returns:
             int: The count of items with the specified ID.
         """
@@ -226,11 +229,11 @@ class Inventory:
                 if inventory.items[x][y] and inventory.items[x][y][0].id == item_id:
                     count += inventory.items[x][y][1]
         return count
-    
-    def remove_item(self,item_id, count, inventory):
+
+    def remove_item(self, item_id, count, inventory):
         """
         Remove a specified count of items with the given item ID from the inventory.
-    
+
         Args:
             item_id (int): The ID of the item to remove.
             count (int): The count of items to remove.
@@ -243,61 +246,63 @@ class Inventory:
                         inventory.items[x][y][1] -= count
                         if inventory.items[x][y][1] == 0:
                             inventory.items[x][y] = None
+
+
 player_inventory = Inventory()
 item_bar = Inventory(1, 5, x=infoObject.current_w // 2.5, y=infoObject.current_h / 1.2)
 selected = None
 
 # Crafting Grid
-crafting_grid = Inventory(rows=3, col=3, box_size=50, x=50, y=infoObject.current_h / 1.2, border=3)
+crafting_grid = Inventory(
+    rows=3, col=3, box_size=50, x=50, y=infoObject.current_h / 1.2, border=3
+)
 
 
 crafting_recipes = [
     {
-        'pattern': [[(0, 1), None, (0, 1)], [None, (1, 1), None], [None, (1, 1), None]],
-        'output': (2, 1)  # Green sword
+        "pattern": [[(0, 1), None, (0, 1)], [None, (1, 1), None], [None, (1, 1), None]],
+        "output": (2, 1),  # Green sword
     },
     # Add more recipes as needed
 ]
 
 
+if __name__ == "__main__":
+    running = True
+    while running:
+        for event in pig.event.get():
+            if event.type == pig.QUIT:
+                running = False
+            if event.type == pig.MOUSEBUTTONDOWN:
+                if event.button == 3:
+                    # Right-click to get a random item
+                    selected = [Item(random.randint(0, 3)), 1]
+                elif event.button == 1:
+                    try:
+                        pos = player_inventory.Get_pos()
+                        if player_inventory.In_grid(pos[0], pos[1]):
+                            if selected:
+                                selected = player_inventory.Add(selected, pos)
+                            elif player_inventory.items[pos[0]][pos[1]]:
+                                selected = player_inventory.items[pos[0]][pos[1]]
+                                player_inventory.items[pos[0]][pos[1]] = None
+                        if crafting_grid.In_grid(pos[0], pos[1]):
+                            if selected:
+                                selected = crafting_grid.Add(selected, pos)
+                            elif crafting_grid.items[pos[0]][pos[1]]:
+                                selected = crafting_grid.items[pos[0]][pos[1]]
+                                crafting_grid.items[pos[0]][pos[1]] = None
+                    except:
+                        None  # Handle errors gracefully
 
+        screen.fill((255, 255, 255, 100))
+        player_inventory.draw([False, 0])
+        crafting_grid.draw([False, 0])
 
-running = True
-while running:
-    for event in pig.event.get():
-        if event.type == pig.QUIT:
-            running = False
-        if event.type == pig.MOUSEBUTTONDOWN:
-            if event.button == 3:
-                # Right-click to get a random item
-                selected = [Item(random.randint(0, 3)), 1]
-            elif event.button == 1:
-                try:
-                    pos = player_inventory.Get_pos()
-                    if player_inventory.In_grid(pos[0], pos[1]):
-                        if selected:
-                            selected = player_inventory.Add(selected, pos)
-                        elif player_inventory.items[pos[0]][pos[1]]:
-                            selected = player_inventory.items[pos[0]][pos[1]]
-                            player_inventory.items[pos[0]][pos[1]] = None
-                    if crafting_grid.In_grid(pos[0], pos[1]):
-                        if selected:
-                            selected = crafting_grid.Add(selected, pos)
-                        elif crafting_grid.items[pos[0]][pos[1]]:
-                            selected = crafting_grid.items[pos[0]][pos[1]]
-                            crafting_grid.items[pos[0]][pos[1]] = None
-                except:
-                    None  # Handle errors gracefully
+        if selected:
+            mousex, mousey = pig.mouse.get_pos()
+            screen.blit(selected[0].resize(30), (mousex, mousey))
+            obj = font.render(str(selected[1]), True, (0, 0, 0))
+            screen.blit(obj, (mousex + 15, mousey + 15))
 
-    screen.fill((255, 255, 255, 100))
-    player_inventory.draw([False, 0])
-    crafting_grid.draw([False, 0])
-    
-    if selected:
-        mousex, mousey = pig.mouse.get_pos()
-        screen.blit(selected[0].resize(30), (mousex, mousey))
-        obj = font.render(str(selected[1]), True, (0, 0, 0))
-        screen.blit(obj, (mousex + 15, mousey + 15))
-
-
-    pig.display.update()
+        pig.display.update()
