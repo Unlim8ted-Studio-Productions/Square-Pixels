@@ -1,41 +1,69 @@
+import random
 import pygame as pig
-
 
 pig.init()
 
-infoObject: object = pig.display.Info()
-screen: pig.Surface = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
+infoObject = pig.display.Info()
+screen = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
 
-# these are the images that get shown as items, different color circle for each item
+# Create item surfaces
 items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(4)]
 wood = pig.image.load(r"terraria_styled_game\Textures\wood.png")
+stone = pig.image.load(r"terraria_styled_game\Textures\stone.jpg")
 scale = (25, 25)
 wood = pig.transform.scale(wood, scale)
-items[0].blit(wood, (15, 15, 100, 100))
-stone = pig.image.load(r"terraria_styled_game\Textures\stone.jpg")
 stone = pig.transform.scale(stone, scale)
+items[0].blit(wood, (15, 15, 100, 100))
 items[1].blit(stone, (15, 15, 100, 100))
-pig.draw.circle(items[2], (255, 255, 0), (25, 25), 25)
+# Create a green sword item
+pig.draw.circle(items[2], (0, 255, 0), (25, 25), 25)
+# Create a blue circle item
 pig.draw.circle(items[3], (0, 0, 255), (25, 25), 25)
 
 font = pig.font.Font(pig.font.match_font("calibri"), 26)
 
-
-# class for a item, just holds the surface and can resize it
 class Item:
+    """
+    Represents an item with an associated image and ID.
+
+    Args:
+        id (int): The ID of the item.
+
+    Attributes:
+        id (int): The ID of the item.
+        surface (pygame.Surface): The image representing the item.
+    """
+
     def __init__(self, id):
         self.id = id
         self.surface = items[id]
 
     def resize(self, size):
+        """
+        Resize the item's image.
+
+        Args:
+            size (int): The size to resize the image to.
+
+        Returns:
+            pygame.Surface: The resized image.
+        """
         return pig.transform.scale(self.surface, (size, size))
 
-
-# the inventory system
 class Inventory:
-    def __init__(
-        self, rows=9, col=27, box_size=infoObject.current_w // 30, x=50, y=50, border=3
-    ):
+    """
+    Represents an inventory for managing items.
+
+    Args:
+        rows (int): The number of rows in the inventory grid.
+        col (int): The number of columns in the inventory grid.
+        box_size (int): The size of each inventory slot.
+        x (int): The x-coordinate of the top-left corner of the inventory grid.
+        y (int): The y-coordinate of the top-left corner of the inventory grid.
+        border (int): The border size around each inventory slot.
+    """
+
+    def __init__(self, rows=9, col=27, box_size=infoObject.current_w // 30, x=50, y=50, border=3):
         self.rows = rows
         self.col = col
         self.items = [[None for _ in range(self.rows)] for _ in range(self.col)]
@@ -44,9 +72,15 @@ class Inventory:
         self.y = y
         self.border = border
 
-    # draw everything
+
     def draw(self, ychange):
-        # draw background
+        """
+        Draw the inventory grid on the screen.
+
+        Args:
+            ychange (list): A list containing a boolean value indicating if the y-position should change,
+                           and the new y-position.
+        """
         temp = self.y
         if ychange[0]:
             self.y = ychange[1]
@@ -78,18 +112,28 @@ class Inventory:
                     )
         self.y = temp
 
-    # get the square that the mouse is over
     def Get_pos(self):
-        mouse = pig.mouse.get_pos()
+        """
+        Get the position in the inventory grid where the mouse cursor is located.
 
+        Returns:
+            tuple: A tuple containing the x and y coordinates of the grid position.
+        """
+        mouse = pig.mouse.get_pos()
         x = mouse[0] - self.x
         y = mouse[1] - self.y
         x = x // (self.box_size + self.border)
         y = y // (self.box_size + self.border)
         return (x, y)
 
-    # add an item/s
     def Add(self, Item, xy):
+        """
+        Add an item to the inventory grid at the specified position.
+
+        Args:
+            Item (Item): The item to add.
+            xy (tuple): A tuple containing the x and y coordinates of the position.
+        """
         x, y = xy
         if self.items[x][y]:
             if self.items[x][y][0].id == Item[0].id:
@@ -101,25 +145,38 @@ class Inventory:
         else:
             self.items[x][y] = Item
 
-    # check whether the mouse in in the grid
     def In_grid(self, x, y):
-        if 0 > x > self.col - 1:
+        """
+        Check if the specified coordinates are within the inventory grid.
+
+        Args:
+            x (int): The x-coordinate to check.
+            y (int): The y-coordinate to check.
+
+        Returns:
+            bool: True if the coordinates are within the grid, False otherwise.
+        """
+        if not (0 <= x < self.col):
             return False
-        if 0 > y > self.rows - 1:
+        if not (0 <= y < self.rows):
             return False
         return True
 
-    def get_item(self, itemId: int):
+    def get_item(self, itemId):
+        """
+        Get an item with the specified item ID and add it to the inventory.
+
+        Args:
+            itemId (int): The ID of the item to retrieve.
+        """
         lookingforspot = True
-        if itemId != None:
+        if itemId is not None:
             item = Item(itemId)
-            # 0=wood 1=stone
             x = 0
             y = 0
             while lookingforspot:
                 if self.items[x][y]:
-                    if self.items[x][y].id == itemId:
-                        # self.items[x][y] += 1
+                    if self.items[x][y][0].id == itemId:
                         lookingforspot = False
                     else:
                         self.items[x][y] = item
@@ -128,46 +185,119 @@ class Inventory:
                     self.items[x][y] = item
                     lookingforspot = False
 
+    def place_item_in_crafting_grid(self,item, x, y):
+        """
+        Place an item in the crafting grid at the specified position.
+        
+        Args:
+            item (Item): The item to place in the grid.
+            x (int): The x-coordinate of the grid position.
+            y (int): The y-coordinate of the grid position.
+        """
+        crafting_grid[y][x] = item
 
+    def get_item_from_crafting_grid(self,x, y):
+        """
+        Get the item from the crafting grid at the specified position.
+    
+        Args:
+            x (int): The x-coordinate of the grid position.
+            y (int): The y-coordinate of the grid position.
+    
+        Returns:
+            Item: The item in the grid position, or None if no item is present.
+        """
+        return crafting_grid[y][x]
+    
+    def count_item(self,item_id, inventory):
+        """
+        Count the number of items with the specified item ID in the inventory.
+    
+        Args:
+            item_id (int): The ID of the item to count.
+            inventory (Inventory): The inventory to search.
+    
+        Returns:
+            int: The count of items with the specified ID.
+        """
+        count = 0
+        for x in range(inventory.col):
+            for y in range(inventory.rows):
+                if inventory.items[x][y] and inventory.items[x][y][0].id == item_id:
+                    count += inventory.items[x][y][1]
+        return count
+    
+    def remove_item(self,item_id, count, inventory):
+        """
+        Remove a specified count of items with the given item ID from the inventory.
+    
+        Args:
+            item_id (int): The ID of the item to remove.
+            count (int): The count of items to remove.
+            inventory (Inventory): The inventory to remove items from.
+        """
+        for x in range(inventory.col):
+            for y in range(inventory.rows):
+                if inventory.items[x][y] and inventory.items[x][y][0].id == item_id:
+                    if inventory.items[x][y][1] >= count:
+                        inventory.items[x][y][1] -= count
+                        if inventory.items[x][y][1] == 0:
+                            inventory.items[x][y] = None
 player_inventory = Inventory()
 item_bar = Inventory(1, 5, x=infoObject.current_w // 2.5, y=infoObject.current_h / 1.2)
-
-# what the player is holding
 selected = None
 
+# Crafting Grid
+crafting_grid = Inventory(rows=3, col=3, box_size=50, x=50, y=infoObject.current_h / 1.2, border=3)
 
-def inventory(e, truescreen):
-    global selected, player_inventory
-    inven = True
-    while inven:
+
+crafting_recipes = [
+    {
+        'pattern': [[(0, 1), None, (0, 1)], [None, (1, 1), None], [None, (1, 1), None]],
+        'output': (2, 1)  # Green sword
+    },
+    # Add more recipes as needed
+]
+
+
+
+
+running = True
+while running:
+    for event in pig.event.get():
+        if event.type == pig.QUIT:
+            running = False
+        if event.type == pig.MOUSEBUTTONDOWN:
+            if event.button == 3:
+                # Right-click to get a random item
+                selected = [Item(random.randint(0, 3)), 1]
+            elif event.button == 1:
+                try:
+                    pos = player_inventory.Get_pos()
+                    if player_inventory.In_grid(pos[0], pos[1]):
+                        if selected:
+                            selected = player_inventory.Add(selected, pos)
+                        elif player_inventory.items[pos[0]][pos[1]]:
+                            selected = player_inventory.items[pos[0]][pos[1]]
+                            player_inventory.items[pos[0]][pos[1]] = None
+                    if crafting_grid.In_grid(pos[0], pos[1]):
+                        if selected:
+                            selected = crafting_grid.Add(selected, pos)
+                        elif crafting_grid.items[pos[0]][pos[1]]:
+                            selected = crafting_grid.items[pos[0]][pos[1]]
+                            crafting_grid.items[pos[0]][pos[1]] = None
+                except:
+                    None  # Handle errors gracefully
+
+    screen.fill((255, 255, 255, 100))
+    player_inventory.draw([False, 0])
+    crafting_grid.draw([False, 0])
+    
+    if selected:
         mousex, mousey = pig.mouse.get_pos()
-        # draw the screen
-        screen.fill((255, 255, 255, 100))
-        backround = pig.Surface([640, 480], pig.SRCALPHA)
-        #
-        truescreen.blit(backround, (0, 0))
-        player_inventory.draw()
+        screen.blit(selected[0].resize(30), (mousex, mousey))
+        obj = font.render(str(selected[1]), True, (0, 0, 0))
+        screen.blit(obj, (mousex + 15, mousey + 15))
 
-        # if holding something, draw it next to mouse
-        if selected:
-            truescreen.blit(selected[0].resize(30), (mousex, mousey))
-            obj = font.render(str(selected[1]), True, (0, 0, 0))
-            truescreen.blit(obj, (mousex + 15, mousey + 15))
 
-        pig.display.update()
-        if e.type == pig.K_ESCAPE:
-            inven = False
-
-            # if e.type == pig.MOUSEBUTTONDOWN:
-            # if right clicked, get a random item
-            # if e.button == 3:
-            #    selected = [Item(random.randint(0, 3)), 1]
-
-            if e.button == 1:
-                pos = player_inventory.Get_pos()
-                if player_inventory.In_grid(pos[0], pos[1]):
-                    if selected:
-                        selected = player_inventory.Add(selected, pos)
-                    elif player_inventory.items[pos[0]][pos[1]]:
-                        selected = player_inventory.items[pos[0]][pos[1]]
-                        player_inventory.items[pos[0]][pos[1]] = None
+    pig.display.update()
