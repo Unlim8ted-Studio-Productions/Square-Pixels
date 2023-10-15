@@ -6,6 +6,7 @@ import random
 from uimanagement.inventory import Item
 from uimanagement.inventory import player_inventory
 from uimanagement.inventory import item_bar
+from uimanagement.inventory import crafting_grid
 import soundmanagement.music as music
 
 selected = None
@@ -499,13 +500,15 @@ class Player:
         """
         if event.button == 1:
             self.click = pig.mouse.get_pos()
-            pos = item_bar.Get_pos()
+            pos = pig.mouse.get_pos()
             try:
+                gridpos = item_bar.Get_pos()
                 if item_bar.In_grid(pos[0], pos[1]):
-                    if item_bar.items[pos[0]][pos[1]]:
-                        selected = item_bar.items[pos[0]][pos[1]]
-                        holdobject = item_bar.items[pos[0]][pos[1]]
-                        print("Item selected:", selected)
+                    if selected:
+                        selected = item_bar.Add(selected, gridpos)
+                    elif item_bar.items[gridpos[0]][gridpos[1]]:
+                        selected = item_bar.items[gridpos[0]][gridpos[1]]
+                        item_bar.items[gridpos[0]][gridpos[1]] = None
             except:
                 None
                 # clicked out of inventory
@@ -604,6 +607,7 @@ class Player:
             screen.blit(backround, (0, 0))
             player_inventory.draw(ychange=(False, 0))
             item_bar.draw(ychange=(True, infoObject.current_h / 1.64))
+            crafting_grid.draw(ychange=(False, 0))
             # if holding something, draw it next to mouse
             if selected:
                 screen.blit(selected[0].resize(30), (mousex, mousey))
@@ -621,26 +625,37 @@ class Player:
                         selected = [Item(random.randint(0, 3)), 1]
                     elif event.button == 1:
                         try:
-                            pos = player_inventory.Get_pos()
+                            pos = pig.mouse.get_pos()
+                            gridpos = player_inventory.Get_pos()
                             if player_inventory.In_grid(pos[0], pos[1]):
                                 if selected:
-                                    selected = player_inventory.Add(selected, pos)
-                                elif player_inventory.items[pos[0]][pos[1]]:
-                                    selected = player_inventory.items[pos[0]][pos[1]]
-                                    player_inventory.items[pos[0]][pos[1]] = None
-                        except:
-                            None
-                            # print("clicked out of inventory")
-                        try:
+                                    selected = player_inventory.Add(selected, gridpos)
+                                elif player_inventory.items[gridpos[0]][gridpos[1]]:
+                                    selected = player_inventory.items[gridpos[0]][
+                                        gridpos[1]
+                                    ]
+                                    player_inventory.items[gridpos[0]][
+                                        gridpos[1]
+                                    ] = None
+                            gridpos = crafting_grid.Get_pos()
+                            if crafting_grid.In_grid(pos[0], pos[1]):
+                                if selected:
+                                    selected = crafting_grid.Add(selected, gridpos)
+                                elif crafting_grid.items[gridpos[0]][gridpos[1]]:
+                                    selected = crafting_grid.items[gridpos[0]][
+                                        gridpos[1]
+                                    ]
+                                    crafting_grid.items[gridpos[0]][gridpos[1]] = None
+                            gridpos = item_bar.Get_pos()
                             if item_bar.In_grid(pos[0], pos[1]):
                                 if selected:
-                                    selected = item_bar.Add(selected, pos)
-                                elif item_bar.items[pos[0]][pos[1]]:
-                                    selected = item_bar.items[pos[0]][pos[1]]
-                                    item_bar.items[pos[0]][pos[1]] = None
+                                    selected = item_bar.Add(selected, gridpos)
+                                elif item_bar.items[gridpos[0]][gridpos[1]]:
+                                    selected = item_bar.items[gridpos[0]][gridpos[1]]
+                                    item_bar.items[gridpos[0]][gridpos[1]] = None
                         except:
-                            pass
-                            # print("clicked out of inventory")
+                            None  # Handle errors gracefully
+        item_bar.y = infoObject.current_h / 1.2
 
     def draw_trail(self, screen: pig.Surface) -> None:
         """

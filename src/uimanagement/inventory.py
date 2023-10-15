@@ -113,7 +113,7 @@ class Inventory:
                         obj,
                         (rect[0] + self.box_size // 2, rect[1] + self.box_size // 2),
                     )
-        self.y = temp
+        # self.y = temp
 
     def Get_pos(self):
         """
@@ -127,7 +127,7 @@ class Inventory:
         y = mouse[1] - self.y
         x = x // (self.box_size + self.border)
         y = y // (self.box_size + self.border)
-        return (x, int(y))
+        return (int(x), int(y))
 
     def Add(self, Item, xy):
         """
@@ -303,12 +303,20 @@ if __name__ == "__main__":
                             elif crafting_grid.items[gridpos[0]][gridpos[1]]:
                                 selected = crafting_grid.items[gridpos[0]][gridpos[1]]
                                 crafting_grid.items[gridpos[0]][gridpos[1]] = None
+                        gridpos = item_bar.Get_pos()
+                        if item_bar.In_grid(pos[0], pos[1]):
+                            if selected:
+                                selected = item_bar.Add(selected, gridpos)
+                            elif item_bar.items[gridpos[0]][gridpos[1]]:
+                                selected = item_bar.items[gridpos[0]][gridpos[1]]
+                                item_bar.items[gridpos[0]][gridpos[1]] = None
                     except:
                         None  # Handle errors gracefully
 
         screen.fill((255, 255, 255, 100))
         player_inventory.draw([False, 0])
         crafting_grid.draw([False, 0])
+        item_bar.draw([False, 0])
 
         if selected:
             mousex, mousey = pig.mouse.get_pos()
