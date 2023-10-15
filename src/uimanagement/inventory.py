@@ -127,7 +127,7 @@ class Inventory:
         y = mouse[1] - self.y
         x = x // (self.box_size + self.border)
         y = y // (self.box_size + self.border)
-        return (x, y)
+        return (x, int(y))
 
     def Add(self, Item, xy):
         """
@@ -159,11 +159,18 @@ class Inventory:
         Returns:
             bool: True if the coordinates are within the grid, False otherwise.
         """
-        if not (0 <= x < self.col):
+        # print(
+        #    f"x: {x} y: {y} {self.x} {self.y} {self.x+self.col +1*self.box_size} {self.y+self.rows*self.box_size}"
+        # )
+        if (
+            x >= self.x
+            and x <= self.x + ((self.col + 1) * self.box_size)
+            and y >= self.y
+            and y <= self.y + (self.rows * self.box_size)
+        ):
+            return True
+        else:
             return False
-        if not (0 <= y < self.rows):
-            return False
-        return True
 
     def get_item(self, itemId):
         """
@@ -279,19 +286,23 @@ if __name__ == "__main__":
                     selected = [Item(random.randint(0, 3)), 1]
                 elif event.button == 1:
                     try:
-                        pos = player_inventory.Get_pos()
+                        pos = pig.mouse.get_pos()
+                        gridpos = player_inventory.Get_pos()
                         if player_inventory.In_grid(pos[0], pos[1]):
                             if selected:
-                                selected = player_inventory.Add(selected, pos)
-                            elif player_inventory.items[pos[0]][pos[1]]:
-                                selected = player_inventory.items[pos[0]][pos[1]]
-                                player_inventory.items[pos[0]][pos[1]] = None
+                                selected = player_inventory.Add(selected, gridpos)
+                            elif player_inventory.items[gridpos[0]][gridpos[1]]:
+                                selected = player_inventory.items[gridpos[0]][
+                                    gridpos[1]
+                                ]
+                                player_inventory.items[gridpos[0]][gridpos[1]] = None
+                        gridpos = crafting_grid.Get_pos()
                         if crafting_grid.In_grid(pos[0], pos[1]):
                             if selected:
-                                selected = crafting_grid.Add(selected, pos)
-                            elif crafting_grid.items[pos[0]][pos[1]]:
-                                selected = crafting_grid.items[pos[0]][pos[1]]
-                                crafting_grid.items[pos[0]][pos[1]] = None
+                                selected = crafting_grid.Add(selected, gridpos)
+                            elif crafting_grid.items[gridpos[0]][gridpos[1]]:
+                                selected = crafting_grid.items[gridpos[0]][gridpos[1]]
+                                crafting_grid.items[gridpos[0]][gridpos[1]] = None
                     except:
                         None  # Handle errors gracefully
 
