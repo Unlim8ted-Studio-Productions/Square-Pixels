@@ -12,6 +12,9 @@ from playfab.PlayFabClientAPI import (
 from playfab import PlayFabSettings
 from captcha.image import ImageCaptcha
 from playfab.PlayFabClientAPI import IsClientLoggedIn
+import tkinter as tk
+from tkinter import filedialog
+
 
 # Initialize Pygame
 pygame.init()
@@ -364,10 +367,18 @@ class SignUpScreen:
         self.password_input = InputField(
             WIDTH // 2 - 100, HEIGHT // 2, 400, 40, "Password"
         )
+        self.profile_picture_button = Button(
+            "Upload Profile Picture",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 50,
+            200,
+            50,
+            self.upload_profile_picture,
+        )
         self.create_account_button = Button(
             "Create Account",
             WIDTH // 2 - 100,
-            HEIGHT // 2 + 50,
+            HEIGHT // 2 + 100,
             200,
             50,
             self.create_account,
@@ -375,7 +386,7 @@ class SignUpScreen:
         self.google_login_button = Button(
             "Google Login",
             WIDTH // 2 - 100,
-            HEIGHT // 2 + 100,
+            HEIGHT // 2 + 150,
             200,
             50,
             self.google_login,
@@ -383,7 +394,7 @@ class SignUpScreen:
         self.back_button = Button(
             "Back",
             WIDTH // 2 - 100,
-            HEIGHT // 2 + 150,
+            HEIGHT // 2 + 200,
             200,
             50,
             self.back,
@@ -393,11 +404,13 @@ class SignUpScreen:
                 self.username_input,
                 self.email_input,
                 self.password_input,
+                self.profile_picture_button,
                 self.create_account_button,
                 self.google_login_button,
                 self.back_button,
             ]
         )
+        self.profile_picture = None
 
     def render(self):
         for button in self.buttons:
@@ -406,39 +419,6 @@ class SignUpScreen:
     def back(self):
         global current_page, main_page
         current_page = main_page
-
-    # Function to create an account with an email address
-
-    def create_account(self):
-        global signed_in
-        email = self.email_input.text
-        password = self.password_input.text
-        username = self.username_input.text
-
-        def callback(success, failure):
-            if success:
-                display_message("Account created and signed in.", (0, 255, 0))
-            else:
-                display_message("Account creation failed.")
-                if failure:
-                    display_message("Here's some debug information:")
-                    display_message(failure)
-
-        try:
-            request = {"CreateAccount": True}
-            request["TitleId"] = PlayFabSettings.TitleId
-            request["Email"] = email
-            request["Password"] = password
-            request["Username"] = username
-            result = playfab.PlayFabClientAPI.RegisterPlayFabUser(request, callback)
-
-            if result is not None and "SessionTicket" in result:
-                signed_in = True
-                print("Account created and signed in.", (0, 255, 0))
-            else:
-                None
-        except Exception as e:
-            display_message(f"Account creation failed: {e}")
 
     def google_login(self):
         request = {"CreateAccount": True}
@@ -458,9 +438,54 @@ class SignUpScreen:
 
         result = playfab.PlayFabClientAPI.LoginWithGoogleAccount(request, callback)
 
-    # Function to send a verification code to the provided email
-    def send_verification_code(self):
+    # Function to create an account with an email address
+    def create_account(self):
+        global signed_in
         email = self.email_input.text
+        password = self.password_input.text
+        username = self.username_input.text
+
+        def callback(success, failure):
+            if success:
+                display_message("Account created and signed in.", (0, 255, 0))
+            else:
+                display_message("Account creation failed.")
+                if failure:
+                    display_message("Here's some debug information:")
+                    display_message(str(failure))
+
+        try:
+            request = {"CreateAccount": True}
+            request["TitleId"] = PlayFabSettings.TitleId
+            request["Email"] = email
+            request["Password"] = password
+            request["Username"] = username
+
+            # Upload the profile picture if it has been selected
+            if self.profile_picture:
+                request["ProfilePicture"] = self.profile_picture
+
+            result = playfab.PlayFabClientAPI.RegisterPlayFabUser(request, callback)
+
+            if result is not None and "SessionTicket" in result:
+                signed_in = True
+                display_message("Account created and signed in.", (0, 255, 0))
+            else:
+                None
+        except Exception as e:
+            display_message(f"Account creation failed: {e}")
+
+    # Function to upload a profile picture
+    def upload_profile_picture(self):
+        # Open a file dialog to select a profile picture
+        root = tk.Tk()
+        root.withdraw()  # Hide the main window
+        file_path = filedialog.askopenfilename(title="Select a Profile Picture")
+        root.destroy()  # Close the hidden root window
+
+        if file_path:
+            with open(file_path, "rb") as profile_picture:
+                self.profile_picture = profile_picture.read()
 
 
 # Create a screen for the sign-in process
@@ -657,15 +682,6 @@ def guest():
     signed_in = "Guest"
 
 
-# Update the button click handlers to switch to the respective screens
-# main_page.add_button(
-#    Button("Create Account", 100, 250, 200, 50, switch_to_sign_up)
-# )
-# main_page.add_button(
-#    Button("Sign In", 350, 250, 200, 50, switch_to_sign_in)
-# )
-
-
 # Add a function to show the sign-in or guest popup
 def show_signin_popup():
     global WIDTH, HEIGHT, screen, BACKGROUND_COLOR, signed_in, current_message
@@ -676,7 +692,7 @@ def show_signin_popup():
     ########################DEVELOPMENTAL TESTING ONLY##############################
     popup_font = pygame.font.Font(None, 24)
     popup_text = "Please sign in to play the game and save your progress."
-    popup_text2 = "If you choose to play as a guest, your progress will reset daily."
+    popup_text2 = "If you choose to play as a guest, your progress will reset daily because we won't be able to verify your ownership of the game."
     sign_in_button = Button(
         "Sign In", WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, switch_to_sign_in
     )
