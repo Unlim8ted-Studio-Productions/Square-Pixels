@@ -14,7 +14,7 @@ from captcha.image import ImageCaptcha
 from playfab.PlayFabClientAPI import IsClientLoggedIn
 import tkinter as tk
 from tkinter import filedialog
-
+import hashlib
 
 # Initialize Pygame
 pygame.init()
@@ -354,6 +354,40 @@ class InputField:
                 self.text += event.unicode
 
 
+class Checkbox:
+    def __init__(self, label, x, y, callback):
+        self.label = label
+        self.x = x
+        self.y = y
+        self.width = 20  # Width of the checkbox
+        self.height = 20  # Height of the checkbox
+        self.checked = False
+        self.callback = callback
+
+    def draw(self):
+        # Draw the checkbox border
+        stroke(0)  # You can use the appropriate color here
+        strokeWeight(2)  # You can adjust the thickness
+        noFill()
+        rect(self.x, self.y, self.width, self.height)
+
+        # Draw the checkmark if checked
+        if self.checked:
+            line(self.x, self.y, self.x + self.width, self.y + self.height)
+            line(self.x + self.width, self.y, self.x, self.y + self.height)
+
+        # Draw the label
+        noStroke()
+        fill(0)  # You can use the appropriate color here
+        textSize(16)  # You can adjust the font size
+        text(self.label, self.x + 30, self.y + 15)
+
+    def mouse_click(self, mx, my):
+        if self.x < mx < self.x + self.width and self.y < my < self.y + self.height:
+            self.checked = not self.checked
+            self.callback()  # Call the callback function when the checkbox state changes
+
+
 # Create a screen for the sign-up process
 class SignUpScreen:
     def __init__(self):
@@ -522,6 +556,7 @@ class SignInScreen:
                 self.back_button,
             ]
         )
+        self.remember_me = True
 
     def render(self):
         for button in self.buttons:
@@ -554,15 +589,28 @@ class SignInScreen:
             print(good)
             if good:
                 signed_in = True
-                # playfab.PlayFabClientAPI.GetPlayerProfile
-                # user = {""}
-                display_message("Signed in.", (0, 255, 0))
-                return
+                em = hashlib.sha256(bytes(request["Email"]))
+                p = hashlib.sha256(
+                    bytes(request["Password"])
+                )  # TODO #24 make keep logged in more secure
+                if self.remember_me: #TODO #26 #25 add remember me checkbox
+                    with open("h.h", "x") as x:
+                        x.write(em + "\n" + p)
+                        x.close()
+                        #TODO #27 make load details for remember me on startup
+                    # playfab.PlayFabClientAPI.GetPlayerProfile
+                    # user = {""}
+                    display_message("Signed in.", (0, 255, 0))
+                    return
             else:
                 print("signed in failed")
                 display_message("Sign-in failed.")
         except Exception as e:
             display_message(f"Sign-in failed: {e}")
+
+    # Function to toggle the "Remember Me" checkbox
+    def toggle_remember_me(self):
+        self.remember_me = not self.remember_me
 
     # Function to send a verification code to the provided email
     def send_verification_code(self):
