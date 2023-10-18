@@ -26,6 +26,7 @@ def game(
         r"terraria_styled_game\sounds\music\ingame\music\Ingame1.mp3", volume=0.2
     )
     enemymanager = enemy_manager.Enemy_manager([(0, infoObject.current_w)])
+    xp = 0
     while running:
         clicked = False
         if reset_terrain:
@@ -82,7 +83,7 @@ def game(
                     channel=1,
                     volume=5,
                 )
-            tile = player.delete_tile(terrain_gen.terrain, tile)
+            tile = player.delete_tile(terrain_gen.terrain, tile, xp)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders, screen
         )  # terrain_gen.colliders)
@@ -91,7 +92,7 @@ def game(
         )
         if player.current_health <= 0:
             if death.draw_death_screen(
-                screen, infoObject.current_w, infoObject.current_h
+                screen, infoObject.current_w, infoObject.current_h, xp
             ):
                 player.respawn(sky, infoObject, [(0, infoObject.current_w)])
             else:

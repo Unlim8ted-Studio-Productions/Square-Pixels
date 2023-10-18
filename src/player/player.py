@@ -20,7 +20,7 @@ class Player:
     Represents the player character in the game.
     """
 
-    def __init__(self, x, y, health_bar_length):
+    def __init__(self, x, y, health_bar_length, xp):
         """
         Initializes the Player object.
 
@@ -32,6 +32,7 @@ class Player:
         # Initialize player attributes
         self.x = x
         self.y = y
+        self.xp = xp
         self.width = 5
         self.height = 5
         self.jump = False
@@ -79,6 +80,7 @@ class Player:
         # Reset player health and find a respawn location
         self.current_health = 200
         self.target_health = 500
+        self.xp = 0
         respawned = False
         for i in active_chunks:
             while not respawned:
@@ -413,7 +415,7 @@ class Player:
         if self.aiming:
             self.arrow_end_pos = pig.mouse.get_pos()
 
-    def delete_tile(self, terrain, tile):
+    def delete_tile(self, terrain, tile, xp):
         """
         Delete a tile from the terrain.
 
@@ -436,6 +438,10 @@ class Player:
             e = terrain[(self.click[1] - 5) // 15][self.click[0] // 15]
             f = terrain[self.click[1] // 15][(self.click[0] - 5) // 15]
             g = terrain[self.click[1] // 15][(self.click[0] + 5) // 15]
+            h = [a, b, c, d, e, f, g]
+            for is_block in h:
+                if is_block != 8:
+                    xp += is_block
             terrain[self.click[1] // 15][self.click[0] // 15] = 8
             terrain[(self.click[1] + 5) // 15][(self.click[0] - 5) // 15] = 8
             terrain[(self.click[1] - 5) // 15][(self.click[0] + 5) // 15] = 8
@@ -516,6 +522,9 @@ class Player:
         if event.button == 3 and holdobject != [Item, 999999999999999999]:
             self.place = pig.mouse.get_pos()
             return self.placeitem(holdobject, terrain)
+
+    def draw_xp(self):
+        pass
 
     def player_jump(self):
         """makes the player jump"""

@@ -1,13 +1,18 @@
 import pygame as pig
+import playfab
+
+playfab.PlayFabClientAPI.GetLeaderboard
 
 
-def draw_death_screen(screen, width, height):
+def draw_death_screen(screen, width, height, xp):
     clock: object = pig.time.Clock()
     death_text = pig.font.Font(
         "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50
     )
     d_text = death_text.render("You Died", True, (255, 255, 255))
+    xp_text = death_text.render(f"Your Score: {xp}", True, (255, 255, 255))
     death_text_rect = d_text.get_rect(center=(width // 2, height // 3))
+    xp_text_rect = xp_text.get_rect(center=(width // 2, height // 3 + 50))
     # Define buttons
     respawn_button = pig.Rect(width // 4, height // 2, 200, 50)
     menu_button = pig.Rect(3 * width // 4, height // 2, 200, 50)
@@ -18,6 +23,7 @@ def draw_death_screen(screen, width, height):
                 quit()
         screen.fill((0, 0, 0))
         screen.blit(d_text, death_text_rect)
+        screen.blit(xp_text, xp_text_rect)
         # Check if the mouse is hovering over the buttons
         if respawn_button.collidepoint(pig.mouse.get_pos()):
             pig.draw.rect(screen, (150, 150, 150), respawn_button)

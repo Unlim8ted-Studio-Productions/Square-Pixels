@@ -354,7 +354,7 @@ class InputField:
                 self.text += event.unicode
 
 
-#class Checkbox:
+# class Checkbox:
 #    def __init__(self, label, x, y, callback):
 #        self.label = label
 #        self.x = x
@@ -387,6 +387,7 @@ class InputField:
 #            self.checked = not self.checked
 #            self.callback()  # Call the callback function when the checkbox state changes
 #
+
 
 # Create a screen for the sign-up process
 class SignUpScreen:
@@ -593,11 +594,11 @@ class SignInScreen:
                 p = hashlib.sha256(
                     bytes(request["Password"])
                 )  # TODO #24 make keep logged in more secure
-                if self.remember_me: #TODO #26 #25 add remember me checkbox
+                if self.remember_me:  # TODO #26 #25 add remember me checkbox
                     with open("h.h", "x") as x:
                         x.write(em + "\n" + p)
                         x.close()
-                        #TODO #27 make load details for remember me on startup
+                        # TODO #27 make load details for remember me on startup
                     # playfab.PlayFabClientAPI.GetPlayerProfile
                     # user = {""}
                     display_message("Signed in.", (0, 255, 0))
@@ -860,6 +861,44 @@ def mainfunc():
         # Add other game states as needed
         pygame.display.update()
         pygame.time.Clock().tick(FPS)
+
+
+# Get leaderboard data
+def get_leaderboard():
+    request = {
+        "StatisticName": "HighScore",  # Replace with your leaderboard name
+        "StartPosition": 0,
+        "MaxResultsCount": 10,  # Get the top 10 scores
+    }
+    result = playfab.PlayFabClientAPI.GetLeaderboard(request)
+    if result is not None:
+        leaderboard_data = result.data.Leaderboard
+        # Process and display leaderboard_data in your game's UI
+
+
+# Get a player's friends list
+def get_friends_list():
+    request = {}
+    result = playfab.PlayFabClientAPI.GetFriendsList(request)
+    if result is not None:
+        friends = result.data.Friends
+        # Process and display friends list in your game's UI
+
+
+# Add a friend
+def add_friend(player_id):
+    request = {"FriendPlayFabId": player_id}
+    playfab.PlayFabClientAPI.AddFriend(request)
+
+
+# Handle friend requests, accept or decline
+def handle_friend_request(friend_playfab_id, accept):
+    if accept:
+        request = {"FriendPlayFabId": friend_playfab_id}
+        playfab.PlayFabClientAPI.AddFriend(request)
+    else:
+        request = {"FriendPlayFabId": friend_playfab_id}
+        playfab.PlayFabClientAPI.RemoveFriend(request)
 
 
 if __name__ == "__main__":
