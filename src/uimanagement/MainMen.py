@@ -15,6 +15,15 @@ from playfab.PlayFabClientAPI import IsClientLoggedIn
 import tkinter as tk
 from tkinter import filedialog
 import hashlib
+from uimanagement.leaderboard import (
+    display_leaderboard,
+    update_leaderboard,
+    get_leaderboard,
+    next_leadeboard_page,
+    previous_leadeboard_page,
+    search_input_callback_l,
+)
+
 
 # Initialize Pygame
 pygame.init()
@@ -146,7 +155,16 @@ class Button:
 
 
 # Main Menu
-def main_menu(host_button, join_button, leaderboard_data, leaderboard_page):
+def main_menu(
+    host_button,
+    join_button,
+    leaderboard_data,
+    leaderboard_page,
+    next_button,
+    previous_button,
+    search_input,
+    search_button,
+):
     """
     Display the main menu and handle user interactions.
 
@@ -236,8 +254,20 @@ def main_menu(host_button, join_button, leaderboard_data, leaderboard_page):
             play_button.draw()
             settings_button.draw()
             quit_button.draw()
-        
-        display_leaderboard(leaderboard_data)
+
+        display_leaderboard(
+            leaderboard_data,
+            leaderboard_page,
+            "",
+            10,
+            next_button,
+            previous_button,
+            search_input,
+            search_button,
+            screen,
+            WIDTH,
+            WHITE,
+        )
         if show_play_buttons:
             singleplayer_button.draw()
             multiplayer_button.draw()
@@ -732,7 +762,7 @@ def guest():
 
 
 # Add a function to show the sign-in or guest popup
-def show_signin_popup():
+def show_signin_popup(leaderboard_page):
     global WIDTH, HEIGHT, screen, BACKGROUND_COLOR, signed_in, current_message
     ########################DEVELOPMENTAL TESTING ONLY##############################
     create_account = Button(
@@ -795,7 +825,8 @@ def show_signin_popup():
                 create_account.handle_event(event)
                 ########################DEVELOPMENTAL TESTING ONLY##############################
         if signed_in != False:
-            return
+            leaderboard_data = get_leaderboard(leaderboard_page, display_message)
+            return leaderboard_data
 
         pygame.display.update()
         pygame.display.flip()
@@ -824,7 +855,11 @@ def mainfunc():
     """
     Main function to run the game.
     """
-    global running,current_leader_page
+    global running, current_leader_page
+    # Add these constants to control pagination
+    ENTRIES_PER_PAGE = 10
+    current_leader_page = 1
+    leaderboard_data = get_leaderboard(current_leader_page, display_message)
     # Initialize multiplayer and singleplayer buttons
     host_button = Button(
         "Host", WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50, host_multiplayer_game
@@ -832,31 +867,52 @@ def mainfunc():
     join_button = Button(
         "Join", WIDTH // 2 - 100, HEIGHT // 2 + 100, 200, 50, join_multiplayer_game
     )
-    # Add these constants to control pagination
-    ENTRIES_PER_PAGE = 10
-    current_leader_page = 1
     # Add buttons for next and previous page
-    next_button = Button("Next Page", WIDTH - 120, HEIGHT - 40, 100, 30, next_page)
-    previous_button = Button("Previous Page", 20, HEIGHT - 40, 120, 30, previous_page)
+    next_button = Button(
+        "Next Page",
+        WIDTH - 120,
+        HEIGHT - 40,
+        100,
+        30,
+        next_leadeboard_page(current_leader_page, leaderboard_data, display_message),
+    )
+    previous_button = Button(
+        "Previous Page",
+        20,
+        HEIGHT - 40,
+        120,
+        30,
+        previous_leadeboard_page(
+            current_leader_page, leaderboard_data, display_message
+        ),
+    )
     # Add the search button in the display_leaderboard function
-    search_button = Button("Search", 230, 20, 80, 30, search_input_callback)
+    search_button = Button("Search", 230, 20, 80, 30, search_input_callback_l)
     # Add the search bar for filtering leaderboard entries
     search_input = InputField(20, 20, 200, 30, "Search by Player Name")
     running = True
     # Main game loop
-    leaderboard_data = get_leaderboard(current_leader_page)
     while running:
         # Generate a random cloud
         if (
             signed_in == False
         ):  # DO NOT CHANGE TO "IF NOT SIGNED_IN: because singed_in can also be a string"
-            show_signin_popup()
+            leaderboard_data = show_signin_popup(current_leader_page)
 
         if signed_in == "Guest":
             pass  # TODO:implement #22 guest logic in future
         # TODO #23 add function checking acount variable for having bought this game
         if game_state == "menu":
-            main_menu(host_button, join_button, leaderboard_data, current_leader_page)
+            main_menu(
+                host_button,
+                join_button,
+                leaderboard_data,
+                current_leader_page,
+                next_button,
+                previous_button,
+                search_input,
+                search_button,
+            )
         elif game_state == "multiplayer":
             if show_multiplayer_options:
                 host_button.draw()
@@ -872,93 +928,6 @@ def mainfunc():
         # Add other game states as needed
         pygame.display.update()
         pygame.time.Clock().tick(FPS)
-
-
-# Functions for handling next and previous page
-def next_page(current_leader_page, leaderboard_data):
-    current_leader_page += 1
-    leaderboard_data = get_leaderboard(current_leader_page)
-
-
-def previous_page():
-    if current_leader_page > 1:
-        current_leader_page -= 1
-        leaderboard_data = get_leaderboard(current_leader_page)
-
-# Function for handling search input
-def search_input_callback(search_input):
-    global search_query
-    search_query = search_input.text
-
-
-
-def display_leaderboard(leaderboard_data, current_leader_page, search_query, ENTRIES_PER_PAGE, next_button, previous_button, search_input, search_button):
-    # Filter leaderboard data based on the search query
-    filtered_data = []
-    for entry in leaderboard_data:
-        player_name = entry["DisplayName"]
-        if search_query.lower() in player_name.lower():
-            filtered_data.append(entry)
-
-    # Calculate the start and end indices for the current page
-    start_index = (current_page - 1) * ENTRIES_PER_PAGE
-    end_index = start_index + ENTRIES_PER_PAGE
-
-    # Display leaderboard entries for the current page
-    y = 50  # Initial y-coordinate for rendering leaderboard entries
-
-    for entry in filtered_data[start_index:end_index]:
-        player_name, score = entry["DisplayName"], entry["Value"]
-        leaderboard_text = f"{player_name}: {score}"
-
-        # Render the leaderboard text on the right side of the screen
-        text_surface = font.render(leaderboard_text, True, WHITE)
-        text_rect = text_surface.get_rect(right=WIDTH - 20, top=y)
-        screen.blit(text_surface, text_rect)
-
-        y += 30  # Adjust the y-coordinate for the next entry
-
-
-    next_button.draw()
-    previous_button.draw()
-
-    search_input.text = search_query
-    search_input.draw()
-
-    search_button.draw()
-
-def update_leaderboard(event, search_input, next_button, search_button, previous_button):
-    search_input.handle_event(event)
-    next_button.handle_event(event)
-    previous_button.handle_event(event)
-    search_button.handle_event(event)
-
-
-def get_leaderboard(current_leader_page):
-    start = (current_leader_page - 1) * 10
-    end = start + 10
-    request = {
-        "StatisticName": "xp",  # Replace with your leaderboard name
-        "StartPosition": start,
-        "MaxResultsCount": end,  # Get the top 10 scores
-    }
-    def callback(success, failure):
-            global good
-            if success:
-                None
-               # good = True
-                #display_message("Account created and signed in.", (0, 255, 0))
-            else:
-                None#display_message("Account creation failed.")
-                if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
-    result = playfab.PlayFabClientAPI.GetLeaderboard(request,callback)
-    if result is not None:
-        leaderboard_data = result.data.Leaderboard
-        return leaderboard_data
-    return []  # Return an empty list if no data is available
-
 
 
 # Get a player's friends list
