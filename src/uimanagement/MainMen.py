@@ -607,7 +607,7 @@ class SignInScreen:
 
     def sign_in_with_email(self, email=None, password=None):
         global signed_in, good  # , user
-        if email != None and password != None:
+        if email == None and password == None:
             email = self.email_input.text
             password = self.password_input.text
 
@@ -640,7 +640,6 @@ class SignInScreen:
                         print(x)
                         x.write(em + "\n" + p)
                         x.close()
-                        # TODO #27 make load details for remember me on startup
                     # playfab.PlayFabClientAPI.GetPlayerProfile
                     # user = {""}
                 display_message("Signed in.", (0, 255, 0))
