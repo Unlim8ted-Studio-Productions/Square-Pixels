@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src"
+    "\\src",
+    "\\src\\uimanagement"
   ],
-  "SelectedNode": "\\src\\logo.py",
+  "SelectedNode": "\\src\\uimanagement\\inventory.py",
   "PreviewInSolutionExplorer": false
 }
