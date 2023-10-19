@@ -46,7 +46,7 @@ if __name__ == "__main__":
     )
     player_sprite = main()
     terrain_gen.generate_terrain(screen)
-    player = pl.Player(vx, vy, infoObject.current_w - 40)
+    player = pl.Player(vx, vy, infoObject.current_w - 40, 0)
     DayTime = 0
     Morning = 0
     # world:object = tgen.generate()

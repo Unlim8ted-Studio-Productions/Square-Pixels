@@ -104,7 +104,9 @@ show_multiplayer_options = False  # Flag to control visibility of multiplayer op
 class Button:
     """Button class for creating interactive buttons in the game."""
 
-    def __init__(self, text, x, y, width, height, command):
+    def __init__(
+        self, text, x, y, width, height, command, additional_data: list = None
+    ):
         """
         Initialize a button.
 
@@ -115,6 +117,7 @@ class Button:
             width (int): The width of the button.
             height (int): The height of the button.
             command (function): The function to be executed when the button is clicked.
+            aditional data (list): arguments the buttons command needs to run
         """
         self.text = text
         self.x = x
@@ -122,6 +125,7 @@ class Button:
         self.width = width
         self.height = height
         self.command = command
+        self.additional_data = additional_data
         self.hovered = False
 
     def draw(self):
@@ -151,7 +155,10 @@ class Button:
             )
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.hovered:
-                self.command()
+                if self.additional_data != None:
+                    self.command(*self.additional_data)
+                else:
+                    self.command()
 
 
 # Main Menu
@@ -230,6 +237,9 @@ def main_menu(
             settings_button.handle_event(event)
             quit_button.handle_event(event)
             credits_button.handle_event(event)
+            update_leaderboard(
+                event, search_input, next_button, search_button, previous_button
+            )
             if show_play_buttons:
                 singleplayer_button.handle_event(event)
                 multiplayer_button.handle_event(event)
@@ -626,13 +636,14 @@ class SignInScreen:
                 )  # TODO #24 make keep logged in more secure
                 if self.remember_me:  # TODO #26 #25 add remember me checkbox
                     with open("h.h", "x") as x:
+                        print(x)
                         x.write(em + "\n" + p)
                         x.close()
                         # TODO #27 make load details for remember me on startup
                     # playfab.PlayFabClientAPI.GetPlayerProfile
                     # user = {""}
-                    display_message("Signed in.", (0, 255, 0))
-                    return
+                display_message("Signed in.", (0, 255, 0))
+                return
             else:
                 print("signed in failed")
                 display_message("Sign-in failed.")
@@ -662,60 +673,6 @@ def display_message(message, color=(255, 0, 0)):
     text_surface = font.render(message, True, color)
     text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))
     screen.blit(text_surface, text_rect)
-
-
-# Create a Button class with text input fields
-class Button:
-    """Button class for creating interactive buttons in the game."""
-
-    def __init__(self, text, x, y, width, height, command):
-        """
-        Initialize a button.
-
-        Args:
-            text (str): The text displayed on the button.
-            x (int): The x-coordinate of the button's top-left corner.
-            y (int): The y-coordinate of the button's top-left corner.
-            width (int): The width of the button.
-            height (int): The height of the button.
-            command (function): The function to be executed when the button is clicked.
-        """
-        self.text = text
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.command = command
-        self.hovered = False
-
-    def draw(self):
-        """Draw the button on the screen."""
-        color = BUTTON_HOVER_COLOR if self.hovered else BUTTON_COLOR
-        pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        text = font.render(self.text, True, WHITE)
-        screen.blit(
-            text,
-            (
-                self.x + self.width // 2 - text.get_width() // 2,
-                self.y + self.height // 2 - text.get_height() // 2,
-            ),
-        )
-
-    def handle_event(self, event):
-        """
-        Handle events related to the button.
-
-        Args:
-            event: The Pygame event to be processed.
-        """
-        if event.type == pygame.MOUSEMOTION:
-            self.hovered = (
-                self.x < event.pos[0] < self.x + self.width
-                and self.y < event.pos[1] < self.y + self.height
-            )
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.hovered:
-                self.command()
 
 
 # Create a "Not a Robot" button
@@ -874,17 +831,17 @@ def mainfunc():
         HEIGHT - 40,
         100,
         30,
-        next_leadeboard_page(current_leader_page, leaderboard_data, display_message),
+        next_leadeboard_page,
+        [current_leader_page, leaderboard_data, display_message],
     )
     previous_button = Button(
         "Previous Page",
-        20,
+        WIDTH - 500,
         HEIGHT - 40,
         120,
         30,
-        previous_leadeboard_page(
-            current_leader_page, leaderboard_data, display_message
-        ),
+        previous_leadeboard_page,
+        [current_leader_page, leaderboard_data, display_message],
     )
     # Add the search button in the display_leaderboard function
     search_button = Button("Search", 230, 20, 80, 30, search_input_callback_l)

@@ -83,7 +83,7 @@ def get_leaderboard(current_leader_page, display_message):
     start = (current_leader_page - 1) * 10
     end = start + 10
     request = {
-        "StatisticName": "xp",  # Replace with your leaderboard name
+        "StatisticName": "XP",  # Replace with your leaderboard name
         "StartPosition": start,
         "MaxResultsCount": end,  # Get the top 10 scores
     }
