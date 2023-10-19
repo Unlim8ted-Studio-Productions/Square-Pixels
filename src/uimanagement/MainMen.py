@@ -605,10 +605,11 @@ class SignInScreen:
 
     # Function to sign in with an email address
 
-    def sign_in_with_email(self):
+    def sign_in_with_email(self, email=None, password=None):
         global signed_in, good  # , user
-        email = self.email_input.text
-        password = self.password_input.text
+        if email != None and password != None:
+            email = self.email_input.text
+            password = self.password_input.text
 
         def callback(success, failure):
             global good
@@ -854,7 +855,13 @@ def mainfunc():
         if (
             signed_in == False
         ):  # DO NOT CHANGE TO "IF NOT SIGNED_IN: because singed_in can also be a string"
-            leaderboard_data = show_signin_popup(current_leader_page)
+            try:
+                with open("h.h") as a:
+                    leaderboard_data = SignInScreen.sign_in_with_email(
+                        SignInScreen(), a.readline(0), a.readline(1)
+                    )
+            except:
+                leaderboard_data = show_signin_popup(current_leader_page)
 
         if signed_in == "Guest":
             pass  # TODO:implement #22 guest logic in future
