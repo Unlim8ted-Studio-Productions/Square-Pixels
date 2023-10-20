@@ -4,17 +4,18 @@ import eastereggs.credits_Easteregg as egg
 from soundmanagement.music import play_music
 import random
 import playfab
+from playfab import PlayFabSettings
+from captcha.image import ImageCaptcha
+from playfab.PlayFabClientAPI import IsClientLoggedIn
 from playfab.PlayFabClientAPI import (
     LoginWithEmailAddress,
     RegisterPlayFabUser,
     LoginWithGoogleAccount,
 )
-from playfab import PlayFabSettings
-from captcha.image import ImageCaptcha
-from playfab.PlayFabClientAPI import IsClientLoggedIn
 import tkinter as tk
 from tkinter import filedialog
 import hashlib
+# from account_mannagement.authentication import SignInScreen, SignUpScreen
 from uimanagement.leaderboard import (
     display_leaderboard,
     update_leaderboard,
@@ -23,6 +24,9 @@ from uimanagement.leaderboard import (
     previous_leadeboard_page,
     search_input_callback_l,
 )
+from uimanagement.input_feild import InputField
+from uimanagement.button import Button
+from uimanagement.clouds import Cloud
 
 
 # Initialize Pygame
@@ -61,26 +65,6 @@ BUTTON_HOVER_COLOR = (100, 100, 100)
 white = (255, 255, 255)
 
 
-# Cloud class
-class Cloud:
-    def __init__(self, x, y, image, speed):
-        self.x = x
-        self.y = y
-        self.image = image
-        self.speed = speed
-        self.alpha = 0
-
-    def move(self):
-        self.x -= self.speed
-        self.alpha += 1
-        if self.alpha >= 255:
-            self.alpha = 255
-
-    def draw(self):
-        self.image.set_alpha(self.alpha)
-        screen.blit(self.image, (self.x, self.y))
-
-
 # Load cloud images
 cloud_images = [
     pygame.transform.scale(
@@ -102,64 +86,242 @@ show_play_buttons = False  # Flag to control visibility of play buttons
 show_multiplayer_options = False  # Flag to control visibility of multiplayer options
 
 
-class Button:
-    """Button class for creating interactive buttons in the game."""
-
-    def __init__(
-        self, text, x, y, width, height, command, additional_data: list = None
-    ):
-        """
-        Initialize a button.
-
-        Args:
-            text (str): The text displayed on the button.
-            x (int): The x-coordinate of the button's top-left corner.
-            y (int): The y-coordinate of the button's top-left corner.
-            width (int): The width of the button.
-            height (int): The height of the button.
-            command (function): The function to be executed when the button is clicked.
-            aditional data (list): arguments the buttons command needs to run
-        """
-        self.text = text
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.command = command
-        self.additional_data = additional_data
-        self.hovered = False
-
-    def draw(self):
-        """Draw the button on the screen."""
-        color = BUTTON_HOVER_COLOR if self.hovered else BUTTON_COLOR
-        pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        text = font.render(self.text, True, WHITE)
-        screen.blit(
-            text,
-            (
-                self.x + self.width // 2 - text.get_width() // 2,
-                self.y + self.height // 2 - text.get_height() // 2,
-            ),
+# Create a screen for the sign-up process
+class SignUpScreen:
+    def __init__(self):
+        self.buttons = []
+        self.username_input = InputField(
+            WIDTH // 2 - 100, HEIGHT // 2 - 100, 400, 40, "Username"
         )
+        self.email_input = InputField(
+            WIDTH // 2 - 100, HEIGHT // 2 - 50, 400, 40, "Email"
+        )
+        self.password_input = InputField(
+            WIDTH // 2 - 100, HEIGHT // 2, 400, 40, "Password"
+        )
+        self.profile_picture_button = Button(
+            "Upload Profile Picture",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 50,
+            200,
+            50,
+            self.upload_profile_picture,
+        )
+        self.create_account_button = Button(
+            "Create Account",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 100,
+            200,
+            50,
+            self.create_account,
+        )
+        self.google_login_button = Button(
+            "Google Login",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 150,
+            200,
+            50,
+            self.google_login,
+        )
+        self.back_button = Button(
+            "Back",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 200,
+            200,
+            50,
+            self.back,
+        )
+        self.buttons.extend(
+            [
+                self.username_input,
+                self.email_input,
+                self.password_input,
+                self.profile_picture_button,
+                self.create_account_button,
+                self.google_login_button,
+                self.back_button,
+            ]
+        )
+        self.profile_picture = None
 
-    def handle_event(self, event):
-        """
-        Handle events related to the button.
+    def render(self):
+        for button in self.buttons:
+            button.draw(screen)
 
-        Args:
-            event: The Pygame event to be processed.
-        """
-        if event.type == pygame.MOUSEMOTION:
-            self.hovered = (
-                self.x < event.pos[0] < self.x + self.width
-                and self.y < event.pos[1] < self.y + self.height
-            )
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.hovered:
-                if self.additional_data != None:
-                    self.command(*self.additional_data)
-                else:
-                    self.command()
+    def back(self):
+        global current_page, main_page
+        current_page = main_page
+
+    def google_login(self):
+        request = {"CreateAccount": True}
+        request["TitleId"] = PlayFabSettings.TitleId
+        request[
+            "ServerAuthCode"
+        ] = "95487563442-ta5a931frpcrsm78js4q5eb2sjvi927m.apps.googleusercontent.com"
+
+        def callback(success, failure):
+            if success:
+                display_message("Account created and signed in.", (0, 255, 0))
+            else:
+                display_message("Account creation failed.")
+                if failure:
+                    display_message("Here's some debug information:")
+                    display_message(str(failure))
+
+        result = LoginWithGoogleAccount(request, callback)
+
+    # Function to create an account with an email address
+    def create_account(self):
+        global signed_in
+        email = self.email_input.text
+        password = self.password_input.text
+        username = self.username_input.text
+
+        def callback(success, failure):
+            if success:
+                display_message("Account created and signed in.", (0, 255, 0))
+            else:
+                display_message("Account creation failed.")
+                if failure:
+                    display_message("Here's some debug information:")
+                    display_message(str(failure))
+
+        try:
+            request = {"CreateAccount": True}
+            request["TitleId"] = PlayFabSettings.TitleId
+            request["Email"] = email
+            request["Password"] = password
+            request["Username"] = username
+
+            # Upload the profile picture if it has been selected
+            if self.profile_picture:
+                request["ProfilePicture"] = self.profile_picture
+
+            result = RegisterPlayFabUser(request, callback)
+
+            if result is not None and "SessionTicket" in result:
+                signed_in = True
+                display_message("Account created and signed in.", (0, 255, 0))
+            else:
+                None
+        except Exception as e:
+            display_message(f"Account creation failed: {e}")
+
+    # Function to upload a profile picture
+    def upload_profile_picture(self):
+        # Open a file dialog to select a profile picture
+        root = tk.Tk()
+        root.withdraw()  # Hide the main window
+        file_path = filedialog.askopenfilename(title="Select a Profile Picture")
+        root.destroy()  # Close the hidden root window
+
+        if file_path:
+            with open(file_path, "rb") as profile_picture:
+                self.profile_picture = profile_picture.read()
+
+
+# Create a screen for the sign-in process
+class SignInScreen:
+    def __init__(self):
+        self.buttons = []
+        self.email_input = InputField(
+            WIDTH // 2 - 100, HEIGHT // 2 - 50, 400, 40, "Email"
+        )
+        self.password_input = InputField(
+            WIDTH // 2 - 100, HEIGHT // 2, 400, 40, "Password"
+        )
+        self.sign_in_button = Button(
+            "Sign In",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 50,
+            200,
+            50,
+            self.sign_in_with_email,
+        )
+        self.back_button = Button(
+            "Back",
+            WIDTH // 2 - 100,
+            HEIGHT // 2 + 100,
+            200,
+            50,
+            self.back,
+        )
+        self.buttons.extend(
+            [
+                self.email_input,
+                self.password_input,
+                self.sign_in_button,
+                self.back_button,
+            ]
+        )
+        self.remember_me = True
+
+    def render(self):
+        for button in self.buttons:
+            button.draw(screen)
+
+    # Function to sign in with an email address
+
+    def sign_in_with_email(self, email=None, password=None):
+        global signed_in, good  # , user
+        if email == None and password == None:
+            email = self.email_input.text
+            password = self.password_input.text
+        # print(email + "\n" + password)
+
+        def callback(success, failure):
+            global good
+            if success:
+                good = True
+                display_message("Account created and signed in.", (0, 255, 0))
+            else:
+                display_message("Account creation failed.")
+                if failure:
+                    display_message("Here's some debug information:")
+                    display_message(str(failure))
+
+        try:
+            request = {}
+            request["TitleId"] = PlayFabSettings.TitleId
+            request["Email"] = email
+            request["Password"] = password
+            result = LoginWithEmailAddress(request, callback)
+            print(good)
+            if good:
+                signed_in = True
+                em = hashlib.sha256(bytes(request["Email"]))
+                p = hashlib.sha256(
+                    bytes(request["Password"])
+                )  # TODO #24 make keep logged in more secure
+                if self.remember_me:  # TODO #26 #25 add remember me checkbox
+                    # with open("h.h", "x") as x:
+                    x = open("h.h", "w")
+                    x.write(str(em + "\n" + p))
+                    x.close()
+                    # playfab.PlayFabClientAPI.GetPlayerProfile
+                    # user = {""}
+                display_message("Signed in.", (0, 255, 0))
+                return
+            else:
+                print("signed in failed")
+                display_message("Sign-in failed.")
+        except Exception as e:
+            display_message(f"Sign-in failed: {e}")
+
+    # Function to toggle the "Remember Me" checkbox
+    def toggle_remember_me(self):
+        self.remember_me = not self.remember_me
+
+    # Function to send a verification code to the provided email
+    def send_verification_code(self):
+        email = self.email_input.text
+
+    def back(self):
+        global current_page, main_page
+        current_page = main_page
+
+    # Add code to send a verification code to the email
+    # You would typically use an email service or other means to send the code
 
 
 # Main Menu
@@ -259,12 +421,12 @@ def main_menu(
         # Move and draw clouds
         for cloud in clouds:
             cloud.move()
-            cloud.draw()
+            cloud.draw(screen)
         if not show_play_buttons:
-            credits_button.draw()
-            play_button.draw()
-            settings_button.draw()
-            quit_button.draw()
+            credits_button.draw(screen)
+            play_button.draw(screen)
+            settings_button.draw(screen)
+            quit_button.draw(screen)
 
         display_leaderboard(
             leaderboard_data,
@@ -278,13 +440,13 @@ def main_menu(
             WHITE,
         )
         if show_play_buttons:
-            singleplayer_button.draw()
-            multiplayer_button.draw()
-            back_button.draw()
+            singleplayer_button.draw(screen)
+            multiplayer_button.draw(screen)
+            back_button.draw(screen)
 
         if show_multiplayer_options:
-            host_button.draw()
-            join_button.draw()
+            host_button.draw(screen)
+            join_button.draw(screen)
 
         pygame.display.flip()
         pygame.time.Clock().tick(FPS)
@@ -360,39 +522,6 @@ def open_settings():
     game_state = "settings"
 
 
-# Create an InputField class for text input
-class InputField:
-    def __init__(self, x, y, width, height, placeholder):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.placeholder = placeholder
-        self.text = ""
-        self.active = False
-
-    def draw(self):
-        color = BUTTON_COLOR if not self.active else BUTTON_HOVER_COLOR
-        pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        font_color = (0, 0, 0) if not self.active else (255, 255, 255)
-        text = font.render(
-            self.text if self.text else self.placeholder, True, font_color
-        )
-        screen.blit(text, (self.x + 10, self.y + 10))
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            self.active = (
-                self.x < event.pos[0] < self.x + self.width
-                and self.y < event.pos[1] < self.y + self.height
-            )
-        if event.type == pygame.KEYDOWN and self.active:
-            if event.key == pygame.K_BACKSPACE:
-                self.text = self.text[:-1]
-            else:
-                self.text += event.unicode
-
-
 # class Checkbox:
 #    def __init__(self, label, x, y, callback):
 #        self.label = label
@@ -428,244 +557,6 @@ class InputField:
 #
 
 
-# Create a screen for the sign-up process
-class SignUpScreen:
-    def __init__(self):
-        self.buttons = []
-        self.username_input = InputField(
-            WIDTH // 2 - 100, HEIGHT // 2 - 100, 400, 40, "Username"
-        )
-        self.email_input = InputField(
-            WIDTH // 2 - 100, HEIGHT // 2 - 50, 400, 40, "Email"
-        )
-        self.password_input = InputField(
-            WIDTH // 2 - 100, HEIGHT // 2, 400, 40, "Password"
-        )
-        self.profile_picture_button = Button(
-            "Upload Profile Picture",
-            WIDTH // 2 - 100,
-            HEIGHT // 2 + 50,
-            200,
-            50,
-            self.upload_profile_picture,
-        )
-        self.create_account_button = Button(
-            "Create Account",
-            WIDTH // 2 - 100,
-            HEIGHT // 2 + 100,
-            200,
-            50,
-            self.create_account,
-        )
-        self.google_login_button = Button(
-            "Google Login",
-            WIDTH // 2 - 100,
-            HEIGHT // 2 + 150,
-            200,
-            50,
-            self.google_login,
-        )
-        self.back_button = Button(
-            "Back",
-            WIDTH // 2 - 100,
-            HEIGHT // 2 + 200,
-            200,
-            50,
-            self.back,
-        )
-        self.buttons.extend(
-            [
-                self.username_input,
-                self.email_input,
-                self.password_input,
-                self.profile_picture_button,
-                self.create_account_button,
-                self.google_login_button,
-                self.back_button,
-            ]
-        )
-        self.profile_picture = None
-
-    def render(self):
-        for button in self.buttons:
-            button.draw()
-
-    def back(self):
-        global current_page, main_page
-        current_page = main_page
-
-    def google_login(self):
-        request = {"CreateAccount": True}
-        request["TitleId"] = PlayFabSettings.TitleId
-        request[
-            "ServerAuthCode"
-        ] = "95487563442-ta5a931frpcrsm78js4q5eb2sjvi927m.apps.googleusercontent.com"
-
-        def callback(success, failure):
-            if success:
-                display_message("Account created and signed in.", (0, 255, 0))
-            else:
-                display_message("Account creation failed.")
-                if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
-
-        result = playfab.PlayFabClientAPI.LoginWithGoogleAccount(request, callback)
-
-    # Function to create an account with an email address
-    def create_account(self):
-        global signed_in
-        email = self.email_input.text
-        password = self.password_input.text
-        username = self.username_input.text
-
-        def callback(success, failure):
-            if success:
-                display_message("Account created and signed in.", (0, 255, 0))
-            else:
-                display_message("Account creation failed.")
-                if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
-
-        try:
-            request = {"CreateAccount": True}
-            request["TitleId"] = PlayFabSettings.TitleId
-            request["Email"] = email
-            request["Password"] = password
-            request["Username"] = username
-
-            # Upload the profile picture if it has been selected
-            if self.profile_picture:
-                request["ProfilePicture"] = self.profile_picture
-
-            result = playfab.PlayFabClientAPI.RegisterPlayFabUser(request, callback)
-
-            if result is not None and "SessionTicket" in result:
-                signed_in = True
-                display_message("Account created and signed in.", (0, 255, 0))
-            else:
-                None
-        except Exception as e:
-            display_message(f"Account creation failed: {e}")
-
-    # Function to upload a profile picture
-    def upload_profile_picture(self):
-        # Open a file dialog to select a profile picture
-        root = tk.Tk()
-        root.withdraw()  # Hide the main window
-        file_path = filedialog.askopenfilename(title="Select a Profile Picture")
-        root.destroy()  # Close the hidden root window
-
-        if file_path:
-            with open(file_path, "rb") as profile_picture:
-                self.profile_picture = profile_picture.read()
-
-
-# Create a screen for the sign-in process
-class SignInScreen:
-    def __init__(self):
-        self.buttons = []
-        self.email_input = InputField(
-            WIDTH // 2 - 100, HEIGHT // 2 - 50, 400, 40, "Email"
-        )
-        self.password_input = InputField(
-            WIDTH // 2 - 100, HEIGHT // 2, 400, 40, "Password"
-        )
-        self.sign_in_button = Button(
-            "Sign In",
-            WIDTH // 2 - 100,
-            HEIGHT // 2 + 50,
-            200,
-            50,
-            self.sign_in_with_email,
-        )
-        self.back_button = Button(
-            "Back",
-            WIDTH // 2 - 100,
-            HEIGHT // 2 + 100,
-            200,
-            50,
-            self.back,
-        )
-        self.buttons.extend(
-            [
-                self.email_input,
-                self.password_input,
-                self.sign_in_button,
-                self.back_button,
-            ]
-        )
-        self.remember_me = True
-
-    def render(self):
-        for button in self.buttons:
-            button.draw()
-
-    # Function to sign in with an email address
-
-    def sign_in_with_email(self, email=None, password=None):
-        global signed_in, good  # , user
-        if email == None and password == None:
-            email = self.email_input.text
-            password = self.password_input.text
-        # print(email + "\n" + password)
-
-        def callback(success, failure):
-            global good
-            if success:
-                good = True
-                display_message("Account created and signed in.", (0, 255, 0))
-            else:
-                display_message("Account creation failed.")
-                if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
-
-        try:
-            request = {}
-            request["TitleId"] = PlayFabSettings.TitleId
-            request["Email"] = email
-            request["Password"] = password
-            result = playfab.PlayFabClientAPI.LoginWithEmailAddress(request, callback)
-            print(good)
-            if good:
-                signed_in = True
-                em = hashlib.sha256(bytes(request["Email"]))
-                p = hashlib.sha256(
-                    bytes(request["Password"])
-                )  # TODO #24 make keep logged in more secure
-                if self.remember_me:  # TODO #26 #25 add remember me checkbox
-                    # with open("h.h", "x") as x:
-                    x = open("h.h", "w")
-                    x.write(str(em + "\n" + p))
-                    x.close()
-                    # playfab.PlayFabClientAPI.GetPlayerProfile
-                    # user = {""}
-                display_message("Signed in.", (0, 255, 0))
-                return
-            else:
-                print("signed in failed")
-                display_message("Sign-in failed.")
-        except Exception as e:
-            display_message(f"Sign-in failed: {e}")
-
-    # Function to toggle the "Remember Me" checkbox
-    def toggle_remember_me(self):
-        self.remember_me = not self.remember_me
-
-    # Function to send a verification code to the provided email
-    def send_verification_code(self):
-        email = self.email_input.text
-
-    def back(self):
-        global current_page, main_page
-        current_page = main_page
-
-    # Add code to send a verification code to the email
-    # You would typically use an email service or other means to send the code
-
-
 # Function to display a message on the screen
 def display_message(message, color=(255, 0, 0)):
     global current_message
@@ -689,7 +580,7 @@ class Page:
 
     def render(self):
         for button in self.buttons:
-            button.draw()
+            button.draw(screen)
 
 
 # Create a page for email input and verification
@@ -766,11 +657,11 @@ def show_signin_popup(leaderboard_page):
                 popup_text2_render,
                 (WIDTH // 2 - popup_text2_render.get_width() // 2, HEIGHT // 2),
             )
-            sign_in_button.draw()
-            guest_button.draw()
-            create_account.draw()
+            sign_in_button.draw(screen)
+            guest_button.draw(screen)
+            create_account.draw(screen)
             ########################DEVELOPMENTAL TESTING ONLY##############################
-            signin_as_test_user.draw()
+            signin_as_test_user.draw(screen)
             ########################DEVELOPMENTAL TESTING ONLY##############################
         current_page.render()
         for event in pygame.event.get():
@@ -896,8 +787,8 @@ def mainfunc():
             )
         elif game_state == "multiplayer":
             if show_multiplayer_options:
-                host_button.draw()
-                join_button.draw()
+                host_button.draw(screen)
+                join_button.draw(screen)
         elif game_state == "singleplayer":
             import SquarePixel
 

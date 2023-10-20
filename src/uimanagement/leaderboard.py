@@ -177,13 +177,13 @@ def display_leaderboard(
 
         y += 30  # Adjust the y-coordinate for the next entry
 
-    next_button.draw()
-    previous_button.draw()
+    next_button.draw(screen)
+    previous_button.draw(screen)
 
     search_input.text = search_query
-    search_input.draw()
+    search_input.draw(screen)
 
-    search_button.draw()
+    search_button.draw(screen)
 
 
 def update_leaderboard(
