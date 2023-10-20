@@ -67,10 +67,14 @@ if __name__ == "__main__":
         "uimanagement\logo.py",
         "uimanagement\MainMen.py",
         "uimanagement\server_ui.py",
+        r"uimanagement\button.py",
+        "uimanagement\input_feild.py",
+        "uimanagement\clouds.py",
+        r"uimanagement\friends.py",
     ]  # Add your script file names here
 
     # Output file where the combined script will be saved
-    output_file = "combined_script.py"
+    output_file = "combined_scriptV2.py"
 
     combine_scripts_with_dependencies(script_files, output_file)
     print(f"Combined scripts with dependencies into '{output_file}'")
