@@ -163,7 +163,7 @@ def display_leaderboard(
     screen.blit(transparent_surface, (WIDTH - w, y - 100, 1, 1))
 
     text_surface = l_font.render("Leader Board", True, WHITE)
-    text_rect = text_surface.get_rect(right=WIDTH - 20, top=y - 30)
+    text_rect = text_surface.get_rect(right=WIDTH - 20, top=y - 50)
     screen.blit(text_surface, text_rect)
 
     for entry in leaderboard_data:

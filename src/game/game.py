@@ -88,7 +88,7 @@ def game(
             infoObject.current_h, infoObject.current_w, colliders, screen
         )  # terrain_gen.colliders)
         enemymanager.update(
-            player.x, player.y, sky, infoObject, colliders, screen, player
+            player.x, player.y, sky, infoObject, colliders, screen, player, Morning
         )
         if player.current_health <= 0:
             if death.draw_death_screen(

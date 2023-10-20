@@ -44,7 +44,7 @@ class Enemy_manager:
                         self.creatures.append(enemy.Enemy(placey, placex))
                         spawned = True
 
-    def update(self, x, y, air, objectinfo, colliders, screen, player):
+    def update(self, x, y, air, objectinfo, colliders, screen, player, day):
         """
         Updates the state of the enemy manager.
 
@@ -60,8 +60,10 @@ class Enemy_manager:
         Returns:
         None
         """
-        if len(self.creatures) <= rand(1, 2):
+        if len(self.creatures) <= rand(1, 2) and day == 1:
             self.spawn(air, objectinfo)
 
+        if day == 0 and len(self.creatures) > 0:
+            self.creatures.pop(rand(0, len(self.creatures)))
         for creature in self.creatures:
             creature.update(x, y, colliders, air, player, screen)
