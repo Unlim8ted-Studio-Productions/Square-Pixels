@@ -1,8 +1,112 @@
 import playfab
 import pygame
+import json
+import playfab.PlayFabSettings as PlayFabSettings
+import playfab.PlayFabErrors as PlayFabErrors
+import requests
 
 
-font = pygame.font.Font(None, 36)
+def DoPost(
+    urlPath, request, authKey, authVal, callback, customData=None, extraHeaders=None
+):
+    """
+    Note this is a blocking call and will always run synchronously
+    the return type is a dictionary that should contain a valid dictionary that
+    should reflect the expected JSON response
+    if the call fails, there will be a returned PlayFabError
+    """
+
+    url = PlayFabSettings.GetURL(
+        urlPath, PlayFabSettings._internalSettings.RequestGetParams
+    )
+
+    try:
+        j = json.dumps(request)
+    except Exception as e:
+        raise PlayFabErrors.PlayFabException(
+            "The given request is not json serializable. {}".format(e)
+        )
+
+    requestHeaders = {}
+
+    if extraHeaders:
+        requestHeaders.update(extraHeaders)
+
+    requestHeaders["Content-Type"] = "application/json"
+    requestHeaders["X-PlayFabSDK"] = PlayFabSettings._internalSettings.SdkVersionString
+    requestHeaders[
+        "X-ReportErrorAsSuccess"
+    ] = "true"  # Makes processing PlayFab errors a little easier
+
+    if authKey and authVal:
+        requestHeaders[authKey] = authVal
+
+    httpResponse = requests.post(url, data=j, headers=requestHeaders)
+    # print(httpResponse)
+
+    error = response = None
+
+    if httpResponse.status_code != 200:
+        # Failed to contact PlayFab Case
+        error = PlayFabErrors.PlayFabError()
+
+        error.HttpCode = httpResponse.status_code
+        error.HttpStatus = httpResponse.reason
+    else:
+        # Contacted playfab
+        responseWrapper = json.loads(httpResponse.content.decode("utf-8"))
+        # print(responseWrapper)
+        if responseWrapper["code"] != 200:
+            # contacted PlayFab, but response indicated failure
+            error = responseWrapper
+            return None
+        else:
+            # successful call to PlayFab
+            response = responseWrapper["data"]
+            return response
+
+    if error and callback:
+        callGlobalErrorHandler(error)
+
+        try:
+            # Notify the caller about an API Call failure
+            callback(None, error)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+    elif (response or response == {}) and callback:
+        try:
+            # Notify the caller about an API Call success
+            # User should also check for {} on the response as it can still be a valid call
+            callback(response, None)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+    elif callback:
+        try:
+            # Notify the caller about an API issue, response was none
+            emptyResponseError = PlayFabErrors.PlayFabError()
+            emptyResponseError.Error = "Empty Response Recieved"
+            emptyResponseError.ErrorMessage = "PlayFabHTTP Recieved an empty response"
+            emptyResponseError.ErrorCode = PlayFabErrors.PlayFabErrorCode.Unknown
+            callback(None, emptyResponseError)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+
+
+def callGlobalErrorHandler(error):
+    if PlayFabSettings.GlobalErrorHandler:
+        try:
+            # Global notification about an API Call failure
+            PlayFabSettings.GlobalErrorHandler(error)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+
+
+font = pygame.font.Font("terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 36)
+l_font = pygame.font.Font("terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50)
 
 
 # Functions for handling next and previous page
@@ -25,9 +129,7 @@ def search_input_callback_l(search_input):
 
 def display_leaderboard(
     leaderboard_data,
-    current_page,
     search_query,
-    ENTRIES_PER_PAGE,
     next_button,
     previous_button,
     search_input,
@@ -36,21 +138,35 @@ def display_leaderboard(
     WIDTH,
     WHITE,
 ):
-    # Filter leaderboard data based on the search query
-    filtered_data = []
-    for entry in leaderboard_data:
-        player_name = entry["DisplayName"]
-        if search_query.lower() in player_name.lower():
-            filtered_data.append(entry)
-
-    # Calculate the start and end indices for the current page
-    start_index = (current_page - 1) * ENTRIES_PER_PAGE
-    end_index = start_index + ENTRIES_PER_PAGE
-
     # Display leaderboard entries for the current page
-    y = 50  # Initial y-coordinate for rendering leaderboard entries
+    y = (
+        pygame.display.Info().current_h
+    ) / 3  # Initial y-coordinate for rendering leaderboard entries
+    w = (pygame.display.Info().current_h) / 3
+    # Create a transparent black color
+    transparent_black = (0, 0, 0, 100)
+    # Create a surface with the transparent black color and same dimensions as the rectangle
+    transparent_surface = pygame.Surface(
+        (w, pygame.display.Info().current_h - (y / 2)), pygame.SRCALPHA
+    )
+    pygame.draw.rect(
+        transparent_surface,
+        transparent_black,
+        (
+            0,
+            0,
+            w,
+            y * 2,
+        ),
+    )
 
-    for entry in filtered_data[start_index:end_index]:
+    screen.blit(transparent_surface, (WIDTH - w, y - 100, 1, 1))
+
+    text_surface = l_font.render("Leader Board", True, WHITE)
+    text_rect = text_surface.get_rect(right=WIDTH - 20, top=y - 30)
+    screen.blit(text_surface, text_rect)
+
+    for entry in leaderboard_data:
         player_name, score = entry["DisplayName"], entry["Value"]
         leaderboard_text = f"{player_name}: {score}"
 
@@ -79,6 +195,29 @@ def update_leaderboard(
     search_button.handle_event(event)
 
 
+def Getleader_http(request, callback, customData=None, extraHeaders=None):
+    """
+    Retrieves a list of ranked users for the given statistic, starting from the indicated point in the leaderboard
+    https://docs.microsoft.com/rest/api/playfab/client/player-data-management/getleaderboard
+    """
+    if not PlayFabSettings._internalSettings.ClientSessionTicket:
+        raise PlayFabErrors.PlayFabException("Must be logged in to call this method")
+
+    def wrappedCallback(playFabResult, error):
+        if callback:
+            callback(playFabResult, error)
+
+    return DoPost(
+        "/Client/GetLeaderboard",
+        request,
+        "X-Authorization",
+        PlayFabSettings._internalSettings.ClientSessionTicket,
+        wrappedCallback,
+        customData,
+        extraHeaders,
+    )
+
+
 def get_leaderboard(current_leader_page, display_message):
     start = (current_leader_page - 1) * 10
     end = start + 10
@@ -87,24 +226,36 @@ def get_leaderboard(current_leader_page, display_message):
         "StartPosition": start,
         "MaxResultsCount": end,  # Get the top 10 scores
     }
+    leaderboard_data = None
 
     def callback(success, failure):
-        global good
         if success:
-            None
+            None  # leaderboard_data = success.data.Leaderboard
         # good = True
         # display_message("Account created and signed in.", (0, 255, 0))
         else:
-            None  # display_message("Account creation failed.")
+            display_message("failed to fetch leaderboard")
+            print("failed to fetch leaderboard")
             if failure:
                 display_message("Here's some debug information:")
                 display_message(str(failure) + "leader board")
+                print("Here's some debug information:")
+                print(str(failure) + "leader board")
 
     try:
-        result = playfab.PlayFabClientAPI.GetLeaderboard(request, callback)
-        if result is not None:
-            leaderboard_data = result.data.Leaderboard
-            return leaderboard_data
+        leaderboard_data = Getleader_http(request, callback)
+        # print(leaderboard_data["Leaderboard"])
+        if leaderboard_data["Leaderboard"] is not None:
+            # Filter leaderboard data
+            filtered_data = []
+            for entry in leaderboard_data["Leaderboard"]:
+                player_name = entry["DisplayName"]
+                player_score = entry["StatValue"]
+                player_position = entry["Position"]
+                filtered_data.insert(
+                    player_position, {"DisplayName": player_name, "Value": player_score}
+                )
+        return filtered_data
     except Exception as e:
         print(e)
     return []  # Return an empty list if no data is available

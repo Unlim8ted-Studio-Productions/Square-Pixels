@@ -168,7 +168,7 @@ def render_terrain(
         transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
         pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
         # Blit the transparent surface onto the main screen
-        #  screen.blit(transparent_surface, rect.topleft)
+        screen.blit(transparent_surface, rect.topleft)
         # Remove the black rectangle if it's fully transparent
         if transparency == 0 or distance <= 60:
             black_rectangles.remove(rect)

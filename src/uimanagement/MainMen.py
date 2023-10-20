@@ -29,6 +29,7 @@ from uimanagement.leaderboard import (
 pygame.init()
 # Add the signed_in flag
 signed_in = IsClientLoggedIn()
+
 current_message = ""
 # Constants
 infoObject: object = pygame.display.Info()
@@ -267,9 +268,7 @@ def main_menu(
 
         display_leaderboard(
             leaderboard_data,
-            leaderboard_page,
             "",
-            10,
             next_button,
             previous_button,
             search_input,
@@ -610,6 +609,7 @@ class SignInScreen:
         if email == None and password == None:
             email = self.email_input.text
             password = self.password_input.text
+        # print(email + "\n" + password)
 
         def callback(success, failure):
             global good
@@ -636,10 +636,10 @@ class SignInScreen:
                     bytes(request["Password"])
                 )  # TODO #24 make keep logged in more secure
                 if self.remember_me:  # TODO #26 #25 add remember me checkbox
-                    with open("h.h", "x") as x:
-                        print(x)
-                        x.write(em + "\n" + p)
-                        x.close()
+                    # with open("h.h", "x") as x:
+                    x = open("h.h", "w")
+                    x.write(str(em + "\n" + p))
+                    x.close()
                     # playfab.PlayFabClientAPI.GetPlayerProfile
                     # user = {""}
                 display_message("Signed in.", (0, 255, 0))
@@ -722,10 +722,19 @@ def guest():
 def show_signin_popup(leaderboard_page):
     global WIDTH, HEIGHT, screen, BACKGROUND_COLOR, signed_in, current_message
     ########################DEVELOPMENTAL TESTING ONLY##############################
+    signin_as_test_user = Button(
+        "signin_as_test_user",
+        WIDTH // 2 - 100,
+        HEIGHT // 2 - 325,
+        200,
+        50,
+        SignInScreen.sign_in_with_email,
+        [None, "testuser@gmail.com", "test123"],
+    )
+    ########################DEVELOPMENTAL TESTING ONLY##############################
     create_account = Button(
         "Create Acount", WIDTH // 2 - 100, HEIGHT // 2 - 225, 200, 50, switch_to_sign_up
     )
-    ########################DEVELOPMENTAL TESTING ONLY##############################
     popup_font = pygame.font.Font(None, 24)
     popup_text = "Please sign in to play the game and save your progress."
     popup_text2 = "If you choose to play as a guest, your progress will reset daily because we won't be able to verify your ownership of the game."
@@ -759,8 +768,9 @@ def show_signin_popup(leaderboard_page):
             )
             sign_in_button.draw()
             guest_button.draw()
-            ########################DEVELOPMENTAL TESTING ONLY##############################
             create_account.draw()
+            ########################DEVELOPMENTAL TESTING ONLY##############################
+            signin_as_test_user.draw()
             ########################DEVELOPMENTAL TESTING ONLY##############################
         current_page.render()
         for event in pygame.event.get():
@@ -778,8 +788,9 @@ def show_signin_popup(leaderboard_page):
             else:
                 sign_in_button.handle_event(event)
                 guest_button.handle_event(event)
-                ########################DEVELOPMENTAL TESTING ONLY##############################
                 create_account.handle_event(event)
+                ########################DEVELOPMENTAL TESTING ONLY##############################
+                signin_as_test_user.handle_event(event)
                 ########################DEVELOPMENTAL TESTING ONLY##############################
         if signed_in != False:
             leaderboard_data = get_leaderboard(leaderboard_page, display_message)
@@ -848,6 +859,7 @@ def mainfunc():
     # Add the search bar for filtering leaderboard entries
     search_input = InputField(20, 20, 200, 30, "Search by Player Name")
     running = True
+    fetch_leaderboard = False
     # Main game loop
     while running:
         # Generate a random cloud
@@ -855,12 +867,18 @@ def mainfunc():
             signed_in == False
         ):  # DO NOT CHANGE TO "IF NOT SIGNED_IN: because singed_in can also be a string"
             try:
-                with open("h.h") as a:
+                with open("h.h", "r") as a:
                     leaderboard_data = SignInScreen.sign_in_with_email(
                         SignInScreen(), a.readline(0), a.readline(1)
                     )
             except:
                 leaderboard_data = show_signin_popup(current_leader_page)
+
+        if signed_in == True:
+            if not fetch_leaderboard:
+                leaderboard_data = get_leaderboard(current_leader_page, display_message)
+                # print(leaderboard_data)
+                fetch_leaderboard = True
 
         if signed_in == "Guest":
             pass  # TODO:implement #22 guest logic in future
