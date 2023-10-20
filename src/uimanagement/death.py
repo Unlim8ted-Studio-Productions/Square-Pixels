@@ -1,7 +1,7 @@
 import pygame as pig
 import playfab
 
-playfab.PlayFabClientAPI.GetLeaderboard
+
 
 
 def draw_death_screen(screen, width, height, xp):
@@ -16,6 +16,8 @@ def draw_death_screen(screen, width, height, xp):
     # Define buttons
     respawn_button = pig.Rect(width // 4, height // 2, 200, 50)
     menu_button = pig.Rect(3 * width // 4, height // 2, 200, 50)
+    #playfab.PlayFabClientAPI.GetPlayerStatistics commands for changing leaderboard stuff
+    #playfab.PlayFabClientAPI.UpdatePlayerStatistics
     while True:
         for event in pig.event.get():
             if event.type == pig.QUIT:
