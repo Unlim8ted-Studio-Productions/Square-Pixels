@@ -35,7 +35,8 @@ from uimanagement.clouds import Cloud
 pygame.init()
 # Add the signed_in flag
 signed_in = IsClientLoggedIn()
-
+em = ""
+p = ""
 current_message = ""
 # Constants
 infoObject: object = pygame.display.Info()
@@ -55,7 +56,8 @@ pygame_icon = pygame.image.load(
 )
 pygame.display.set_icon(pygame_icon)
 
-PlayFabSettings.TitleId = "4AAA9"
+playfabsettings = PlayFabSettings
+playfabsettings.TitleId = "4AAA9"
 # Define fonts
 font = pygame.font.Font(None, 36)
 
@@ -156,7 +158,7 @@ class SignUpScreen:
 
     def google_login(self):
         request = {"CreateAccount": True}
-        request["TitleId"] = PlayFabSettings.TitleId
+        request["TitleId"] = playfabsettings.TitleId
         request[
             "ServerAuthCode"
         ] = "95487563442-ta5a931frpcrsm78js4q5eb2sjvi927m.apps.googleusercontent.com"
@@ -190,7 +192,7 @@ class SignUpScreen:
 
         try:
             request = {"CreateAccount": True}
-            request["TitleId"] = PlayFabSettings.TitleId
+            request["TitleId"] = playfabsettings.TitleId
             request["Email"] = email
             request["Password"] = password
             request["Username"] = username
@@ -265,7 +267,7 @@ class SignInScreen:
     # Function to sign in with an email address
 
     def sign_in_with_email(self, email=None, password=None):
-        global signed_in, good  # , user
+        global signed_in, good, em, p  # , user
         if email == None and password == None:
             email = self.email_input.text
             password = self.password_input.text
@@ -284,7 +286,7 @@ class SignInScreen:
 
         try:
             request = {}
-            request["TitleId"] = PlayFabSettings.TitleId
+            request["TitleId"] = playfabsettings.TitleId
             request["Email"] = email
             request["Password"] = password
             result = LoginWithEmailAddress(request, callback)
@@ -300,21 +302,21 @@ class SignInScreen:
                     with open("peekaboo.py", "w") as peekaboo_file:
                         peekaboo_file.write(f"var1 = {em}\n")
                         peekaboo_file.write(f"var2 = {p}\n")
-
-                    # Compile peekaboo.py to peekaboo.pyc
-                    import py_compile
-
-                    py_compile.compile("peekaboo.py")
-                    import peekaboo
-
-                    os.remove("peekaboo.py")
-
-                    # Create remember.cfg with the value True
-                    with open("remember.py", "w") as cfg_file:
-                        cfg_file.write("t = True\n")
-
-                    # playfab.PlayFabClientAPI.GetPlayerProfile
-                    # user = {""}
+                #
+                ## Compile peekaboo.py to peekaboo.pyc
+                # import py_compile
+                #
+                # py_compile.compile("peekaboo.py")
+                # import peekaboo
+                #
+                # os.remove("peekaboo.py")
+                #
+                ## Create remember.cfg with the value True
+                # with open("remember.py", "w") as cfg_file:
+                #    cfg_file.write("t = True\n")
+                #
+                ## playfab.PlayFabClientAPI.GetPlayerProfile
+                # user = {""}
                 display_message("Signed in.", (0, 255, 0))
                 return
             else:

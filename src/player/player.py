@@ -441,7 +441,7 @@ class Player:
             h = [a, b, c, d, e, f, g]
             for is_block in h:
                 if is_block != 8:
-                    self.xp += is_block * 5
+                    self.xp += is_block
             terrain[self.click[1] // 15][self.click[0] // 15] = 8
             terrain[(self.click[1] + 5) // 15][(self.click[0] - 5) // 15] = 8
             terrain[(self.click[1] - 5) // 15][(self.click[0] + 5) // 15] = 8

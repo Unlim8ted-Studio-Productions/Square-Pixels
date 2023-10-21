@@ -1,7 +1,8 @@
 import pygame as pig
-from playfab import PlayFabSettings, PlayFabErrors
+from playfab import PlayFabSettings, PlayFabErrors, PlayFabHTTP
 import json
 import requests
+from uimanagement.MainMen import SignInScreen, em, p
 
 
 def DoPost(
@@ -40,7 +41,7 @@ def DoPost(
         requestHeaders[authKey] = authVal
 
     httpResponse = requests.post(url, data=j, headers=requestHeaders)
-    # print(httpResponse)
+    print(httpResponse)
 
     error = response = None
 
@@ -140,7 +141,7 @@ def UpdatePlayerStatistics(request, callback, customData=None, extraHeaders=None
         if callback:
             callback(playFabResult, error)
 
-    return DoPost(
+    PlayFabHTTP.DoPost(
         "/Client/UpdatePlayerStatistics",
         request,
         "X-Authorization",
@@ -151,19 +152,9 @@ def UpdatePlayerStatistics(request, callback, customData=None, extraHeaders=None
     )
 
 
-def draw_death_screen(screen, width, height, xp):
-    clock: object = pig.time.Clock()
-    death_text = pig.font.Font(
-        "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50
-    )
-    d_text = death_text.render("You Died", True, (255, 255, 255))
-    xp_text = death_text.render(f"Your Score: {xp}", True, (255, 255, 255))
-    death_text_rect = d_text.get_rect(center=(width // 2, height // 3))
-    xp_text_rect = xp_text.get_rect(center=(width // 2, height // 3 + 50))
-    # Define buttons
-    respawn_button = pig.Rect(width // 4, height // 2, 200, 50)
-    menu_button = pig.Rect(3 * width // 4, height // 2, 200, 50)
+def do_leaderboard_updates(xp, width, height, death_text, screen):
     # Function to display a message on the screen
+    SignInScreen.sign_in_with_email(None, em, p)
 
     def display_message(message, color=(255, 0, 0)):
         global current_message
@@ -174,7 +165,7 @@ def draw_death_screen(screen, width, height, xp):
 
     def callback(success, failure):
         if success:
-            None  # leaderboard_data = success.data.Leaderboard
+            print("success")  # leaderboard_data = success.data.Leaderboard
         # good = True
         # display_message("Account created and signed in.", (0, 255, 0))
         else:
@@ -191,11 +182,17 @@ def draw_death_screen(screen, width, height, xp):
         request, callback
     )  # example output {"Statistics": [{"StatisticName": "XP", "Value": 900, "Version": 0}]}
     if cxp:
+        version = cxp["Statistics"][0]["Version"]
         cxp = cxp["Statistics"][0]["Value"]
         print(cxp)
         if cxp:
             if cxp < xp:
-                request = {"Statistics": [{"StatisticName": "XP", "Value": xp}]}
+                print("hello")
+                request = {
+                    "Statistics": [
+                        {"StatisticName": "XP", "Value": xp, "Version": version}
+                    ]
+                }
                 UpdatePlayerStatistics(request, callback)
         else:
             request = {"StatisticName": "XP", "Value": xp}
@@ -204,6 +201,20 @@ def draw_death_screen(screen, width, height, xp):
         request = {"StatisticName": "XP", "Value": xp}
         UpdatePlayerStatistics(request, callback)
 
+
+def draw_death_screen(screen, width, height, xp):
+    clock: object = pig.time.Clock()
+    death_text = pig.font.Font(
+        "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 50
+    )
+    d_text = death_text.render("You Died", True, (255, 255, 255))
+    xp_text = death_text.render(f"Your Score: {xp}", True, (255, 255, 255))
+    death_text_rect = d_text.get_rect(center=(width // 2, height // 3))
+    xp_text_rect = xp_text.get_rect(center=(width // 2, height // 3 + 50))
+    # Define buttons
+    respawn_button = pig.Rect(width // 4, height // 2, 200, 50)
+    menu_button = pig.Rect(3 * width // 4, height // 2, 200, 50)
+    do_leaderboard_updates(xp, width, height, death_text, screen)
     while True:
         for event in pig.event.get():
             if event.type == pig.QUIT:
