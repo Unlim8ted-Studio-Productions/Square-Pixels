@@ -415,7 +415,7 @@ class Player:
         if self.aiming:
             self.arrow_end_pos = pig.mouse.get_pos()
 
-    def delete_tile(self, terrain, tile, xp):
+    def delete_tile(self, terrain, tile):
         """
         Delete a tile from the terrain.
 
@@ -441,7 +441,7 @@ class Player:
             h = [a, b, c, d, e, f, g]
             for is_block in h:
                 if is_block != 8:
-                    xp += is_block
+                    self.xp += is_block * 5
             terrain[self.click[1] // 15][self.click[0] // 15] = 8
             terrain[(self.click[1] + 5) // 15][(self.click[0] - 5) // 15] = 8
             terrain[(self.click[1] - 5) // 15][(self.click[0] + 5) // 15] = 8

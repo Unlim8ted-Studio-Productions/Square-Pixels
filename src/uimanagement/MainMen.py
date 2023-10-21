@@ -1,3 +1,4 @@
+import os
 import pygame
 import sys
 import eastereggs.credits_Easteregg as egg
@@ -15,6 +16,7 @@ from playfab.PlayFabClientAPI import (
 import tkinter as tk
 from tkinter import filedialog
 import hashlib
+
 # from account_mannagement.authentication import SignInScreen, SignUpScreen
 from uimanagement.leaderboard import (
     display_leaderboard,
@@ -289,15 +291,28 @@ class SignInScreen:
             print(good)
             if good:
                 signed_in = True
-                em = hashlib.sha256(bytes(request["Email"]))
-                p = hashlib.sha256(
-                    bytes(request["Password"])
-                )  # TODO #24 make keep logged in more secure
+                em = request["Email"]
+                p = request["Password"]
+                # TODO #24 make keep logged in more secure
                 if self.remember_me:  # TODO #26 #25 add remember me checkbox
                     # with open("h.h", "x") as x:
-                    x = open("h.h", "w")
-                    x.write(str(em + "\n" + p))
-                    x.close()
+                    # Create peekaboo.py and add var1 and var2
+                    with open("peekaboo.py", "w") as peekaboo_file:
+                        peekaboo_file.write(f"var1 = {em}\n")
+                        peekaboo_file.write(f"var2 = {p}\n")
+
+                    # Compile peekaboo.py to peekaboo.pyc
+                    import py_compile
+
+                    py_compile.compile("peekaboo.py")
+                    import peekaboo
+
+                    os.remove("peekaboo.py")
+
+                    # Create remember.cfg with the value True
+                    with open("remember.py", "w") as cfg_file:
+                        cfg_file.write("t = True\n")
+
                     # playfab.PlayFabClientAPI.GetPlayerProfile
                     # user = {""}
                 display_message("Signed in.", (0, 255, 0))
