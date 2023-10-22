@@ -24,8 +24,12 @@ class InputField:
         self.placeholder = placeholder
         self.text = ""
         self.active = False
+        self.size = 36
 
     def draw(self, screen):
+        font = pygame.font.Font(
+            "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", self.size
+        )
         color = BUTTON_COLOR if not self.active else BUTTON_HOVER_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
         font_color = (0, 0, 0) if not self.active else (255, 255, 255)
