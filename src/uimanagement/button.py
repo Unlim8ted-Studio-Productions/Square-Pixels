@@ -72,3 +72,6 @@ class Button:
                     self.command(*self.additional_data)
                 else:
                     self.command()
+
+    def selected(self):
+        self.hovered = True

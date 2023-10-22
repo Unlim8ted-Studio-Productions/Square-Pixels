@@ -29,7 +29,7 @@ from uimanagement.leaderboard import (
 from uimanagement.input_feild import InputField
 from uimanagement.button import Button
 from uimanagement.clouds import Cloud
-
+from uimanagement.friends import instance
 
 # Initialize Pygame
 pygame.init()
@@ -413,6 +413,8 @@ def main_menu(
                 sys.exit()
 
             # Handle events for buttons
+            for button in instance.activebuttons:
+                button.handle_event(event)
             play_button.handle_event(event)
             settings_button.handle_event(event)
             quit_button.handle_event(event)
@@ -444,7 +446,9 @@ def main_menu(
             play_button.draw(screen)
             settings_button.draw(screen)
             quit_button.draw(screen)
-
+        # Render the friends ui
+        instance.render()
+        # render the leaderboard
         display_leaderboard(
             leaderboard_data,
             "",

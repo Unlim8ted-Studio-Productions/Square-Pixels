@@ -24,8 +24,8 @@ if __name__ == "__main__":
     pygame_icon = pig.image.load(
         r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
     )
-    pig.display.set_icon(pygame_icon)
-    # pig.display.toggle_fullscreen()
+    pig.display.set_icon(pygame_icon)    # pig.display.toggle_fullscreen()
+
     pig.display.set_caption("Square Pixel")
     pig.mouse.set_cursor(pig.SYSTEM_CURSOR_CROSSHAIR)
     # Path to the folder to save the extracted frames
