@@ -18,7 +18,15 @@ class Button:
     """Button class for creating interactive buttons in the game."""
 
     def __init__(
-        self, text, x, y, width, height, command, additional_data: list = None
+        self,
+        text,
+        x,
+        y,
+        width,
+        height,
+        command,
+        additional_data: list = None,
+        color=(255, 255, 255),
     ):
         """
         Initialize a button.
@@ -46,6 +54,7 @@ class Button:
         self.italics = False
         self.underlined = False
         self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
+        self.color = color
 
     def draw(self, screen):
         """Draw the button on the screen."""
@@ -55,7 +64,7 @@ class Button:
         font.set_underline(self.underlined)
         color = BUTTON_HOVER_COLOR if self.hovered else BUTTON_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        text = font.render(self.text, True, WHITE)
+        text = font.render(self.text, True, self.color)
         screen.blit(
             text,
             (

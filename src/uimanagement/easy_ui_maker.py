@@ -8,6 +8,7 @@ from button import Button
 from input_feild import InputField
 from TextElement import TextElement
 from checkbox import CheckBox
+from color import ColorPickerInputField
 
 
 # Constants
@@ -33,6 +34,7 @@ buttons = []
 input_fields = []
 sidebar_buttons = []
 text_elements = []
+checkboxes = []
 
 # Element that is currently being moved or scaled
 selected_element = None
@@ -100,6 +102,27 @@ def create_new_text_element():
     text_elements.append(text_element)
 
 
+def delete_selected_element():
+    global selected_element
+
+    if selected_element:
+        if isinstance(selected_element, Button):
+            buttons.remove(selected_element)
+        elif isinstance(selected_element, InputField):
+            input_fields.remove(selected_element)
+        elif isinstance(selected_element, TextElement):
+            text_elements.remove(selected_element)
+        elif isinstance(selected_element, CheckBox):
+            checkboxes.remove(selected_element)
+
+        selected_element = None
+
+
+def create_delete_button():
+    delete_button = Button("Delete", 10, 280, 120, 40, delete_selected_element)
+    sidebar_buttons.append(delete_button)
+
+
 def export_ui_elements():
     global buttons, input_fields
     code = []
@@ -118,6 +141,10 @@ def export_ui_elements():
     for index, text_element in enumerate(text_elements):
         code.append(
             f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
+        )
+    for index, checkbox in enumerate(checkboxes):
+        code.append(
+            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
         )
     result = "\n".join(code)
     pyperclip.copy(result)
@@ -141,10 +168,17 @@ def create_new_input_field():
     input_fields.append(input_field)
 
 
-create_button_on_sidebar("New Text", 110, create_new_text_element)
+def create_new_checkbox():
+    checkbox = CheckBox(380, 40, "Label")
+    checkboxes.append(checkbox)
+
+
 create_button_on_sidebar("New Button", 10, create_new_button)
 create_button_on_sidebar("New Input", 60, create_new_input_field)
-create_button_on_sidebar("Save UI", 170, export_ui_elements, [buttons, input_fields])
+create_button_on_sidebar("New Text", 110, create_new_text_element)
+create_button_on_sidebar("Checkbox", 170, create_new_checkbox)
+create_button_on_sidebar("Save UI", 230, export_ui_elements, [buttons, input_fields])
+create_delete_button()
 
 
 # UI panel for editing properties
@@ -266,10 +300,13 @@ height_input_field = NumericInputField(
 font_name_input_field = TextInputField(
     ui_panel_x + 10, 330, ui_panel_width - 20, 30, "Font Name:", "Arial"
 )
-bold_checkbox = CheckBox(ui_panel_x + 10, 450, "Bold", False)
-italic_checkbox = CheckBox(ui_panel_x + 10, 500, "Italic", False)
-underline_checkbox = CheckBox(ui_panel_x + 10, 550, "Underline", False)
-
+bold_checkbox = CheckBox(ui_panel_x + 10, 450, "Bold", False, color=(0, 0, 0))
+italic_checkbox = CheckBox(ui_panel_x + 10, 500, "Italic", False, color=(0, 0, 0))
+underline_checkbox = CheckBox(ui_panel_x + 10, 550, "Underline", False, color=(0, 0, 0))
+# Create color picker input field for customizing color
+color_picker_input_field = ColorPickerInputField(
+    ui_panel_x + 10, 630, ui_panel_width - 20, 40, "Color:", (255, 0, 0)
+)
 
 ui_panel.elements = [
     text_input_field,
@@ -280,6 +317,7 @@ ui_panel.elements = [
     bold_checkbox,
     italic_checkbox,
     underline_checkbox,
+    color_picker_input_field,
 ]
 for el in ui_panel.elements:
     el.size = 20
@@ -317,6 +355,12 @@ def handle_events():
                 ) and text.y < event.pos[1] < text.y + (text.height + text.size):
                     text.active = True
                     selected_element = text
+            for check in checkboxes:
+                if check.x < event.pos[0] < check.x + (
+                    check.width + check.size
+                ) and check.y < event.pos[1] < check.y + (check.height + check.size):
+                    check.active = True
+                    selected_element = check
             for sidebar_button in sidebar_buttons:
                 if (
                     sidebar_button.x
@@ -354,6 +398,9 @@ def handle_events():
             button.change_text(event)
         for text_element in text_elements:
             text_element.change_text(event)
+        for checkbox in checkboxes:
+            checkbox.change_text(event)
+            checkbox.handle_event(event)
         if selected_element:
             # Update UI panel with the selected element's properties
             text_input_field.text = selected_element.text
@@ -381,7 +428,10 @@ def handle_events():
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
                 selected_element.size -= 1
         for inspect in ui_panel.elements:
-            inspect.handle_event(event)
+            if isinstance(inspect, ColorPickerInputField):
+                inspect.handle_event(event)
+            else:
+                inspect.handle_event(event)
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             # Update the selected element's properties with the UI panel values
             if selected_element:
@@ -393,6 +443,9 @@ def handle_events():
                 selected_element.bold = bold_checkbox.checked
                 selected_element.italics = italic_checkbox.checked
                 selected_element.underlined = underline_checkbox.checked
+        # Update the selected element's color based on the color picker value
+        if selected_element:
+            selected_element.color = color_picker_input_field.color
 
 
 def main():
@@ -412,6 +465,8 @@ def main():
             button.draw(screen)
         for input_field in input_fields:
             input_field.draw(screen)
+        for checkbox in checkboxes:
+            checkbox.draw(screen)
             # Blit instructions on the screen
         instruction_surface = instruction_font.render(
             instruction_text, True, (255, 255, 255)
