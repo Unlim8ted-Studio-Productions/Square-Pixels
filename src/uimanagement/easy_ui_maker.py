@@ -4,11 +4,18 @@ import pyperclip  # Required for clipboard copy
 
 # Initialize Pygame
 pygame.init()
-from button import Button
-from input_feild import InputField
-from TextElement import TextElement
-from checkbox import CheckBox
-from color import ColorPickerInputField
+if __name__ == "__main__":
+    from button import Button
+    from input_feild import InputField
+    from TextElement import TextElement
+    from checkbox import CheckBox
+    from color import ColorPickerInputField
+else:
+    from uimanagement.button import Button
+    from uimanagement.input_feild import InputField
+    from uimanagement.TextElement import TextElement
+    from uimanagement.checkbox import CheckBox
+    from uimanagement.color import ColorPickerInputField
 
 
 # Constants
@@ -130,7 +137,7 @@ def export_ui_elements():
     # Create buttons
     for index, button in enumerate(buttons):
         code.append(
-            f"button{index + 1} = Button({button.x}, {button.y}, {button.width}, {button.height}, '{button.text}', None)"
+            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
         )
 
     # Create input fields
@@ -478,7 +485,11 @@ def main():
         pygame.display.flip()
 
 
-if __name__ == "__main__":
+def start():
     for bu in sidebar_buttons:
         bu.size = 20
     main()
+
+
+if __name__ == "__main__":
+    start()

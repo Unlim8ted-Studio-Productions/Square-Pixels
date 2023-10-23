@@ -16,6 +16,7 @@ from playfab.PlayFabClientAPI import (
 import tkinter as tk
 from tkinter import filedialog
 import hashlib
+from uimanagement.easy_ui_maker import start
 
 # from account_mannagement.authentication import SignInScreen, SignUpScreen
 from uimanagement.leaderboard import (
@@ -375,6 +376,15 @@ def main_menu(
         50,
         start_singleplayer_game,
     )
+    UImaker = Button(
+        "Make UI (for testing purposes only) <unless future mod system...>",
+        684,
+        800,
+        822,
+        50,
+        start,
+    )
+    UImaker.size = 20
     back_button = Button("Back", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, back)
     play_button = Button(
         "Play", WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, toggle_play_buttons
@@ -419,6 +429,7 @@ def main_menu(
             settings_button.handle_event(event)
             quit_button.handle_event(event)
             credits_button.handle_event(event)
+            UImaker.handle_event(event)
             update_leaderboard(
                 event, search_input, next_button, search_button, previous_button
             )
@@ -446,6 +457,7 @@ def main_menu(
             play_button.draw(screen)
             settings_button.draw(screen)
             quit_button.draw(screen)
+            UImaker.draw(screen)
         # Render the friends ui
         instance.render()
         # render the leaderboard
