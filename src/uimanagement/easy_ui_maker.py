@@ -6,6 +6,8 @@ import pyperclip  # Required for clipboard copy
 pygame.init()
 from button import Button
 from input_feild import InputField
+from TextElement import TextElement
+from checkbox import CheckBox
 
 
 # Constants
@@ -30,6 +32,7 @@ pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
 buttons = []
 input_fields = []
 sidebar_buttons = []
+text_elements = []
 
 # Element that is currently being moved or scaled
 selected_element = None
@@ -50,7 +53,9 @@ UI_PANEL_COLOR = (200, 200, 200)
 
 # Create a font for displaying instructions
 instruction_font = pygame.font.Font(None, 20)
+# Add instructions for updating the selected element
 instruction_text = "Click and drag to move, right-click to resize element and scroll to change font size."
+instruction_text += "Edit properties in the UI panel, then press Enter to apply changes to the selected element."
 
 
 # Function for updating font size when scrolling
@@ -89,6 +94,12 @@ def create_new_button():
     buttons.append(button)
 
 
+# Function for creating a new text element
+def create_new_text_element():
+    text_element = TextElement(200, 300, "Text", 24)
+    text_elements.append(text_element)
+
+
 def export_ui_elements():
     global buttons, input_fields
     code = []
@@ -103,6 +114,10 @@ def export_ui_elements():
     for index, input_field in enumerate(input_fields):
         code.append(
             f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
+        )
+    for index, text_element in enumerate(text_elements):
+        code.append(
+            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
         )
     result = "\n".join(code)
     pyperclip.copy(result)
@@ -126,6 +141,7 @@ def create_new_input_field():
     input_fields.append(input_field)
 
 
+create_button_on_sidebar("New Text", 110, create_new_text_element)
 create_button_on_sidebar("New Button", 10, create_new_button)
 create_button_on_sidebar("New Input", 60, create_new_input_field)
 create_button_on_sidebar("Save UI", 170, export_ui_elements, [buttons, input_fields])
@@ -238,22 +254,35 @@ text_input_field = TextInputField(
     ui_panel_x + 10, 30, ui_panel_width - 20, 30, "Text:", ""
 )
 text_size_input_field = NumericInputField(
-    ui_panel_x + 10, 80, ui_panel_width - 20, 30, "Text Size:", 12
+    ui_panel_x + 10, 100, ui_panel_width - 20, 30, "Text Size:", 0
 )
 width_input_field = NumericInputField(
-    ui_panel_x + 10, 130, ui_panel_width - 20, 30, "Width:", 100
+    ui_panel_x + 10, 170, ui_panel_width - 20, 30, "Width:", 0
 )
 height_input_field = NumericInputField(
-    ui_panel_x + 10, 180, ui_panel_width - 20, 30, "Height:", 50
+    ui_panel_x + 10, 250, ui_panel_width - 20, 30, "Height:", 0
 )
 
-# Add input fields to the UI panel
+font_name_input_field = TextInputField(
+    ui_panel_x + 10, 330, ui_panel_width - 20, 30, "Font Name:", "Arial"
+)
+bold_checkbox = CheckBox(ui_panel_x + 10, 450, "Bold", False)
+italic_checkbox = CheckBox(ui_panel_x + 10, 500, "Italic", False)
+underline_checkbox = CheckBox(ui_panel_x + 10, 550, "Underline", False)
+
+
 ui_panel.elements = [
     text_input_field,
     text_size_input_field,
     width_input_field,
     height_input_field,
+    font_name_input_field,
+    bold_checkbox,
+    italic_checkbox,
+    underline_checkbox,
 ]
+for el in ui_panel.elements:
+    el.size = 20
 
 
 def handle_events():
@@ -262,6 +291,7 @@ def handle_events():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if scaling:
                 scaling = False
@@ -281,6 +311,12 @@ def handle_events():
                 ):
                     input_field.active = True
                     selected_element = input_field
+            for text in text_elements:
+                if text.x < event.pos[0] < text.x + (
+                    text.width + text.size
+                ) and text.y < event.pos[1] < text.y + (text.height + text.size):
+                    text.active = True
+                    selected_element = text
             for sidebar_button in sidebar_buttons:
                 if (
                     sidebar_button.x
@@ -313,10 +349,22 @@ def handle_events():
             scale_start_height = selected_element.height
 
         for input_field in input_fields:
-            input_field.handle_event(event)
+            input_field.change_text(event)
         for button in buttons:
             button.change_text(event)
+        for text_element in text_elements:
+            text_element.change_text(event)
         if selected_element:
+            # Update UI panel with the selected element's properties
+            text_input_field.text = selected_element.text
+            text_size_input_field.value = selected_element.size
+            width_input_field.value = selected_element.width
+            height_input_field.value = selected_element.height
+            font_name_input_field.text = selected_element.font_name
+            bold_checkbox.checked = selected_element.bold
+            italic_checkbox.checked = selected_element.italics
+            underline_checkbox.checked = selected_element.underlined
+
             if scaling and event.type == pygame.MOUSEMOTION:
                 selected_element.width = scale_start_width + (
                     event.pos[0] - scale_start_x
@@ -332,6 +380,19 @@ def handle_events():
                 selected_element.size += 1
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
                 selected_element.size -= 1
+        for inspect in ui_panel.elements:
+            inspect.handle_event(event)
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            # Update the selected element's properties with the UI panel values
+            if selected_element:
+                selected_element.text = text_input_field.text
+                selected_element.size = text_size_input_field.value
+                selected_element.width = width_input_field.value
+                selected_element.height = height_input_field.value
+                selected_element.font_name = font_name_input_field.text
+                selected_element.bold = bold_checkbox.checked
+                selected_element.italics = italic_checkbox.checked
+                selected_element.underlined = underline_checkbox.checked
 
 
 def main():
@@ -343,6 +404,9 @@ def main():
         for sidebar_button in sidebar_buttons:
             sidebar_button.draw(screen)
 
+        # Add text elements to the drawing loop
+        for text_element in text_elements:
+            text_element.draw(screen)
         # Draw the elements (buttons and input fields)
         for button in buttons:
             button.draw(screen)
@@ -361,5 +425,5 @@ def main():
 
 if __name__ == "__main__":
     for bu in sidebar_buttons:
-        bu.size = 15
+        bu.size = 20
     main()

@@ -42,12 +42,17 @@ class Button:
         self.hovered = False
         self.size = 36
         self.active = False
+        self.bold = False
+        self.italics = False
+        self.underlined = False
+        self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
 
     def draw(self, screen):
         """Draw the button on the screen."""
-        font = pygame.font.Font(
-            "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", self.size
-        )
+        font = pygame.font.Font(self.font_name, self.size)
+        font.set_bold(self.bold)
+        font.set_italic(self.italics)
+        font.set_underline(self.underlined)
         color = BUTTON_HOVER_COLOR if self.hovered else BUTTON_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
         text = font.render(self.text, True, WHITE)

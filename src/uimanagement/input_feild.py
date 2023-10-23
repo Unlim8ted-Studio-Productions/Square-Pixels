@@ -25,11 +25,11 @@ class InputField:
         self.text = ""
         self.active = False
         self.size = 36
+        self.hovered = False
+        self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
 
     def draw(self, screen):
-        font = pygame.font.Font(
-            "terraria_styled_game\Fonts\PixelifySans-Regular.ttf", self.size
-        )
+        font = pygame.font.Font(self.font_name, self.size)
         color = BUTTON_COLOR if not self.active else BUTTON_HOVER_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
         font_color = (0, 0, 0) if not self.active else (255, 255, 255)
@@ -44,6 +44,23 @@ class InputField:
                 self.x < event.pos[0] < self.x + self.width
                 and self.y < event.pos[1] < self.y + self.height
             )
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
+
+    def change_text(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
         if event.type == pygame.KEYDOWN and self.active:
             if event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
