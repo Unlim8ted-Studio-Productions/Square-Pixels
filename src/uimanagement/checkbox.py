@@ -38,14 +38,14 @@ class CheckBox:
                 self.color,
                 (self.x + 105, self.y + 10),
                 (self.x + 115, self.y + 20),
-                2,
+                5,
             )
             pygame.draw.line(
                 screen,
                 self.color,
                 (self.x + 115, self.y + 20),
                 (self.x + 135, self.y + 5),
-                2,
+                5,
             )
 
     def handle_event(self, event):
