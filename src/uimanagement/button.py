@@ -41,6 +41,7 @@ class Button:
         self.additional_data = additional_data
         self.hovered = False
         self.size = 36
+        self.active = False
 
     def draw(self, screen):
         """Draw the button on the screen."""
@@ -72,10 +73,30 @@ class Button:
             )
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.hovered:
+                self.active = True
                 if self.additional_data != None:
                     self.command(*self.additional_data)
                 else:
                     self.command()
+            else:
+                self.active = False
 
     def selected(self):
         self.hovered = True
+
+    def change_text(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode

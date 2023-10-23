@@ -15,8 +15,17 @@ WHITE = (255, 255, 255)
 
 
 # Set the screen size
-screen_width, screen_height = 800, 600
-screen = pygame.display.set_mode((screen_width, screen_height))
+infoObject: object = pygame.display.Info()
+screen_width, screen_height = infoObject.current_w, infoObject.current_h
+screen: pygame.Surface = pygame.display.set_mode(
+    (infoObject.current_w, infoObject.current_h)
+)
+pygame_icon = pygame.image.load(
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+)
+pygame.display.set_icon(pygame_icon)  # pygame.display.toggle_fullscreen()
+pygame.display.set_caption("Square Pixel")
+pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
 
 buttons = []
 input_fields = []
@@ -31,7 +40,7 @@ scale_start_width = 0
 scale_start_height = 0
 
 # UI panel properties
-ui_panel_x = 600
+ui_panel_x = screen_width - 200
 ui_panel_y = 0
 ui_panel_width = 200
 ui_panel_height = screen_height
@@ -305,6 +314,8 @@ def handle_events():
 
         for input_field in input_fields:
             input_field.handle_event(event)
+        for button in buttons:
+            button.change_text(event)
         if selected_element:
             if scaling and event.type == pygame.MOUSEMOTION:
                 selected_element.width = scale_start_width + (
