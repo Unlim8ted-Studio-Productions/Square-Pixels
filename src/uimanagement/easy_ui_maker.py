@@ -61,10 +61,15 @@ ui_panel_height = screen_height
 UI_PANEL_COLOR = (200, 200, 200)
 
 # Create a font for displaying instructions
-instruction_font = pygame.font.Font(None, 20)
+instruction_font = pygame.font.Font(None, 13)
 # Add instructions for updating the selected element
-instruction_text = "Click and drag to move, right-click to resize element and scroll to change font size."
-instruction_text += "Edit properties in the UI panel, then press Enter to apply changes to the selected element."
+instruction_text = "Click and drag to move, right-click to resize element and scroll to change font size. "
+instruction_text += "Edit properties in the UI panel, then press Enter to apply changes to the selected element. "
+instruction_text += "To use color wheel hold mouse button down and then move it around the inner circle. "
+instruction_text += "The bar on the right of the wheel controls brightness. "
+instruction_text += (
+    "Once you find the color you want then just click the element you want to recolor. "
+)
 
 
 # Function for updating font size when scrolling

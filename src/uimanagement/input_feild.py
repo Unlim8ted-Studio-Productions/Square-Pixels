@@ -27,9 +27,15 @@ class InputField:
         self.size = 36
         self.hovered = False
         self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
+        self.bold = False
+        self.italics = False
+        self.underlined = False
 
     def draw(self, screen):
         font = pygame.font.Font(self.font_name, self.size)
+        font.set_bold(self.bold)
+        font.set_italic(self.italics)
+        font.set_underline(self.underlined)
         color = BUTTON_COLOR if not self.active else BUTTON_HOVER_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
         font_color = (0, 0, 0) if not self.active else (255, 255, 255)
