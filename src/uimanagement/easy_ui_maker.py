@@ -42,6 +42,8 @@ input_fields = []
 sidebar_buttons = []
 text_elements = []
 checkboxes = []
+scripts = []
+
 
 # Element that is currently being moved or scaled
 selected_element = None
@@ -210,6 +212,21 @@ class UIPanel:
 
         for element in self.elements:
             element.draw(screen)
+
+
+class Script:
+    def __init__(self):
+        self.nodes = []  # List of nodes
+        self.connections = []  # List of connections between nodes
+
+
+class Node:
+    def __init__(self, node_type, x, y, node_id):
+        self.type = node_type
+        self.x = x
+        self.y = y
+        self.id = node_id
+        self.logic = lambda: None  # Default logic for the node
 
 
 # Text input field for customizing text
