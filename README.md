@@ -87,7 +87,7 @@ We welcome contributions to our project! If you wish to contribute, please adher
 ## ToDo
 
 - [ ] Fix collision handling
-- [ ] add darkness wherever the player has not yet explored and a map
+- [x] add darkness wherever the player has not yet explored and a map
 - [ ] Finish settings
 - [ ] Add more world options
 - [ ] add saving/loading game
