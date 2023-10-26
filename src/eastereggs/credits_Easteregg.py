@@ -210,6 +210,7 @@ def start():
                 "_-animator-_",
                 "_-moderator-_",
                 "-_musician-_",
+                "-_security researcher-_",
                 "-----Fingall O'Callaghan-----",
                 "_-artist-_",
                 "_-animator-_",
@@ -237,7 +238,7 @@ def start():
             while credits_y >= -len(credits_text) * 40 and won:
                 screen.fill(WHITE)
                 for i, text in enumerate(credits_text):
-                    if i <= 41:
+                    if i <= 42:
                         text_surface = credits_font.render(text, True, RED)
                         screen.blit(
                             text_surface,
