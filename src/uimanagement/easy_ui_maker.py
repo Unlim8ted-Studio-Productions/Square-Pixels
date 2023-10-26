@@ -1,6 +1,10 @@
 import pygame
 import sys
 import pyperclip  # Required for clipboard copy
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image
+
 
 # Initialize Pygame
 pygame.init()
@@ -10,12 +14,14 @@ if __name__ == "__main__":
     from TextElement import TextElement
     from checkbox import CheckBox
     from color import ColorPickerInputField
+    from Image import ImageElement
 else:
     from uimanagement.button import Button
     from uimanagement.input_feild import InputField
     from uimanagement.TextElement import TextElement
     from uimanagement.checkbox import CheckBox
     from uimanagement.color import ColorPickerInputField
+    from uimanagement.Image import ImageElement
 
 
 # Constants
@@ -43,6 +49,7 @@ sidebar_buttons = []
 text_elements = []
 checkboxes = []
 scripts = []
+images = []
 
 
 # Element that is currently being moved or scaled
@@ -104,6 +111,26 @@ def create_button_on_sidebar(text, y, create_function, extra=None):
     sidebar_buttons.append(new_button)
 
 
+def add_image(circle=False):
+    root = tk.Tk()
+    root.withdraw()  # Hide the main tkinter window
+
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
+    )
+
+    if file_path:
+        # Load the selected image using PIL
+        image = Image.open(file_path)
+
+        # Create an ImageElement object and add it to your list of elements
+        if circle:
+            image_element = ImageElement(200, 400, image, "Circle")
+        else:
+            image_element = ImageElement(200, 400, image)
+        images.append(image_element)
+
+
 # Function for creating a new button
 def create_new_button():
     button = create_button("Button", 200, 200, 100, 50, None)
@@ -132,8 +159,8 @@ def delete_selected_element():
         selected_element = None
 
 
-def create_delete_button():
-    delete_button = Button("Delete", 10, 280, 120, 40, delete_selected_element)
+def create_delete_button(y=280):
+    delete_button = Button("Delete", 10, y, 120, 40, delete_selected_element)
     sidebar_buttons.append(delete_button)
 
 
@@ -191,8 +218,10 @@ create_button_on_sidebar("New Button", 10, create_new_button)
 create_button_on_sidebar("New Input", 60, create_new_input_field)
 create_button_on_sidebar("New Text", 110, create_new_text_element)
 create_button_on_sidebar("Checkbox", 170, create_new_checkbox)
-create_button_on_sidebar("Save UI", 230, export_ui_elements, [buttons, input_fields])
-create_delete_button()
+create_button_on_sidebar("Add Image", 230, add_image)
+create_button_on_sidebar("Add Circle Image", 290, add_image, True)  # circle
+create_button_on_sidebar("Save UI", 350, export_ui_elements, [buttons, input_fields])
+create_delete_button(410)
 
 
 # UI panel for editing properties
@@ -496,6 +525,8 @@ def main():
             input_field.draw(screen)
         for checkbox in checkboxes:
             checkbox.draw(screen)
+        for image in images:
+            image.draw(screen)
             # Blit instructions on the screen
         instruction_surface = instruction_font.render(
             instruction_text, True, (255, 255, 255)
