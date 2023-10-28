@@ -71,6 +71,11 @@ if __name__ == "__main__":
         "uimanagement\input_feild.py",
         "uimanagement\clouds.py",
         r"uimanagement\friends.py",
+        r"uimanagement\TextElement.py",
+        r"uimanagement\easy_ui_maker.py",
+        r"uimanagement\Checkbox.py",
+        r"uimanagement\Image.py",
+        r"uimanagement\Nodes.py",
     ]  # Add your script file names here
 
     # Output file where the combined script will be saved

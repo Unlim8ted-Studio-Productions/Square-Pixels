@@ -15,6 +15,9 @@ if __name__ == "__main__":
     from checkbox import CheckBox
     from color import ColorPickerInputField
     from Image import ImageElement
+    from numeric_input import NumericInputField
+    from script import Script
+    from UIpanel import UIPanel
 else:
     from uimanagement.button import Button
     from uimanagement.input_feild import InputField
@@ -22,6 +25,9 @@ else:
     from uimanagement.checkbox import CheckBox
     from uimanagement.color import ColorPickerInputField
     from uimanagement.Image import ImageElement
+    from uimanagement.numeric_input import NumericInputField
+    from uimanagement.script import Script
+    from uimanagement.UIpanel import UIPanel
 
 
 # Constants
@@ -66,9 +72,6 @@ ui_panel_y = 0
 ui_panel_width = 200
 ui_panel_height = screen_height
 
-# UI panel background color
-UI_PANEL_COLOR = (200, 200, 200)
-
 # Create a font for displaying instructions
 instruction_font = pygame.font.Font(None, 13)
 # Add instructions for updating the selected element
@@ -83,19 +86,72 @@ instruction_text += (
 
 # Function for updating font size when scrolling
 def update_font_size(selected_element, scroll_direction):
+    """
+    Updates the font size of a selected element based on scroll direction
+    Args:
+        selected_element: The element to update font size for
+        scroll_direction: The direction of scrolling ('up' or 'down')
+    Returns:
+        None: Does not return anything
+    - Check if selected element is a Button
+    - If scroll direction is 'up', increase font size by 1 point
+    - If scroll direction is 'down', decrease font size by 1 point
+    - Set the new font size on the selected element"""
     if isinstance(selected_element, Button):
         selected_element.font_size += scroll_direction * 2
 
 
 def create_button(text, x, y, width, height, command, additional_data=None):
+    """
+    Create a button widget
+    Args:
+        text: Button text
+        x: x-coordinate of button
+        y: y-coordinate of button
+        width: Width of button
+        height: Height of button
+        command: Command to execute on click
+        additional_data: Optional additional data to pass to command
+    Returns:
+        Button: Button widget object
+    - Create a Button object with the given parameters
+    - Return the Button object
+    """
     return Button(text, x, y, width, height, command, additional_data)
 
 
 def create_input_field(x, y, width, height, placeholder):
+    """
+    Creates an input field widget
+    Args:
+        x: X coordinate of input field
+        y: Y coordinate of input field
+        width: Width of input field
+        height: Height of input field
+        placeholder: Placeholder text for input field
+    Returns:
+        InputField: Input field widget object
+    - Creates an InputField object with the provided x, y, width, height
+    - Sets the placeholder text on the input field
+    - Returns the InputField object
+    """
     return InputField(x, y, width, height, placeholder)
 
 
 def create_button_on_sidebar(text, y, create_function, extra=None):
+    """
+    Creates a button on the sidebar.
+    Args:
+        text: The text to display on the button.
+        y: The y coordinate for the button.
+        create_function: The function to call when button is clicked.
+        extra: Optional additional data to pass to create_function.
+    Returns:
+        new_button: The created button object.
+    - A new Button object is created with the given parameters
+    - The button is added to the sidebar_buttons list
+    - The button can now be clicked to call create_function, passing extra data
+    """
     button_width = 120
     button_height = 40
     button_x = 10
@@ -112,6 +168,15 @@ def create_button_on_sidebar(text, y, create_function, extra=None):
 
 
 def add_image(circle=None):
+    """
+    Add an image to the canvas
+    Args:
+        circle: The circle object to add the image to
+    Returns:
+        None: Does not return anything
+    - Opens a file dialog to select an image file
+    - Checks if a file was selected
+    - If file selected, adds the image to the canvas"""
     root = tk.Tk()
     root.withdraw()  # Hide the main tkinter window
 
@@ -133,17 +198,45 @@ def add_image(circle=None):
 
 # Function for creating a new button
 def create_new_button():
+    """Creates a new button and adds it to the buttons list
+
+    Args:
+        None
+    Returns:
+        None: No value is returned
+
+    - A new button object is created with the label "Button", positioned at (200,200) with dimensions of 100x50 pixels
+    - The new button is appended to the global buttons list
+    - No value is returned as the button is added directly to the buttons list"""
     button = create_button("Button", 200, 200, 100, 50, None)
     buttons.append(button)
 
 
 # Function for creating a new text element
 def create_new_text_element():
+    """
+    Creates and adds a new text element to the list
+    Args:
+        None
+    Returns:
+        None: No value is returned
+    - Creates a new TextElement object with default values
+    - Adds the new TextElement to the text_elements list
+    - No value is returned, only side effect is adding to list"""
     text_element = TextElement(200, 300, "Text", 24)
     text_elements.append(text_element)
 
 
 def delete_selected_element():
+    """Deletes currently selected element
+    Args:
+        None
+    Returns:
+        None: Selected element is deleted from list
+    - Check if a selected element exists
+    - If it does, remove it from the global list storing all elements
+    - Clear the selected element variable
+    - Refresh the UI to remove the selected element"""
     global selected_element
 
     if selected_element:
@@ -160,11 +253,31 @@ def delete_selected_element():
 
 
 def create_delete_button(y=280):
+    """
+    Create and add a delete button to the sidebar
+    Args:
+        y: Position of the button from the top of the sidebar in pixels
+    Returns:
+        None: No value is returned
+    - Create a Button object with text "Delete", x position 10, y position from argument, width 120 and height 40
+    - Assign the delete_selected_element function to the button's command
+    - Append the button object to the sidebar_buttons list"""
     delete_button = Button("Delete", 10, y, 120, 40, delete_selected_element)
     sidebar_buttons.append(delete_button)
 
 
 def export_ui_elements():
+    """
+    Exports UI elements to Python code
+    Args:
+        None: No arguments
+    Returns:
+        None: Does not return anything
+    Processes Logic:
+        - Loops through button, input_field, checkbox, image lists and generates Python code to recreate each element
+        - Copies generated code to clipboard
+        - Displays message that code was copied
+    """
     global buttons, input_fields, checkboxes, images
     code = [
         "if __name__ == '__main__':",
@@ -230,11 +343,30 @@ def export_ui_elements():
 
 # Function for creating a new input field
 def create_new_input_field():
+    """
+    Creates and adds a new input field to the list of input fields
+    Args:
+        None: No arguments are passed to this function
+    Returns:
+        None: This function does not return anything
+    - Creates a new input field object using the create_input_field function and default parameters
+    - Appends the newly created input field object to the list of existing input fields
+    - This allows adding multiple input fields dynamically to the UI"""
     input_field = create_input_field(300, 300, 200, 30, "Enter text")
     input_fields.append(input_field)
 
 
 def create_new_checkbox():
+    """Creates a new checkbox object and appends it to the checkboxes list
+
+    Args:
+        None
+    Returns:
+        None: No value is returned
+    - A CheckBox object is instantiated with coordinates (380, 40) and label "Label"
+    - The new CheckBox object is appended to the checkboxes list
+    - This allows the checkbox to be drawn and interacted with through the checkboxes list
+    """
     checkbox = CheckBox(380, 40, "Label")
     checkboxes.append(checkbox)
 
@@ -249,31 +381,6 @@ create_button_on_sidebar("Save UI", 350, export_ui_elements)
 create_delete_button(410)
 
 
-# UI panel for editing properties
-class UIPanel:
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.bg_color = UI_PANEL_COLOR
-        self.elements = []
-
-    def draw(self, screen):
-        pygame.draw.rect(
-            screen, self.bg_color, (self.x, self.y, self.width, self.height)
-        )
-
-        for element in self.elements:
-            element.draw(screen)
-
-
-class Script:
-    def __init__(self):
-        self.nodes = []  # List of nodes
-        self.connections = []  # List of connections between nodes
-
-
 class Node:
     def __init__(self, node_type, x, y, node_id):
         self.type = node_type
@@ -286,6 +393,14 @@ class Node:
 # Text input field for customizing text
 class TextInputField:
     def __init__(self, x, y, width, height, label, default_text):
+        """
+        Initialize a graph object
+        Args:
+            None: No arguments required
+        Returns:
+            None: Does not return anything
+        - Initialize an empty list to store nodes
+        - Initialize an empty list to store connections between nodes"""
         self.x = x
         self.y = y
         self.width = width
@@ -296,6 +411,13 @@ class TextInputField:
         self.active = False
 
     def draw(self, screen):
+        """Draws a rectangle on the screen.
+        Args:
+            screen: The screen surface to draw on.
+        Returns:
+            None: Does not return anything.
+        - Draws a filled rectangle on the screen surface using the object's position, size and background color attributes.
+        - Loops through the object's elements list and draws each element."""
         font = pygame.font.Font(None, 36)
         text = font.render(self.label, True, (0, 0, 0))
         screen.blit(text, (self.x, self.y))
@@ -316,51 +438,6 @@ class TextInputField:
                 self.text = self.text[:-1]
             else:
                 self.text += event.unicode
-
-
-# Numeric input field for customizing numeric properties
-class NumericInputField:
-    def __init__(self, x, y, width, height, label, default_value):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.label = label
-        self.value = default_value
-        self.active = False
-
-    def draw(self, screen):
-        font = pygame.font.Font(None, 36)
-        text = font.render(self.label, True, (0, 0, 0))
-        screen.blit(text, (self.x, self.y))
-        pygame.draw.rect(
-            screen, (255, 255, 255), (self.x, self.y + 30, self.width, self.height), 2
-        )
-        text = font.render(str(self.value), True, (0, 0, 0))
-        screen.blit(text, (self.x + 5, self.y + 35))
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            self.active = (
-                self.x < event.pos[0] < self.x + self.width
-                and self.y + 30 < event.pos[1] < self.y + 30 + self.height
-            )
-        if event.type == pygame.KEYDOWN and self.active:
-            if event.key == pygame.K_BACKSPACE:
-                self.value = int(str(self.value)[:-1])
-            elif event.key in [
-                pygame.K_0,
-                pygame.K_1,
-                pygame.K_2,
-                pygame.K_3,
-                pygame.K_4,
-                pygame.K_5,
-                pygame.K_6,
-                pygame.K_7,
-                pygame.K_8,
-                pygame.K_9,
-            ]:
-                self.value = int(str(self.value) + event.unicode)
 
 
 # Create UI panel

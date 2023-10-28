@@ -24,8 +24,8 @@ if __name__ == "__main__":
     pygame_icon = pig.image.load(
         r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
     )
-    pig.display.set_icon(pygame_icon)
-    # pig.display.toggle_fullscreen()
+    pig.display.set_icon(pygame_icon)  # pig.display.toggle_fullscreen()
+
     pig.display.set_caption("Square Pixel")
     pig.mouse.set_cursor(pig.SYSTEM_CURSOR_CROSSHAIR)
     # Path to the folder to save the extracted frames
@@ -283,6 +283,7 @@ def start():
                 "_-animator-_",
                 "_-moderator-_",
                 "-_musician-_",
+                "-_security researcher-_",
                 "-----Fingall O'Callaghan-----",
                 "_-artist-_",
                 "_-animator-_",
@@ -310,7 +311,7 @@ def start():
             while credits_y >= -len(credits_text) * 40 and won:
                 screen.fill(WHITE)
                 for i, text in enumerate(credits_text):
-                    if i <= 41:
+                    if i <= 42:
                         text_surface = credits_font.render(text, True, RED)
                         screen.blit(
                             text_surface,
@@ -411,13 +412,15 @@ class Enemy_manager:
         Returns:
         None
         """
-        if len(self.creatures) <= rand(1, 2) and day == 1:
+        if len(self.creatures) <= rand(1, 2):  # and day == 1:
             self.spawn(air, objectinfo)
 
-        if day == 0 and len(self.creatures) > 0:
-            self.creatures.pop(rand(0, len(self.creatures)))
+        # if day == 0 and len(self.creatures) > 0:
+        #    self.creatures.pop(rand(0, len(self.creatures)))
         for creature in self.creatures:
             creature.update(x, y, colliders, air, player, screen)
+
+
 import pygame as pig
 import random
 import math
@@ -670,6 +673,8 @@ class Enemy:
                         (self.enemyx, self.enemyy - 15, 25, 25),
                     )
                     self.lspitattack.pop(0)
+
+
 import render.render as render
 import pygame as pig
 import enemymanagement.enemy_manager as enemy_manager
@@ -698,7 +703,6 @@ def game(
         r"terraria_styled_game\sounds\music\ingame\music\Ingame1.mp3", volume=0.2
     )
     enemymanager = enemy_manager.Enemy_manager([(0, infoObject.current_w)])
-    xp = 0
     while running:
         clicked = False
         if reset_terrain:
@@ -755,7 +759,7 @@ def game(
                     channel=1,
                     volume=5,
                 )
-            tile = player.delete_tile(terrain_gen.terrain, tile, xp)
+            tile = player.delete_tile(terrain_gen.terrain, tile)
         player.update(
             infoObject.current_h, infoObject.current_w, colliders, screen
         )  # terrain_gen.colliders)
@@ -764,7 +768,7 @@ def game(
         )
         if player.current_health <= 0:
             if death.draw_death_screen(
-                screen, infoObject.current_w, infoObject.current_h, xp
+                screen, infoObject.current_w, infoObject.current_h, player.xp
             ):
                 player.respawn(sky, infoObject, [(0, infoObject.current_w)])
             else:
@@ -773,9 +777,12 @@ def game(
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
+        print(player.xp)
         # player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)
+
+
 import pygame
 import socket
 import pickle
@@ -1523,7 +1530,7 @@ class Player:
         if self.aiming:
             self.arrow_end_pos = pig.mouse.get_pos()
 
-    def delete_tile(self, terrain, tile, xp):
+    def delete_tile(self, terrain, tile):
         """
         Delete a tile from the terrain.
 
@@ -1549,7 +1556,7 @@ class Player:
             h = [a, b, c, d, e, f, g]
             for is_block in h:
                 if is_block != 8:
-                    xp += is_block
+                    self.xp += is_block
             terrain[self.click[1] // 15][self.click[0] // 15] = 8
             terrain[(self.click[1] + 5) // 15][(self.click[0] - 5) // 15] = 8
             terrain[(self.click[1] - 5) // 15][(self.click[0] + 5) // 15] = 8
@@ -1824,6 +1831,8 @@ class Player:
             None
         """
         self.trail = []  # Clear the trail
+
+
 import pygame as pig
 import typing as tp
 import player.player as player
@@ -2196,11 +2205,13 @@ class Nametag:
         text = font.render(self.player.name, True, (255, 255, 255))
         text_rect = text.get_rect(center=(self.player.x, self.player.y - 15))
         screen.blit(text, text_rect)
+
+
 import math
 
 
 def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
-    SunPos = [(TimeOfDay * 25), TimeOfDay*10]
+    SunPos = [(TimeOfDay * 25), TimeOfDay * 10]
     blockPos = [x, y]
     Darken = round(math.dist(blockPos, SunPos))
     Darken = Darken * TimeOfDay
@@ -2262,6 +2273,8 @@ def LightAlgorithm(colors, x, y, playerX, playerY, TimeOfDay):
         (num11 - Darken, num11 - Darken, num11 - Darken),
     ]
     return colorslist
+
+
 import pygame
 
 
@@ -2300,6 +2313,8 @@ def play_music(file_path, loops=0, start=0, fade_ms=0, channel=0, volume=1):
     pygame.mixer.Channel(channel).play(
         pygame.mixer.Sound(file_path), loops, start, fade_ms
     )
+
+
 import pygame as pg
 import random
 
@@ -3236,9 +3251,207 @@ if __name__ == "__main__":
     find_servers()
     main()
 import pygame as pig
-import playfab
+from playfab import PlayFabSettings, PlayFabErrors, PlayFabHTTP
+import json
+import requests
+from uimanagement.MainMen import SignInScreen, em, p
 
-playfab.PlayFabClientAPI.GetLeaderboard
+
+def DoPost(
+    urlPath, request, authKey, authVal, callback, customData=None, extraHeaders=None
+):
+    """
+    Note this is a blocking call and will always run synchronously
+    the return type is a dictionary that should contain a valid dictionary that
+    should reflect the expected JSON response
+    if the call fails, there will be a returned PlayFabError
+    """
+
+    url = PlayFabSettings.GetURL(
+        urlPath, PlayFabSettings._internalSettings.RequestGetParams
+    )
+
+    try:
+        j = json.dumps(request)
+    except Exception as e:
+        raise PlayFabErrors.PlayFabException(
+            "The given request is not json serializable. {}".format(e)
+        )
+
+    requestHeaders = {}
+
+    if extraHeaders:
+        requestHeaders.update(extraHeaders)
+
+    requestHeaders["Content-Type"] = "application/json"
+    requestHeaders["X-PlayFabSDK"] = PlayFabSettings._internalSettings.SdkVersionString
+    requestHeaders[
+        "X-ReportErrorAsSuccess"
+    ] = "true"  # Makes processing PlayFab errors a little easier
+
+    if authKey and authVal:
+        requestHeaders[authKey] = authVal
+
+    httpResponse = requests.post(url, data=j, headers=requestHeaders)
+    print(httpResponse)
+
+    error = response = None
+
+    if httpResponse.status_code != 200:
+        # Failed to contact PlayFab Case
+        error = PlayFabErrors.PlayFabError()
+
+        error.HttpCode = httpResponse.status_code
+        error.HttpStatus = httpResponse.reason
+    else:
+        # Contacted playfab
+        responseWrapper = json.loads(httpResponse.content.decode("utf-8"))
+        # print(responseWrapper)
+        if responseWrapper["code"] != 200:
+            # contacted PlayFab, but response indicated failure
+            error = responseWrapper
+            return None
+        else:
+            # successful call to PlayFab
+            response = responseWrapper["data"]
+            return response
+
+    if error and callback:
+        callGlobalErrorHandler(error)
+
+        try:
+            # Notify the caller about an API Call failure
+            callback(None, error)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+    elif (response or response == {}) and callback:
+        try:
+            # Notify the caller about an API Call success
+            # User should also check for {} on the response as it can still be a valid call
+            callback(response, None)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+    elif callback:
+        try:
+            # Notify the caller about an API issue, response was none
+            emptyResponseError = PlayFabErrors.PlayFabError()
+            emptyResponseError.Error = "Empty Response Recieved"
+            emptyResponseError.ErrorMessage = "PlayFabHTTP Recieved an empty response"
+            emptyResponseError.ErrorCode = PlayFabErrors.PlayFabErrorCode.Unknown
+            callback(None, emptyResponseError)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+
+
+def callGlobalErrorHandler(error):
+    if PlayFabSettings.GlobalErrorHandler:
+        try:
+            # Global notification about an API Call failure
+            PlayFabSettings.GlobalErrorHandler(error)
+        except Exception as e:
+            # Global notification about exception in caller's callback
+            PlayFabSettings.GlobalExceptionLogger(e)
+
+
+def GetPlayerStatistics(request, callback, customData=None, extraHeaders=None):
+    """
+    Retrieves the indicated statistics (current version and values for all statistics, if none are specified), for the local
+    player.
+    https://docs.microsoft.com/rest/api/playfab/client/player-data-management/getplayerstatistics
+    """
+    if not PlayFabSettings._internalSettings.ClientSessionTicket:
+        raise PlayFabErrors.PlayFabException("Must be logged in to call this method")
+
+    def wrappedCallback(playFabResult, error):
+        if callback:
+            callback(playFabResult, error)
+
+    return DoPost(
+        "/Client/GetPlayerStatistics",
+        request,
+        "X-Authorization",
+        PlayFabSettings._internalSettings.ClientSessionTicket,
+        wrappedCallback,
+        customData,
+        extraHeaders,
+    )
+
+
+def UpdatePlayerStatistics(request, callback, customData=None, extraHeaders=None):
+    """
+    Updates the values of the specified title-specific statistics for the user. By default, clients are not permitted to
+    update statistics. Developers may override this setting in the Game Manager > Settings > API Features.
+    https://docs.microsoft.com/rest/api/playfab/client/player-data-management/updateplayerstatistics
+    """
+    if not PlayFabSettings._internalSettings.ClientSessionTicket:
+        raise PlayFabErrors.PlayFabException("Must be logged in to call this method")
+
+    def wrappedCallback(playFabResult, error):
+        if callback:
+            callback(playFabResult, error)
+
+    PlayFabHTTP.DoPost(
+        "/Client/UpdatePlayerStatistics",
+        request,
+        "X-Authorization",
+        PlayFabSettings._internalSettings.ClientSessionTicket,
+        wrappedCallback,
+        customData,
+        extraHeaders,
+    )
+
+
+def do_leaderboard_updates(xp, width, height, death_text, screen):
+    # Function to display a message on the screen
+    SignInScreen.sign_in_with_email(None, em, p)
+
+    def display_message(message, color=(255, 0, 0)):
+        global current_message
+        current_message = message
+        text_surface = death_text.render(message, True, color)
+        text_rect = text_surface.get_rect(center=(width // 2, height // 3))
+        screen.blit(text_surface, text_rect)
+
+    def callback(success, failure):
+        if success:
+            print("success")  # leaderboard_data = success.data.Leaderboard
+        # good = True
+        # display_message("Account created and signed in.", (0, 255, 0))
+        else:
+            print("failed to fetch leaderboard position")
+            display_message("failed to fetch leaderboard position")
+            if failure:
+                display_message("Here's some debug information:")
+                display_message(str(failure) + "leader board position")
+                print("Here's some debug information:")
+                print(str(failure) + "leader board")
+
+    request = {"StatisticNames": "XP"}
+    cxp = GetPlayerStatistics(
+        request, callback
+    )  # example output {"Statistics": [{"StatisticName": "XP", "Value": 900, "Version": 0}]}
+    if cxp:
+        version = cxp["Statistics"][0]["Version"]
+        cxp = cxp["Statistics"][0]["Value"]
+        print(cxp)
+        if cxp:
+            if cxp < xp:
+                print("hello")
+                request = {
+                    "Statistics": [
+                        {"StatisticName": "XP", "Value": xp, "Version": version}
+                    ]
+                }
+                UpdatePlayerStatistics(request, callback)
+        else:
+            request = {"StatisticName": "XP", "Value": xp}
+            UpdatePlayerStatistics(request, callback)
+    else:
+        request = {"StatisticName": "XP", "Value": xp}
+        UpdatePlayerStatistics(request, callback)
 
 
 def draw_death_screen(screen, width, height, xp):
@@ -3253,6 +3466,7 @@ def draw_death_screen(screen, width, height, xp):
     # Define buttons
     respawn_button = pig.Rect(width // 4, height // 2, 200, 50)
     menu_button = pig.Rect(3 * width // 4, height // 2, 200, 50)
+    do_leaderboard_updates(xp, width, height, death_text, screen)
     while True:
         for event in pig.event.get():
             if event.type == pig.QUIT:
@@ -3289,6 +3503,8 @@ def draw_death_screen(screen, width, height, xp):
             screen.blit(menu_text, menu_text_rect)
         pig.display.flip()
         clock.tick(60)
+
+
 import random
 import pygame as pig
 
@@ -3690,6 +3906,9 @@ def play_intro_video(image_folder, not_skipped, screen, intro):
 
     # Stop the audio playback
     pig.mixer.music.stop()
+
+
+import os
 import pygame
 import sys
 import eastereggs.credits_Easteregg as egg
@@ -3707,6 +3926,8 @@ from playfab.PlayFabClientAPI import (
 import tkinter as tk
 from tkinter import filedialog
 import hashlib
+from uimanagement.easy_ui_maker import start
+
 # from account_mannagement.authentication import SignInScreen, SignUpScreen
 from uimanagement.leaderboard import (
     display_leaderboard,
@@ -3719,13 +3940,14 @@ from uimanagement.leaderboard import (
 from uimanagement.input_feild import InputField
 from uimanagement.button import Button
 from uimanagement.clouds import Cloud
-
+from uimanagement.friends import instance
 
 # Initialize Pygame
 pygame.init()
 # Add the signed_in flag
 signed_in = IsClientLoggedIn()
-
+em = ""
+p = ""
 current_message = ""
 # Constants
 infoObject: object = pygame.display.Info()
@@ -3745,7 +3967,8 @@ pygame_icon = pygame.image.load(
 )
 pygame.display.set_icon(pygame_icon)
 
-PlayFabSettings.TitleId = "4AAA9"
+playfabsettings = PlayFabSettings
+playfabsettings.TitleId = "4AAA9"
 # Define fonts
 font = pygame.font.Font(None, 36)
 
@@ -3846,7 +4069,7 @@ class SignUpScreen:
 
     def google_login(self):
         request = {"CreateAccount": True}
-        request["TitleId"] = PlayFabSettings.TitleId
+        request["TitleId"] = playfabsettings.TitleId
         request[
             "ServerAuthCode"
         ] = "95487563442-ta5a931frpcrsm78js4q5eb2sjvi927m.apps.googleusercontent.com"
@@ -3880,7 +4103,7 @@ class SignUpScreen:
 
         try:
             request = {"CreateAccount": True}
-            request["TitleId"] = PlayFabSettings.TitleId
+            request["TitleId"] = playfabsettings.TitleId
             request["Email"] = email
             request["Password"] = password
             request["Username"] = username
@@ -3955,7 +4178,7 @@ class SignInScreen:
     # Function to sign in with an email address
 
     def sign_in_with_email(self, email=None, password=None):
-        global signed_in, good  # , user
+        global signed_in, good, em, p  # , user
         if email == None and password == None:
             email = self.email_input.text
             password = self.password_input.text
@@ -3974,24 +4197,37 @@ class SignInScreen:
 
         try:
             request = {}
-            request["TitleId"] = PlayFabSettings.TitleId
+            request["TitleId"] = playfabsettings.TitleId
             request["Email"] = email
             request["Password"] = password
             result = LoginWithEmailAddress(request, callback)
             print(good)
             if good:
                 signed_in = True
-                em = hashlib.sha256(bytes(request["Email"]))
-                p = hashlib.sha256(
-                    bytes(request["Password"])
-                )  # TODO #24 make keep logged in more secure
+                em = request["Email"]
+                p = request["Password"]
+                # TODO #24 make keep logged in more secure
                 if self.remember_me:  # TODO #26 #25 add remember me checkbox
                     # with open("h.h", "x") as x:
-                    x = open("h.h", "w")
-                    x.write(str(em + "\n" + p))
-                    x.close()
-                    # playfab.PlayFabClientAPI.GetPlayerProfile
-                    # user = {""}
+                    # Create peekaboo.py and add var1 and var2
+                    with open("peekaboo.py", "w") as peekaboo_file:
+                        peekaboo_file.write(f"var1 = {em}\n")
+                        peekaboo_file.write(f"var2 = {p}\n")
+                #
+                ## Compile peekaboo.py to peekaboo.pyc
+                # import py_compile
+                #
+                # py_compile.compile("peekaboo.py")
+                # import peekaboo
+                #
+                # os.remove("peekaboo.py")
+                #
+                ## Create remember.cfg with the value True
+                # with open("remember.py", "w") as cfg_file:
+                #    cfg_file.write("t = True\n")
+                #
+                ## playfab.PlayFabClientAPI.GetPlayerProfile
+                # user = {""}
                 display_message("Signed in.", (0, 255, 0))
                 return
             else:
@@ -4050,6 +4286,15 @@ def main_menu(
         50,
         start_singleplayer_game,
     )
+    UImaker = Button(
+        "Make UI (for testing purposes only) <unless future mod system...>",
+        684,
+        800,
+        822,
+        50,
+        start,
+    )
+    UImaker.size = 20
     back_button = Button("Back", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, back)
     play_button = Button(
         "Play", WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, toggle_play_buttons
@@ -4088,10 +4333,13 @@ def main_menu(
                 sys.exit()
 
             # Handle events for buttons
+            for button in instance.activebuttons:
+                button.handle_event(event)
             play_button.handle_event(event)
             settings_button.handle_event(event)
             quit_button.handle_event(event)
             credits_button.handle_event(event)
+            UImaker.handle_event(event)
             update_leaderboard(
                 event, search_input, next_button, search_button, previous_button
             )
@@ -4119,7 +4367,10 @@ def main_menu(
             play_button.draw(screen)
             settings_button.draw(screen)
             quit_button.draw(screen)
-
+            UImaker.draw(screen)
+        # Render the friends ui
+        instance.render()
+        # render the leaderboard
         display_leaderboard(
             leaderboard_data,
             "",
@@ -4786,7 +5037,15 @@ class Button:
     """Button class for creating interactive buttons in the game."""
 
     def __init__(
-        self, text, x, y, width, height, command, additional_data: list = None
+        self,
+        text,
+        x,
+        y,
+        width,
+        height,
+        command,
+        additional_data: list = None,
+        color=(255, 255, 255),
     ):
         """
         Initialize a button.
@@ -4808,12 +5067,23 @@ class Button:
         self.command = command
         self.additional_data = additional_data
         self.hovered = False
+        self.size = 36
+        self.active = False
+        self.bold = False
+        self.italics = False
+        self.underlined = False
+        self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
+        self.color = color
 
     def draw(self, screen):
         """Draw the button on the screen."""
+        font = pygame.font.Font(self.font_name, self.size)
+        font.set_bold(self.bold)
+        font.set_italic(self.italics)
+        font.set_underline(self.underlined)
         color = BUTTON_HOVER_COLOR if self.hovered else BUTTON_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        text = font.render(self.text, True, WHITE)
+        text = font.render(self.text, True, self.color)
         screen.blit(
             text,
             (
@@ -4836,10 +5106,35 @@ class Button:
             )
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.hovered:
+                self.active = True
                 if self.additional_data != None:
                     self.command(*self.additional_data)
                 else:
                     self.command()
+            else:
+                self.active = False
+
+    def selected(self):
+        self.hovered = True
+
+    def change_text(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
+
+
 import pygame
 
 if __name__ == "__main__":
@@ -4866,8 +5161,18 @@ class InputField:
         self.placeholder = placeholder
         self.text = ""
         self.active = False
+        self.size = 36
+        self.hovered = False
+        self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
+        self.bold = False
+        self.italics = False
+        self.underlined = False
 
     def draw(self, screen):
+        font = pygame.font.Font(self.font_name, self.size)
+        font.set_bold(self.bold)
+        font.set_italic(self.italics)
+        font.set_underline(self.underlined)
         color = BUTTON_COLOR if not self.active else BUTTON_HOVER_COLOR
         pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
         font_color = (0, 0, 0) if not self.active else (255, 255, 255)
@@ -4887,6 +5192,25 @@ class InputField:
                 self.text = self.text[:-1]
             else:
                 self.text += event.unicode
+
+    def change_text(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
+
+
 # Cloud class
 class Cloud:
     def __init__(self, x, y, image, speed):
@@ -4905,6 +5229,8 @@ class Cloud:
     def draw(self, screen):
         self.image.set_alpha(self.alpha)
         screen.blit(self.image, (self.x, self.y))
+
+
 import pygame
 from playfab.PlayFabClientAPI import (
     GetFriendLeaderboard,
@@ -4918,107 +5244,26 @@ import playfab.PlayFabSettings as PlayFabSettings
 import requests
 import json
 
+pygame.init()
 
+from uimanagement.button import Button
+from uimanagement.input_feild import InputField
+
+
+infoObject: object = pygame.display.Info()
+screen: pygame.Surface = pygame.display.set_mode(
+    (infoObject.current_w, infoObject.current_h)
+)
+pygame_icon = pygame.image.load(
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+)
+pygame.display.set_icon(pygame_icon)
+# pygame.display.toggle_fullscreen()
+
+pygame.display.set_caption("Square Pixel")
 font = pygame.font.Font("terraria_styled_game\Fonts\PixelifySans-Regular.ttf", 36)
 
-
-def DoPost(
-    urlPath, request, authKey, authVal, callback, customData=None, extraHeaders=None
-):
-    """
-    Note this is a blocking call and will always run synchronously
-    the return type is a dictionary that should contain a valid dictionary that
-    should reflect the expected JSON response
-    if the call fails, there will be a returned PlayFabError
-    """
-
-    url = PlayFabSettings.GetURL(
-        urlPath, PlayFabSettings._internalSettings.RequestGetParams
-    )
-
-    try:
-        j = json.dumps(request)
-    except Exception as e:
-        raise PlayFabErrors.PlayFabException(
-            "The given request is not json serializable. {}".format(e)
-        )
-
-    requestHeaders = {}
-
-    if extraHeaders:
-        requestHeaders.update(extraHeaders)
-
-    requestHeaders["Content-Type"] = "application/json"
-    requestHeaders["X-PlayFabSDK"] = PlayFabSettings._internalSettings.SdkVersionString
-    requestHeaders[
-        "X-ReportErrorAsSuccess"
-    ] = "true"  # Makes processing PlayFab errors a little easier
-
-    if authKey and authVal:
-        requestHeaders[authKey] = authVal
-
-    httpResponse = requests.post(url, data=j, headers=requestHeaders)
-    # print(httpResponse)
-
-    error = response = None
-
-    if httpResponse.status_code != 200:
-        # Failed to contact PlayFab Case
-        error = PlayFabErrors.PlayFabError()
-
-        error.HttpCode = httpResponse.status_code
-        error.HttpStatus = httpResponse.reason
-    else:
-        # Contacted playfab
-        responseWrapper = json.loads(httpResponse.content.decode("utf-8"))
-        # print(responseWrapper)
-        if responseWrapper["code"] != 200:
-            # contacted PlayFab, but response indicated failure
-            error = responseWrapper
-            return None
-        else:
-            # successful call to PlayFab
-            response = responseWrapper["data"]
-            return response
-
-    if error and callback:
-        callGlobalErrorHandler(error)
-
-        try:
-            # Notify the caller about an API Call failure
-            callback(None, error)
-        except Exception as e:
-            # Global notification about exception in caller's callback
-            PlayFabSettings.GlobalExceptionLogger(e)
-    elif (response or response == {}) and callback:
-        try:
-            # Notify the caller about an API Call success
-            # User should also check for {} on the response as it can still be a valid call
-            callback(response, None)
-        except Exception as e:
-            # Global notification about exception in caller's callback
-            PlayFabSettings.GlobalExceptionLogger(e)
-    elif callback:
-        try:
-            # Notify the caller about an API issue, response was none
-            emptyResponseError = PlayFabErrors.PlayFabError()
-            emptyResponseError.Error = "Empty Response Recieved"
-            emptyResponseError.ErrorMessage = "PlayFabHTTP Recieved an empty response"
-            emptyResponseError.ErrorCode = PlayFabErrors.PlayFabErrorCode.Unknown
-            callback(None, emptyResponseError)
-        except Exception as e:
-            # Global notification about exception in caller's callback
-            PlayFabSettings.GlobalExceptionLogger(e)
-
-
-def callGlobalErrorHandler(error):
-    if PlayFabSettings.GlobalErrorHandler:
-        try:
-            # Global notification about an API Call failure
-            PlayFabSettings.GlobalErrorHandler(error)
-        except Exception as e:
-            # Global notification about exception in caller's callback
-            PlayFabSettings.GlobalExceptionLogger(e)
+WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 
 
 # Function to display a message on the screen
@@ -5030,59 +5275,1386 @@ def display_message(message, color=(255, 0, 0)):
     screen.blit(text_surface, text_rect)
 
 
-def callback(success, failure):
-    if success:
-        print("success")  # leaderboard_data = success.data.Leaderboard
-        display_message("success")
-    # good = True
-    # display_message("Account created and signed in.", (0, 255, 0))
-    else:
-        display_message("failed")
-        print("failed")
-        if failure:
-            display_message("Here's some debug information:")
-            display_message(str(failure) + "leader board")
-            print("Here's some debug information:")
-            print(str(failure) + "leader board")
+class Friends:
+    def __init__(self):
+        self.font = None  # You should initialize this appropriately
+        self.current_message = ""
+        self.friends = []
 
-
-def GetFriendsList_http(request, callback, customData=None, extraHeaders=None):
-    """
-    Retrieves the current friend list for the local user, constrained to users who have PlayFab accounts. Friends from
-    linked accounts (Facebook, Steam) are also included. You may optionally exclude some linked services' friends.
-    https://docs.microsoft.com/rest/api/playfab/client/friend-list-management/getfriendslist
-    """
-    if not PlayFabSettings._internalSettings.ClientSessionTicket:
-        raise PlayFabErrors.PlayFabException("Must be logged in to call this method")
-
-    def wrappedCallback(playFabResult, error):
-        if callback:
-            callback(playFabResult, error)
-
-    return DoPost(
-        "/Client/GetFriendsList",
+    def DoPost(
+        self,
+        urlPath,
         request,
-        "X-Authorization",
-        PlayFabSettings._internalSettings.ClientSessionTicket,
-        wrappedCallback,
-        customData,
-        extraHeaders,
+        authKey,
+        authVal,
+        callback,
+        customData=None,
+        extraHeaders=None,
+    ):
+        """
+        Note this is a blocking call and will always run synchronously
+        the return type is a dictionary that should contain a valid dictionary that
+        should reflect the expected JSON response
+        if the call fails, there will be a returned PlayFabError
+        """
+
+        url = PlayFabSettings.GetURL(
+            urlPath, PlayFabSettings._internalSettings.RequestGetParams
+        )
+
+        try:
+            j = json.dumps(request)
+        except Exception as e:
+            raise PlayFabErrors.PlayFabException(
+                "The given request is not json serializable. {}".format(e)
+            )
+
+        requestHeaders = {}
+
+        if extraHeaders:
+            requestHeaders.update(extraHeaders)
+
+        requestHeaders["Content-Type"] = "application/json"
+        requestHeaders[
+            "X-PlayFabSDK"
+        ] = PlayFabSettings._internalSettings.SdkVersionString
+        requestHeaders[
+            "X-ReportErrorAsSuccess"
+        ] = "true"  # Makes processing PlayFab errors a little easier
+
+        if authKey and authVal:
+            requestHeaders[authKey] = authVal
+
+        httpResponse = requests.post(url, data=j, headers=requestHeaders)
+        # print(httpResponse)
+
+        error = response = None
+
+        if httpResponse.status_code != 200:
+            # Failed to contact PlayFab Case
+            error = PlayFabErrors.PlayFabError()
+
+            error.HttpCode = httpResponse.status_code
+            error.HttpStatus = httpResponse.reason
+        else:
+            # Contacted playfab
+            responseWrapper = json.loads(httpResponse.content.decode("utf-8"))
+            # print(responseWrapper)
+            if responseWrapper["code"] != 200:
+                # contacted PlayFab, but response indicated failure
+                error = responseWrapper
+                return None
+            else:
+                # successful call to PlayFab
+                response = responseWrapper["data"]
+                return response
+
+        if error and callback:
+            self.callGlobalErrorHandler(error)
+
+            try:
+                # Notify the caller about an API Call failure
+                callback(None, error)
+            except Exception as e:
+                # Global notification about exception in caller's callback
+                PlayFabSettings.GlobalExceptionLogger(e)
+        elif (response or response == {}) and callback:
+            try:
+                # Notify the caller about an API Call success
+                # User should also check for {} on the response as it can still be a valid call
+                callback(response, None)
+            except Exception as e:
+                # Global notification about exception in caller's callback
+                PlayFabSettings.GlobalExceptionLogger(e)
+        elif callback:
+            try:
+                # Notify the caller about an API issue, response was none
+                emptyResponseError = PlayFabErrors.PlayFabError()
+                emptyResponseError.Error = "Empty Response Recieved"
+                emptyResponseError.ErrorMessage = (
+                    "PlayFabHTTP Recieved an empty response"
+                )
+                emptyResponseError.ErrorCode = PlayFabErrors.PlayFabErrorCode.Unknown
+                callback(None, emptyResponseError)
+            except Exception as e:
+                # Global notification about exception in caller's callback
+                PlayFabSettings.GlobalExceptionLogger(e)
+
+        # Your existing DoPost function with "self" references
+
+    def callGlobalErrorHandler(self, error):
+        if PlayFabSettings.GlobalErrorHandler:
+            try:
+                # Global notification about an API Call failure
+                PlayFabSettings.GlobalErrorHandler(error)
+            except Exception as e:
+                # Global notification about exception in caller's callback
+                PlayFabSettings.GlobalExceptionLogger(e)
+
+    def display_message(self, message, color=(255, 0, 0)):
+        self.current_message = message
+        text_surface = self.font.render(message, True, color)
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))
+        self.screen.blit(text_surface, text_rect)
+
+    def GetFriendsList_http(
+        self, request, callback, customData=None, extraHeaders=None
+    ):
+        """
+        Retrieves the current friend list for the local user, constrained to users who have PlayFab accounts. Friends from
+        linked accounts (Facebook, Steam) are also included. You may optionally exclude some linked services' friends.
+        https://docs.microsoft.com/rest/api/playfab/client/friend-list-management/getfriendslist
+        """
+        if not PlayFabSettings._internalSettings.ClientSessionTicket:
+            raise PlayFabErrors.PlayFabException(
+                "Must be logged in to call this method"
+            )
+
+        def wrappedCallback(playFabResult, error):
+            if callback:
+                callback(playFabResult, error)
+
+        return self.DoPost(
+            "/Client/GetFriendsList",
+            request,
+            "X-Authorization",
+            PlayFabSettings._internalSettings.ClientSessionTicket,
+            wrappedCallback,
+            customData,
+            extraHeaders,
+        )
+
+    def get_friends(self):
+        request = {}
+
+        def callback(success, failure):
+            if success:
+                print("success")
+                self.display_message("success")
+            else:
+                self.display_message("failed")
+                print("failed")
+                if failure:
+                    self.display_message("Here's some debug information:")
+                    self.display_message(str(failure) + "leader board")
+
+        try:
+            result = self.GetFriendsList_http(request, callback)
+        except:
+            result = None
+        if result is not None:
+            print(result)
+            return result
+        else:
+            return []
+
+    def display_friends(self, friends):
+        y = 100
+        for friend in friends:
+            friend_text = self.font.render(friend.username, True, (255, 255, 255))
+            self.screen.blit(friend_text, (50, y))
+            y += 50
+
+    def add_friends(self, friend_identifier):
+        if "@" in friend_identifier:
+            # If the friend_identifier contains "@" symbol, it's an email
+            request = {"FriendEmail": friend_identifier}
+        else:
+            # Otherwise, it's a username
+            request = {"FriendUsername": friend_identifier}
+
+        def callback(success, failure):
+            if success:
+                print("success")
+                self.display_message("success")
+            else:
+                self.display_message("failed")
+                print("failed")
+                if failure:
+                    self.display_message("Here's some debug information:")
+                    self.display_message(str(failure) + "leader board")
+
+        # Call the AddFriend method
+        try:
+            result = AddFriend(request, callback)
+        except:
+            print("error")
+
+
+class FriendScreen:
+    def __init__(self):
+        self.activebuttons = []
+        self.friend_list = [
+            "Friends will appear here"
+        ]  # Initialize a list to store friend names
+        self.pending_friend_list = []  # List to store pending friend requests
+        self.friend_list_offset = 0  # Offset for displaying friends
+        self.show_pending_friends = (
+            False  # To toggle between "Friends" and "Pending Friends" tabs
+        )
+        self.selected_tab = "Friends"  # Initialize the selected tab
+        self.search_bar = InputField(50, 50, 400, 40, "Search Friends")
+        self.add_friend_input = InputField(50, 220, 400, 40, "Enter Username/Email")
+        self.friends_instance = Friends()
+        self.add_friend_tab = Button(
+            "Add Friend",
+            50,
+            150,
+            200,
+            50,
+            self.show_add_friends,
+        )
+        self.add_friend_button = Button(
+            "Send Friend Request",
+            150,
+            270,
+            200,
+            50,
+            self.add_friend,
+        )
+        self.refresh_button = Button(
+            "Refresh",
+            50,
+            100,
+            200,
+            50,
+            self.refresh_friends,
+        )
+        self.friends_tab_button = Button(
+            "Friends",
+            270,
+            95,
+            200,
+            50,
+            self.show_friends,
+        )
+        self.pending_friends_tab_button = Button(
+            "Pending Friends",
+            300,
+            150,
+            200,
+            50,
+            self.show_pending_friends_list,
+        )
+        # self.back_button = Button(
+        #    "Back",
+        #    50,
+        #    HEIGHT - 100,
+        #    200,
+        #    50,
+        #    self.back,
+        # )
+        self.activebuttons.extend(
+            [
+                self.search_bar,
+                self.refresh_button,
+                self.friends_tab_button,
+                self.add_friend_tab,
+                self.pending_friends_tab_button,
+            ]
+        )
+
+    def render(self):
+        # Background for the friend list
+        # Highlight the selected tab
+        backround = pygame.Surface(
+            (525, pygame.display.Info().current_h), pygame.SRCALPHA
+        )
+
+        pygame.draw.rect(
+            backround,
+            (0, 0, 0, 100),
+            (0, 0, 525, pygame.display.Info().current_h),
+        )
+        screen.blit(
+            backround,
+            (
+                0,
+                0,
+            ),
+        )
+        if self.selected_tab == "Friends":
+            self.friends_tab_button.selected()
+            # Display the list of friends
+            self.display_friends()
+
+            self.activebuttons = []
+            self.activebuttons.extend(
+                [
+                    self.search_bar,
+                    self.refresh_button,
+                    self.friends_tab_button,
+                    self.add_friend_tab,
+                    self.pending_friends_tab_button,
+                ]
+            )
+
+        elif self.selected_tab == "Pending Friends":
+            # Display the list of pending friends
+            self.display_pending_friends()
+            self.pending_friends_tab_button.selected()
+
+        elif self.selected_tab == "Add Friends":
+            self.activebuttons = []
+            self.activebuttons.extend(
+                [
+                    self.search_bar,
+                    self.refresh_button,
+                    self.friends_tab_button,
+                    self.add_friend_tab,
+                    self.pending_friends_tab_button,
+                    self.add_friend_input,
+                    self.add_friend_button,
+                ]
+            )
+
+        for button in self.activebuttons:
+            button.draw(screen)
+
+    def refresh_friends(self):
+        # Call a method to refresh the friend list
+        self.friend_list = self.friends_instance.get_friends()
+        # Also, update the pending friend list if needed
+
+    def show_friends(self):
+        self.show_pending_friends = False
+        self.selected_tab = "Friends"
+
+    def show_pending_friends_list(self):
+        # Call a method to get pending friend requests
+        self.selected_tab = "Pending Friends"
+        self.pending_friend_list = self.friends_instance.get_pending_friend_requests()
+        self.show_pending_friends = True
+
+    def get_friends(self):
+        self.friends = self.friends_instance.get_friends()
+
+    def show_add_friends(self):
+        self.selected_tab = "Add Friends"
+
+    # Function to add a friend
+    def add_friend(self):
+        friend_name = self.add_friend_input.text
+        if friend_name:
+            self.friend_list.append(friend_name)
+            self.friends_instance.add_friends(friend_name)
+            # Send a request to the server to add the friend
+            self.add_friend_input.clear()
+
+    # Function to display the list of friends
+    def display_friends(self):
+        # Filter friends based on the search bar input
+        search_text = self.search_bar.text.lower()
+        filtered_friends = [
+            friend for friend in self.friend_list if search_text in friend.lower()
+        ]
+
+        # Display a portion of the filtered friend list (e.g., 10 friends at a time)
+        y = 200
+        for friend in filtered_friends[
+            self.friend_list_offset : self.friend_list_offset + 10
+        ]:
+            friend_text = font.render(friend, True, (255, 255, 255))
+            screen.blit(friend_text, (50, y))
+            y += 50
+
+    # Function to go back to the main menu
+    def back(self):
+        global current_page, main_page
+        current_page = main_page
+
+
+# Usage Example:
+instance = FriendScreen()
+
+
+if __name__ == "__main__":
+    # instance.friend_list = instance.get_friends()
+
+    # Game loop
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            # Handle user input events
+            for button in instance.activebuttons:
+                button.handle_event(event)
+
+        # Update your friend list or other game logic as needed
+        # friend_screen.update()
+
+        # Clear the screen
+        screen.fill((255, 255, 255))
+
+        instance.render()
+        # Update the display
+        pygame.display.flip()
+
+    # Quit Pygame
+    pygame.quit()
+import pygame
+
+
+class TextElement:
+    def __init__(self, x, y, text, font_size):
+        self.x = x
+        self.y = y
+        self.text = text
+        self.font_size = font_size
+        self.color = (255, 255, 255)  # Default text color
+        self.size = font_size
+        self.hovered = False
+        self.width = 50
+        self.height = 25
+        self.bold = False
+        self.italics = False
+        self.underlined = False
+        self.font_name = None
+
+    def draw(self, screen):
+        font = pygame.font.Font(self.font_name, self.size)
+        font.set_bold(self.bold)
+        font.set_italic(self.italics)
+        font.set_underline(self.underlined)
+        text_surface = font.render(self.text, True, self.color)
+        screen.blit(text_surface, (self.x, self.y))
+
+    def change_text(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
+
+
+import pygame
+import sys
+import pyperclip  # Required for clipboard copy
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image
+
+
+# Initialize Pygame
+pygame.init()
+
+from uimanagement.button import Button
+from uimanagement.input_feild import InputField
+from uimanagement.TextElement import TextElement
+from uimanagement.checkbox import CheckBox
+from uimanagement.color import ColorPickerInputField
+from uimanagement.Image import ImageElement
+
+
+# Constants
+BUTTON_COLOR = (50, 50, 50)
+BUTTON_HOVER_COLOR = (100, 100, 100)
+WHITE = (255, 255, 255)
+
+
+# Set the screen size
+infoObject: object = pygame.display.Info()
+screen_width, screen_height = infoObject.current_w, infoObject.current_h
+screen: pygame.Surface = pygame.display.set_mode(
+    (infoObject.current_w, infoObject.current_h)
+)
+pygame_icon = pygame.image.load(
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+)
+pygame.display.set_icon(pygame_icon)  # pygame.display.toggle_fullscreen()
+pygame.display.set_caption("Square Pixel")
+pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
+
+buttons = []
+input_fields = []
+sidebar_buttons = []
+text_elements = []
+checkboxes = []
+scripts = []
+images = []
+
+
+# Element that is currently being moved or scaled
+selected_element = None
+scaling = False
+scale_start_x = 0
+scale_start_y = 0
+scale_start_width = 0
+scale_start_height = 0
+
+# UI panel properties
+ui_panel_x = screen_width - 200
+ui_panel_y = 0
+ui_panel_width = 200
+ui_panel_height = screen_height
+
+# UI panel background color
+UI_PANEL_COLOR = (200, 200, 200)
+
+# Create a font for displaying instructions
+instruction_font = pygame.font.Font(None, 13)
+# Add instructions for updating the selected element
+instruction_text = "Click and drag to move, right-click to resize element and scroll to change font size. "
+instruction_text += "Edit properties in the UI panel, then press Enter to apply changes to the selected element. "
+instruction_text += "To use color wheel hold mouse button down and then move it around the inner circle. "
+instruction_text += "The bar on the right of the wheel controls brightness. "
+instruction_text += (
+    "Once you find the color you want then just click the element you want to recolor. "
+)
+
+
+# Function for updating font size when scrolling
+def update_font_size(selected_element, scroll_direction):
+    if isinstance(selected_element, Button):
+        selected_element.font_size += scroll_direction * 2
+
+
+def create_button(text, x, y, width, height, command, additional_data=None):
+    return Button(text, x, y, width, height, command, additional_data)
+
+
+def create_input_field(x, y, width, height, placeholder):
+    return InputField(x, y, width, height, placeholder)
+
+
+def create_button_on_sidebar(text, y, create_function, extra=None):
+    button_width = 120
+    button_height = 40
+    button_x = 10
+    new_button = Button(
+        text,
+        button_x,
+        y,
+        button_width,
+        button_height,
+        create_function,
+        additional_data=extra,
+    )
+    sidebar_buttons.append(new_button)
+
+
+def add_image(circle=None):
+    root = tk.Tk()
+    root.withdraw()  # Hide the main tkinter window
+
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
+    )
+
+    if file_path:
+        # Load the selected image using PIL
+        image = Image.open(file_path)
+
+        # Create an ImageElement object and add it to your list of elements
+        if circle:
+            image_element = ImageElement(200, 400, image, "Circle")
+        else:
+            image_element = ImageElement(200, 400, image)
+        images.append(image_element)
+
+
+# Function for creating a new button
+def create_new_button():
+    button = create_button("Button", 200, 200, 100, 50, None)
+    buttons.append(button)
+
+
+# Function for creating a new text element
+def create_new_text_element():
+    text_element = TextElement(200, 300, "Text", 24)
+    text_elements.append(text_element)
+
+
+def delete_selected_element():
+    global selected_element
+
+    if selected_element:
+        if isinstance(selected_element, Button):
+            buttons.remove(selected_element)
+        elif isinstance(selected_element, InputField):
+            input_fields.remove(selected_element)
+        elif isinstance(selected_element, TextElement):
+            text_elements.remove(selected_element)
+        elif isinstance(selected_element, CheckBox):
+            checkboxes.remove(selected_element)
+
+        selected_element = None
+
+
+def create_delete_button(y=280):
+    delete_button = Button("Delete", 10, y, 120, 40, delete_selected_element)
+    sidebar_buttons.append(delete_button)
+
+
+def export_ui_elements():
+    global buttons, input_fields, checkboxes, images
+    code = [
+        "if __name__ == '__main__':",
+        "    from button import Button",
+        "    from input_feild import InputField",
+        "    from TextElement import TextElement",
+        "    from checkbox import CheckBox",
+        "    from color import ColorPickerInputField",
+        "    from Image import ImageElement",
+        "else:",
+        "    from uimanagement.button import Button",
+        "    from uimanagement.input_feild import InputField",
+        "    from uimanagement.TextElement import TextElement",
+        "    from uimanagement.checkbox import CheckBox",
+        "    from uimanagement.color import ColorPickerInputField",
+        "    from uimanagement.Image import ImageElement",
+    ]
+
+    # Create buttons
+    for index, button in enumerate(buttons):
+        code.append(
+            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
+        )
+
+    # Create input fields
+    for index, input_field in enumerate(input_fields):
+        code.append(
+            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
+        )
+    for index, text_element in enumerate(text_elements):
+        code.append(
+            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
+        )
+    for index, checkbox in enumerate(checkboxes):
+        code.append(
+            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
+        )
+    for index, image in enumerate(images):
+        code.append(
+            f"Image{index + 1} = ImageElement({image.x}, {image.y}, {image.width}, {image.height})"
+        )
+    code.append("code copied to clipboard")
+    result = "\n".join(code)
+    pyperclip.copy(result)
+    screen.fill((0, 0, 0))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        # Display the generated code on the screen
+        font = pygame.font.Font(None, 15)
+        for index, t in enumerate(code):
+            if index == len(code) - 1:
+                index += 5
+                font = pygame.font.Font(None, 25)
+            code_surface = font.render(t, True, (255, 255, 255))
+            screen.blit(
+                code_surface, (10, 60 + (15 * index))
+            )  # Adjust position as needed
+            pygame.display.flip()
+
+
+# Function for creating a new input field
+def create_new_input_field():
+    input_field = create_input_field(300, 300, 200, 30, "Enter text")
+    input_fields.append(input_field)
+
+
+def create_new_checkbox():
+    checkbox = CheckBox(380, 40, "Label")
+    checkboxes.append(checkbox)
+
+
+create_button_on_sidebar("New Button", 10, create_new_button)
+create_button_on_sidebar("New Input", 60, create_new_input_field)
+create_button_on_sidebar("New Text", 110, create_new_text_element)
+create_button_on_sidebar("Checkbox", 170, create_new_checkbox)
+create_button_on_sidebar("Add Image", 230, add_image)
+create_button_on_sidebar("Add Circle Image", 290, add_image, [True])  # circle
+create_button_on_sidebar("Save UI", 350, export_ui_elements)
+create_delete_button(410)
+
+
+# UI panel for editing properties
+class UIPanel:
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.bg_color = UI_PANEL_COLOR
+        self.elements = []
+
+    def draw(self, screen):
+        pygame.draw.rect(
+            screen, self.bg_color, (self.x, self.y, self.width, self.height)
+        )
+
+        for element in self.elements:
+            element.draw(screen)
+
+
+class Script:
+    def __init__(self):
+        self.nodes = []  # List of nodes
+        self.connections = []  # List of connections between nodes
+
+
+class Node:
+    def __init__(self, node_type, x, y, node_id):
+        self.type = node_type
+        self.x = x
+        self.y = y
+        self.id = node_id
+        self.logic = lambda: None  # Default logic for the node
+
+
+# Text input field for customizing text
+class TextInputField:
+    def __init__(self, x, y, width, height, label, default_text):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.label = label
+        self.default_text = default_text
+        self.text = default_text
+        self.active = False
+
+    def draw(self, screen):
+        font = pygame.font.Font(None, 36)
+        text = font.render(self.label, True, (0, 0, 0))
+        screen.blit(text, (self.x, self.y))
+        pygame.draw.rect(
+            screen, (255, 255, 255), (self.x, self.y + 30, self.width, self.height), 2
+        )
+        text = font.render(self.text, True, (0, 0, 0))
+        screen.blit(text, (self.x + 5, self.y + 35))
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            self.active = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y + 30 < event.pos[1] < self.y + 30 + self.height
+            )
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
+
+
+# Numeric input field for customizing numeric properties
+class NumericInputField:
+    def __init__(self, x, y, width, height, label, default_value):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.label = label
+        self.value = default_value
+        self.active = False
+
+    def draw(self, screen):
+        font = pygame.font.Font(None, 36)
+        text = font.render(self.label, True, (0, 0, 0))
+        screen.blit(text, (self.x, self.y))
+        pygame.draw.rect(
+            screen, (255, 255, 255), (self.x, self.y + 30, self.width, self.height), 2
+        )
+        text = font.render(str(self.value), True, (0, 0, 0))
+        screen.blit(text, (self.x + 5, self.y + 35))
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            self.active = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y + 30 < event.pos[1] < self.y + 30 + self.height
+            )
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.value = int(str(self.value)[:-1])
+            elif event.key in [
+                pygame.K_0,
+                pygame.K_1,
+                pygame.K_2,
+                pygame.K_3,
+                pygame.K_4,
+                pygame.K_5,
+                pygame.K_6,
+                pygame.K_7,
+                pygame.K_8,
+                pygame.K_9,
+            ]:
+                self.value = int(str(self.value) + event.unicode)
+
+
+# Create UI panel
+ui_panel = UIPanel(ui_panel_x, ui_panel_y, ui_panel_width, ui_panel_height)
+
+# Create input fields for customization
+text_input_field = TextInputField(
+    ui_panel_x + 10, 30, ui_panel_width - 20, 30, "Text:", ""
+)
+text_size_input_field = NumericInputField(
+    ui_panel_x + 10, 100, ui_panel_width - 20, 30, "Text Size:", 0
+)
+width_input_field = NumericInputField(
+    ui_panel_x + 10, 170, ui_panel_width - 20, 30, "Width:", 0
+)
+height_input_field = NumericInputField(
+    ui_panel_x + 10, 250, ui_panel_width - 20, 30, "Height:", 0
+)
+
+font_name_input_field = TextInputField(
+    ui_panel_x + 10, 330, ui_panel_width - 20, 30, "Font Name:", "Arial"
+)
+bold_checkbox = CheckBox(ui_panel_x + 10, 450, "Bold", False, color=(0, 0, 0))
+italic_checkbox = CheckBox(ui_panel_x + 10, 500, "Italic", False, color=(0, 0, 0))
+underline_checkbox = CheckBox(ui_panel_x + 10, 550, "Underline", False, color=(0, 0, 0))
+# Create color picker input field for customizing color
+color_picker_input_field = ColorPickerInputField(
+    ui_panel_x + 10, 630, ui_panel_width - 20, 40, "Color:", (255, 0, 0)
+)
+
+ui_panel.elements = [
+    text_input_field,
+    text_size_input_field,
+    width_input_field,
+    height_input_field,
+    font_name_input_field,
+    bold_checkbox,
+    italic_checkbox,
+    underline_checkbox,
+    color_picker_input_field,
+]
+for el in ui_panel.elements:
+    el.size = 20
+
+
+def handle_events():
+    global selected_element, scaling, scale_start_x, scale_start_y, scale_start_width, scale_start_height
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if scaling:
+                scaling = False
+            for button in buttons:
+                if (
+                    button.x < event.pos[0] < button.x + button.width
+                    and button.y < event.pos[1] < button.y + button.height
+                ):
+                    button.selected()
+                    selected_element = button
+            for input_field in input_fields:
+                if (
+                    input_field.x < event.pos[0] < input_field.x + input_field.width
+                    and input_field.y
+                    < event.pos[1]
+                    < input_field.y + input_field.height
+                ):
+                    input_field.active = True
+                    selected_element = input_field
+            for text in text_elements:
+                if text.x < event.pos[0] < text.x + (
+                    text.width + text.size
+                ) and text.y < event.pos[1] < text.y + (text.height + text.size):
+                    text.active = True
+                    selected_element = text
+            for check in checkboxes:
+                if check.x < event.pos[0] < check.x + (
+                    check.width + check.size
+                ) and check.y < event.pos[1] < check.y + (check.height + check.size):
+                    check.active = True
+                    selected_element = check
+            for image in images:
+                if (
+                    image.x < event.pos[0] < image.x + image.width
+                    and image.y < event.pos[1] < image.y + image.height
+                ):
+                    image.active = True
+                    selected_element = image
+            for sidebar_button in sidebar_buttons:
+                if (
+                    sidebar_button.x
+                    < event.pos[0]
+                    < sidebar_button.x + sidebar_button.width
+                    and sidebar_button.y
+                    < event.pos[1]
+                    < sidebar_button.y + sidebar_button.height
+                ):
+                    if sidebar_button.additional_data:
+                        sidebar_button.command(*sidebar_button.additional_data)
+                    else:
+                        sidebar_button.command()
+            if selected_element:
+                if not (
+                    selected_element.x
+                    < event.pos[0]
+                    < selected_element.x + selected_element.width
+                    and selected_element.y
+                    < event.pos[1]
+                    < selected_element.y + selected_element.height
+                ):
+                    selected_element = None
+        elif (
+            event.type == pygame.MOUSEBUTTONDOWN
+            and event.button == 3
+            and selected_element
+        ):
+            scaling = True
+            scale_start_x = event.pos[0]
+            scale_start_y = event.pos[1]
+            scale_start_width = selected_element.width
+            scale_start_height = selected_element.height
+
+        for input_field in input_fields:
+            input_field.change_text(event)
+        for button in buttons:
+            button.change_text(event)
+        for text_element in text_elements:
+            text_element.change_text(event)
+        for checkbox in checkboxes:
+            checkbox.change_text(event)
+            checkbox.handle_event(event)
+        if selected_element:
+            # Update UI panel with the selected element's properties
+            text_input_field.text = selected_element.text
+            text_size_input_field.value = selected_element.size
+            width_input_field.value = selected_element.width
+            height_input_field.value = selected_element.height
+            font_name_input_field.text = selected_element.font_name
+            bold_checkbox.checked = selected_element.bold
+            italic_checkbox.checked = selected_element.italics
+            underline_checkbox.checked = selected_element.underlined
+
+            if scaling and event.type == pygame.MOUSEMOTION:
+                selected_element.width = scale_start_width + (
+                    event.pos[0] - scale_start_x
+                )
+                selected_element.height = scale_start_height - (
+                    scale_start_y - event.pos[1]
+                )
+            elif event.type == pygame.MOUSEMOTION:
+                if pygame.mouse.get_pressed()[0]:  # Left mouse button is held
+                    selected_element.x += event.rel[0]
+                    selected_element.y += event.rel[1]
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                selected_element.size += 1
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                selected_element.size -= 1
+        for inspect in ui_panel.elements:
+            if isinstance(inspect, ColorPickerInputField):
+                inspect.handle_event(event)
+            else:
+                inspect.handle_event(event)
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            # Update the selected element's properties with the UI panel values
+            if selected_element:
+                selected_element.text = text_input_field.text
+                selected_element.size = text_size_input_field.value
+                selected_element.width = width_input_field.value
+                selected_element.height = height_input_field.value
+                selected_element.font_name = font_name_input_field.text
+                selected_element.bold = bold_checkbox.checked
+                selected_element.italics = italic_checkbox.checked
+                selected_element.underlined = underline_checkbox.checked
+        # Update the selected element's color based on the color picker value
+        if selected_element:
+            selected_element.color = color_picker_input_field.color
+
+
+def main():
+    while True:
+        handle_events()
+        screen.fill((0, 0, 0))
+
+        # Draw the sidebar buttons
+        for sidebar_button in sidebar_buttons:
+            sidebar_button.draw(screen)
+
+        # Add text elements to the drawing loop
+        for text_element in text_elements:
+            text_element.draw(screen)
+        # Draw the elements (buttons and input fields)
+        for button in buttons:
+            button.draw(screen)
+        for input_field in input_fields:
+            input_field.draw(screen)
+        for checkbox in checkboxes:
+            checkbox.draw(screen)
+        for image in images:
+            image.draw(screen)
+            # Blit instructions on the screen
+        instruction_surface = instruction_font.render(
+            instruction_text, True, (255, 255, 255)
+        )
+        screen.blit(instruction_surface, (10, screen_height - 30))
+        # Draw the UI panel
+        ui_panel.draw(screen)
+
+        pygame.display.flip()
+
+
+def start():
+    for bu in sidebar_buttons:
+        bu.size = 20
+    main()
+
+
+if __name__ == "__main__":
+    start()
+import pygame
+
+
+class CheckBox:
+    def __init__(
+        self, x, y, text, is_checked=False, font_size=20, color=(255, 255, 255)
+    ):
+        self.x = x
+        self.y = y
+        self.text = text
+        self.is_checked = is_checked
+        self.bold = False
+        self.italics = False
+        self.underlined = False
+        self.font_name = None
+        self.font_size = font_size
+        self.active = False
+        self.hovered = False
+        self.width = 20
+        self.height = 20
+        self.size = font_size
+        self.color = color
+
+    def draw(self, screen):
+        font = pygame.font.Font(self.font_name, self.size)
+        font.set_bold(self.bold)
+        font.set_italic(self.italics)
+        font.set_underline(self.underlined)
+        text = font.render(self.text, True, self.color)
+        screen.blit(text, (self.x, self.y))
+
+        # Draw the checkbox
+        checkbox_rect = pygame.Rect(self.x + 100, self.y, self.width, self.height)
+        pygame.draw.rect(screen, self.color, checkbox_rect, 2)
+        if self.is_checked:
+            pygame.draw.line(
+                screen,
+                self.color,
+                (self.x + 105, self.y + 10),
+                (self.x + 115, self.y + 20),
+                5,
+            )
+            pygame.draw.line(
+                screen,
+                self.color,
+                (self.x + 115, self.y + 20),
+                (self.x + 135, self.y + 5),
+                5,
+            )
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if (
+                self.x + 100 < event.pos[0] < self.x + 120
+                and self.y < event.pos[1] < self.y + 20
+            ):
+                self.is_checked = not self.is_checked
+
+    def change_text(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
+
+
+import pygame
+from PIL import Image, ImageDraw, ImageOps
+
+
+class ImageElement:
+    def __init__(self, x, y, image, crop_mode="None"):
+        self.x = x
+        self.y = y
+        self.image = image
+        self.crop_mode = crop_mode  # "None" or "Circle"
+        self.active = False
+        self.width, self.height = self.image.size
+        self.widtho, self.heighto = self.image.size
+        self.text = ""
+        self.bold = False
+        self.italics = False
+        self.underlined = False
+        self.font_name = "terraria_styled_game\Fonts\PixelifySans-Regular.ttf"
+        self.color = (0, 0, 0)
+        self.size = self.width * self.height
+
+    def draw(self, screen):
+        # Optionally apply cropping based on the selected cropping mode
+        if self.crop_mode == "Circle":
+            # Crop the image to a circle using PIL
+            mask = Image.new("L", (self.widtho, self.heighto), 0)
+            draw = ImageDraw.Draw(mask)
+            draw.ellipse((0, 0, self.widtho, self.heighto), fill=255)
+            self.image.putalpha(mask)
+
+        # Draw the image on the screen
+        pygame_image = pygame.image.fromstring(
+            self.image.tobytes(), self.image.size, self.image.mode
+        )
+        pygame_image = pygame.transform.scale(pygame_image, (self.width, self.height))
+        screen.blit(pygame_image, (self.x, self.y))
+
+
+import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Constants
+WIDTH, HEIGHT = 800, 600
+NODE_RADIUS = 20
+NODE_COLOR = (100, 100, 100)
+LINE_COLOR = (255, 255, 255)
+CONNECTION_COLOR = (255, 255, 0)
+CONNECTION_WIDTH = 2
+TEXT_COLOR = (0, 0, 255)  # Blue for node labels
+
+# Node types and their labels
+node_types = [
+    {"label": "Remove Object", "action": "remove"},
+    {"label": "Add Object", "action": "add"},
+    {"label": "Reveal Object", "action": "reveal"},
+    {"label": "Hide Object", "action": "hide"},
+    {"label": "Move Object", "action": "move"},
+    {"label": "Function", "action": "Script"},
+    {"label": "If", "action": "if"},
+    {"label": "is_clicked", "action": "clicked"},
+]
+
+# Create a Pygame screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Node Editor")
+
+# List to store nodes and connections
+nodes = []
+connections = []
+start_node = {"type": "Start", "label": "Start", "position": (50, HEIGHT // 2)}
+end_node = {"label": "End", "type": "End", "position": (WIDTH - 50, HEIGHT // 2)}
+nodes.append(start_node)
+nodes.append(end_node)
+
+# Constants for the inspector tab
+INSPECTOR_WIDTH = 200
+INSPECTOR_COLOR = (50, 50, 50)
+
+# Create an Inspector rect
+inspector_rect = pygame.Rect(WIDTH - INSPECTOR_WIDTH, 0, INSPECTOR_WIDTH, HEIGHT)
+
+# Create a text input area
+text_input_rect = pygame.Rect(
+    WIDTH - INSPECTOR_WIDTH + 10, 50, INSPECTOR_WIDTH - 20, 100
+)
+text_input_text = ""
+font = pygame.font.Font(None, 36)
+text_input_active = False
+
+
+# Function to add a new node to the canvas
+def add_node(node_type, position):
+    nodes.append(
+        {
+            "type": node_type["label"],
+            "position": position,
+            "rect": pygame.Rect(20, 20, 20, 20),
+        }
     )
 
 
-def get_friends():
-    request = {}
-    result = GetFriendsList_http(request, callback)
-    if result != None:
-        print(result)
-        return result
-    else:
-        return []
+# Function to create a connection between two nodes
+def add_connection(start_node, end_node):
+    connections.append((start_node, end_node))
 
 
-def display_friends(screen, friends):
-    y = 100
-    for friend in friends:
-        friend_text = font.render(friend.username, True, (255, 255, 255))
-        screen.blit(friend_text, (50, y))
-        y += 50
+# Function to draw the inspector tab
+def draw_inspector():
+    pygame.draw.rect(screen, INSPECTOR_COLOR, inspector_rect)
+
+
+# Function to display details about the selected node in the inspector tab
+def show_inspector(node):
+    if node is not None:
+        # Create a text input box for details
+        pygame.draw.rect(screen, (255, 255, 255), text_input_rect)
+        pygame.draw.rect(screen, (0, 0, 0), text_input_rect, 2)
+
+        # Display details about the selected node
+        if "type" in node:
+            details = "Node Type: " + node["type"]
+            font = pygame.font.Font(None, 28)
+            text = font.render(details, True, (0, 0, 0))
+            text_rect = text.get_rect()
+            text_rect.topleft = (text_input_rect.x + 10, text_input_rect.y + 10)
+            screen.blit(text, text_rect)
+        else:
+            text_input_text = ""
+
+
+# Main loop
+running = True
+selected_node = None
+adding_node = None
+dragging_node = None
+mouse_dragging = False
+connecting_node = None
+drawing_line = False
+line_start = None
+node_moving = False
+directions = {}
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                pos = pygame.mouse.get_pos()
+                if adding_node is not None:
+                    add_node(adding_node, pos)
+                    adding_node = None
+
+                # Check if a node is clicked and make it the selected node
+                for node in nodes:
+                    if node["rect"].collidepoint(pos):
+                        selected_node = node
+                        dragging_node = node
+
+                for idx, node_type in enumerate(node_types):
+                    node_rect = pygame.Rect(10, 10 + idx * 30, 200, 20)
+                    if node_rect.collidepoint(pos):
+                        adding_node = node_type
+
+                for node in nodes:
+                    if node["rect"].collidepoint(pos):
+                        connecting_node = node
+                        drawing_line = True
+                        line_start = connecting_node["position"]
+
+            elif event.button == 2:
+                pos = pygame.mouse.get_pos()
+                for node in nodes:
+                    if node["rect"].collidepoint(pos):
+                        selected_node = node
+                        dragging_node = node
+                        mouse_dragging = True
+                text_input_active = text_input_rect.collidepoint(pos)
+
+            if event.button == 3:
+                pos = pygame.mouse.get_pos()
+                for node in nodes:
+                    if node["rect"].collidepoint(pos):
+                        selected_node = node
+                        node_moving = True
+                        break
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                if drawing_line:
+                    pos = pygame.mouse.get_pos()
+                    for node in nodes:
+                        if node["rect"].collidepoint(pos) and node != connecting_node:
+                            add_connection(connecting_node, node)
+                    drawing_line = False
+                connecting_node = None
+
+            if event.button == 1:
+                if dragging_node and selected_node:
+                    selected_node = None
+                    dragging_node = None
+
+            elif event.button == 2:
+                selected_node = None
+                dragging_node = None
+                mouse_dragging = False
+
+    screen.fill((0, 0, 0))
+
+    for connection in connections:
+        start_pos = connection[0]["position"]
+        end_pos = connection[1]["position"]
+        pygame.draw.line(screen, LINE_COLOR, start_pos, end_pos, CONNECTION_WIDTH)
+
+    for node in [start_node, end_node]:
+        node["rect"] = pygame.draw.circle(
+            screen, NODE_COLOR, node["position"], NODE_RADIUS
+        )
+        if node == selected_node:
+            pygame.draw.circle(screen, (0, 255, 0), node["position"], NODE_RADIUS)
+        pygame.draw.circle(screen, LINE_COLOR, node["position"], NODE_RADIUS, 2)
+
+    for idx, node_type in enumerate(node_types):
+        node = node_type["label"]
+        node_rect = pygame.Rect(10, 10 + idx * 30, 200, 20)
+        pygame.draw.rect(screen, NODE_COLOR, node_rect)
+        font = pygame.font.Font(None, 36)
+        text = font.render(node, True, (255, 255, 255))
+        screen.blit(text, (20, 20 + idx * 30))
+
+    for node in nodes:
+        node["rect"] = pygame.draw.circle(
+            screen, NODE_COLOR, node["position"], NODE_RADIUS
+        )
+        if node == selected_node:
+            pygame.draw.circle(screen, (0, 255, 0), node["position"], NODE_RADIUS)
+        pygame.draw.circle(screen, LINE_COLOR, node["position"], NODE_RADIUS, 2)
+        font = pygame.font.Font(None, 24)
+        text = font.render(node["type"], True, TEXT_COLOR)
+        text_rect = text.get_rect()
+        text_rect.center = (node["position"][0], node["position"][1] - NODE_RADIUS - 10)
+        screen.blit(text, text_rect)
+
+    if drawing_line:
+        pygame.draw.line(
+            screen,
+            CONNECTION_COLOR,
+            line_start,
+            pygame.mouse.get_pos(),
+            CONNECTION_WIDTH,
+        )
+
+    # Draw the inspector tab
+    draw_inspector()
+
+    # Show options for the selected node in the inspector tab
+    show_inspector(selected_node)
+
+    pygame.display.flip()
+
+# Quit Pygame
+pygame.quit()
+sys.exit()
