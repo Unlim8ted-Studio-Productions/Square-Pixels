@@ -111,7 +111,7 @@ def create_button_on_sidebar(text, y, create_function, extra=None):
     sidebar_buttons.append(new_button)
 
 
-def add_image(circle=False):
+def add_image(circle=None):
     root = tk.Tk()
     root.withdraw()  # Hide the main tkinter window
 
@@ -165,8 +165,23 @@ def create_delete_button(y=280):
 
 
 def export_ui_elements():
-    global buttons, input_fields
-    code = []
+    global buttons, input_fields, checkboxes, images
+    code = [
+        "if __name__ == '__main__':",
+        "    from button import Button",
+        "    from input_feild import InputField",
+        "    from TextElement import TextElement",
+        "    from checkbox import CheckBox",
+        "    from color import ColorPickerInputField",
+        "    from Image import ImageElement",
+        "else:",
+        "    from uimanagement.button import Button",
+        "    from uimanagement.input_feild import InputField",
+        "    from uimanagement.TextElement import TextElement",
+        "    from uimanagement.checkbox import CheckBox",
+        "    from uimanagement.color import ColorPickerInputField",
+        "    from uimanagement.Image import ImageElement",
+    ]
 
     # Create buttons
     for index, button in enumerate(buttons):
@@ -187,20 +202,30 @@ def export_ui_elements():
         code.append(
             f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
         )
+    for index, image in enumerate(images):
+        code.append(
+            f"Image{index + 1} = ImageElement({image.x}, {image.y}, {image.width}, {image.height})"
+        )
+    code.append("code copied to clipboard")
     result = "\n".join(code)
     pyperclip.copy(result)
+    screen.fill((0, 0, 0))
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        screen.fill((0, 0, 0))
         # Display the generated code on the screen
-        code_text = "\n".join(code) + "\n code copied to clipboard"
-        font = pygame.font.Font(None, 18)
-        code_surface = font.render(code_text, True, (255, 255, 255))
-        screen.blit(code_surface, (10, 60))  # Adjust position as needed
-        pygame.display.flip()
+        font = pygame.font.Font(None, 15)
+        for index, t in enumerate(code):
+            if index == len(code) - 1:
+                index += 5
+                font = pygame.font.Font(None, 25)
+            code_surface = font.render(t, True, (255, 255, 255))
+            screen.blit(
+                code_surface, (10, 60 + (15 * index))
+            )  # Adjust position as needed
+            pygame.display.flip()
 
 
 # Function for creating a new input field
@@ -219,8 +244,8 @@ create_button_on_sidebar("New Input", 60, create_new_input_field)
 create_button_on_sidebar("New Text", 110, create_new_text_element)
 create_button_on_sidebar("Checkbox", 170, create_new_checkbox)
 create_button_on_sidebar("Add Image", 230, add_image)
-create_button_on_sidebar("Add Circle Image", 290, add_image, True)  # circle
-create_button_on_sidebar("Save UI", 350, export_ui_elements, [buttons, input_fields])
+create_button_on_sidebar("Add Circle Image", 290, add_image, [True])  # circle
+create_button_on_sidebar("Save UI", 350, export_ui_elements)
 create_delete_button(410)
 
 
@@ -419,6 +444,13 @@ def handle_events():
                 ) and check.y < event.pos[1] < check.y + (check.height + check.size):
                     check.active = True
                     selected_element = check
+            for image in images:
+                if (
+                    image.x < event.pos[0] < image.x + image.width
+                    and image.y < event.pos[1] < image.y + image.height
+                ):
+                    image.active = True
+                    selected_element = image
             for sidebar_button in sidebar_buttons:
                 if (
                     sidebar_button.x
@@ -428,7 +460,10 @@ def handle_events():
                     < event.pos[1]
                     < sidebar_button.y + sidebar_button.height
                 ):
-                    sidebar_button.command()
+                    if sidebar_button.additional_data:
+                        sidebar_button.command(*sidebar_button.additional_data)
+                    else:
+                        sidebar_button.command()
             if selected_element:
                 if not (
                     selected_element.x
