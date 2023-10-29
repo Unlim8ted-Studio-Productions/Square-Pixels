@@ -1,12 +1,11 @@
 if __name__ == "__main__":
     import pygame as pig
-    import terraingen.terrain_gen as tgen
-    import uimanagement.logo as logo
-    import player.player as pl
-    from uimanagement.Character_creation import main
-    from game.game import game
-    import uimanagement.MainMen as MainMen
-    from soundmanagement.music import play_music
+    from SquarePixels.terraingen import terrain_gen as tgen
+    from SquarePixels.uimanagement import logo, MainMen
+    from SquarePixels.player import player as pl
+    from SquarePixels.uimanagement.Character_creation import main
+    from SquarePixels.game.game import game
+    from SquarePixels.soundmanagement.music import play_music
 
     tile = [-1, 0]
 
@@ -16,29 +15,29 @@ if __name__ == "__main__":
     reset_terrain: bool = False
     clicked: bool = False
     # Path to your video file
-    video_file: str = r"terraria_styled_game\\Company Animated Logo.mov"
+    video_file: str = r"Recources\\Company Animated Logo.mov"
     infoObject: object = pig.display.Info()
     screen: pig.Surface = pig.display.set_mode(
         (infoObject.current_w, infoObject.current_h)
     )
     pygame_icon = pig.image.load(
-        r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+        r"Recources\program recources\Screenshot 2023-09-21 181742.png"
     )
-    pig.display.set_icon(pygame_icon)    # pig.display.toggle_fullscreen()
+    pig.display.set_icon(pygame_icon)  # pig.display.toggle_fullscreen()
 
     pig.display.set_caption("Square Pixel")
     pig.mouse.set_cursor(pig.SYSTEM_CURSOR_CROSSHAIR)
     # Path to the folder to save the extracted frames
-    image_folder: str = r"terraria_styled_game\\frames"
+    image_folder: str = r"Recources\\frames"
     colliders: list = []
     # Extract frames from the video
     # logo.extract_frames(video_file, image_folder)
     vx, vy = 0, 0  # infoObject.current_w/2, 0#infoObject.current_h /2
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen, 0)
-    image_folder: str = r"terraria_styled_game\\NewHorizonsFrames"
+    image_folder: str = r"Recources\\NewHorizonsFrames"
     logo.play_intro_video(image_folder, not_skipped, screen, 1)
-    play_music(r"terraria_styled_game\sounds\music\Menu.mp3")
+    play_music(r"Recources\sounds\music\Menu.mp3")
     MainMen.mainfunc()
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
