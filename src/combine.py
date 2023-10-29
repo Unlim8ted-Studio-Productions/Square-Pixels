@@ -2,6 +2,20 @@ combined_script = ""  # Define combined_script as a global variable
 
 
 def combine_scripts_with_dependencies(script_files, output_file):
+    """
+    Combines Python scripts and their dependencies into a single file
+    Args:
+        script_files: List of script file paths
+        output_file: Path of the output file
+    Returns: 
+        None: Writes the combined script to the output file
+    - Declare a global variable to store the combined script
+    - Define a function to process individual scripts and add them to the combined script
+    - Define a function to find dependencies in a script file by parsing import statements  
+    - Iterate through script files and recursively process dependencies first
+    - Once all dependencies are processed, add the script to the combined script
+    - Write the combined script to the output file
+    """
     global combined_script  # Declare combined_script as a global variable
     processed_files = set()
 
@@ -13,6 +27,16 @@ def combine_scripts_with_dependencies(script_files, output_file):
             processed_files.add(script_file)
 
     def find_dependencies(script_file):
+        """
+        Find dependencies in a Python script file
+        Args:
+            script_file: Path to the Python script file 
+        Returns:
+            dependencies: List of dependencies found in the file
+        - Open the script file and read its contents
+        - Parse the file line by line to find import statements
+        - Extract the module names from import statements
+        - Return a list of unique module names"""
         with open(script_file, "r") as file:
             lines = file.readlines()
             dependencies = []

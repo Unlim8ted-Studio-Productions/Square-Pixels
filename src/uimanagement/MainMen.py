@@ -555,41 +555,6 @@ def open_settings():
     game_state = "settings"
 
 
-# class Checkbox:
-#    def __init__(self, label, x, y, callback):
-#        self.label = label
-#        self.x = x
-#        self.y = y
-#        self.width = 20  # Width of the checkbox
-#        self.height = 20  # Height of the checkbox
-#        self.checked = False
-#        self.callback = callback
-#
-#    def draw(self):
-#        # Draw the checkbox border
-#        stroke(0)  # You can use the appropriate color here
-#        strokeWeight(2)  # You can adjust the thickness
-#        noFill()
-#        rect(self.x, self.y, self.width, self.height)
-#
-#        # Draw the checkmark if checked
-#        if self.checked:
-#            line(self.x, self.y, self.x + self.width, self.y + self.height)
-#            line(self.x + self.width, self.y, self.x, self.y + self.height)
-#
-#        # Draw the label
-#        noStroke()
-#        fill(0)  # You can use the appropriate color here
-#        textSize(16)  # You can adjust the font size
-#        text(self.label, self.x + 30, self.y + 15)
-#
-#    def mouse_click(self, mx, my):
-#        if self.x < mx < self.x + self.width and self.y < my < self.y + self.height:
-#            self.checked = not self.checked
-#            self.callback()  # Call the callback function when the checkbox state changes
-#
-
-
 # Function to display a message on the screen
 def display_message(message, color=(255, 0, 0)):
     global current_message

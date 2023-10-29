@@ -264,6 +264,7 @@ class FriendScreen:
         )
         self.selected_tab = "Friends"  # Initialize the selected tab
         self.search_bar = InputField(50, 50, 400, 40, "Search Friends")
+        self.search_bar.size = 30
         self.add_friend_input = InputField(50, 220, 400, 40, "Enter Username/Email")
         self.friends_instance = Friends()
         self.add_friend_tab = Button(

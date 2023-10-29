@@ -248,6 +248,8 @@ def delete_selected_element():
             text_elements.remove(selected_element)
         elif isinstance(selected_element, CheckBox):
             checkboxes.remove(selected_element)
+        elif isinstance(selected_element, ImageElement):
+            images.remove(selected_element)
 
         selected_element = None
 
@@ -299,21 +301,21 @@ def export_ui_elements():
     # Create buttons
     for index, button in enumerate(buttons):
         code.append(
-            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
+            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, {button.command})"
         )
 
     # Create input fields
     for index, input_field in enumerate(input_fields):
         code.append(
-            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
+            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.text}')"
         )
     for index, text_element in enumerate(text_elements):
         code.append(
-            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
+            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.text}')"
         )
     for index, checkbox in enumerate(checkboxes):
         code.append(
-            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
+            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.text}')"
         )
     for index, image in enumerate(images):
         code.append(
