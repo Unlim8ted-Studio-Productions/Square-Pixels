@@ -66,16 +66,54 @@ def add_node(node_type, position):
 
 # Function to create a connection between two nodes
 def add_connection(start_node, end_node):
+    """
+    Adds a connection between two nodes
+    Args:
+        start_node: The starting node of the connection 
+        end_node: The ending node of the connection
+    Returns: 
+        None: Does not return anything
+    - Appends a tuple containing the start and end nodes to the connections list
+    - This records the connection between the two nodes passed as arguments
+    - No value is returned as the connection is added by side effect of appending to the list
+    - Only the connection between the two nodes is recorded, no checking is done on the nodes"""
     connections.append((start_node, end_node))
 
 
 # Function to draw the inspector tab
 def draw_inspector():
+    """Draws the inspector rectangle on screen
+    Args: 
+        screen: The screen surface to draw on
+    Returns:
+        None: Does not return anything
+    - Draws a rectangle on the screen surface using pygame's draw.rect method  
+    - The rectangle is drawn with the color INSPECTOR_COLOR
+    - The rectangle is drawn using the inspector_rect object which defines its position and size
+    - No value is returned as the rectangle is drawn directly to the screen surface"""
+    """Draws the inspector rectangle on screen
+    Args:
+        screen: The screen surface to draw on
+    Returns: 
+        None: Does not return anything
+    - Draws a rectangle on the screen surface using pygame's draw.rect method
+    - The rectangle is drawn with the color INSPECTOR_COLOR
+    - The rectangle is drawn using the inspector_rect object which defines its position and size
+    - No value is returned as the rectangle is drawn directly to the screen surface"""
     pygame.draw.rect(screen, INSPECTOR_COLOR, inspector_rect)
 
 
 # Function to display details about the selected node in the inspector tab
 def show_inspector(node):
+    """
+    Display inspector details of a node
+    Args:
+        node: The node to display inspector details for
+    Returns: 
+        None: Does not return anything
+    - Check if the passed node is not None
+    - If node is valid, display its inspector details
+    - No return value as function just displays details"""
     if node is not None:
         # Create a text input box for details
         pygame.draw.rect(screen, (255, 255, 255), text_input_rect)
