@@ -3,3 +3,4 @@ pillow
 pymovie
 pyperclip
 playfab
+captcha
