@@ -17,6 +17,8 @@ import tkinter as tk
 from tkinter import filedialog
 import hashlib
 from SquarePixels.uimanagement.easy_ui_maker import start
+import http.client
+import mimetypes
 
 # from account_mannagement.authentication import SignInScreen, SignUpScreen
 from SquarePixels.uimanagement.leaderboard import (
@@ -192,23 +194,44 @@ class SignUpScreen:
                     display_message(str(failure))
 
         try:
-            request = {"CreateAccount": True}
-            request["TitleId"] = playfabsettings.TitleId
-            request["Email"] = email
-            request["Password"] = password
-            request["Username"] = username
+            conn = http.client.HTTPSConnection("api.eva.pingutil.com")
+            payload = ''
+            headers = {}
+            conn.request("GET", f"/email?email={email}", payload, headers)
+            res = conn.getresponse()
+            data = res.read()
+            #https://www.loginradius.com/blog/engineering/email-verification-api/
+            email_data = data.decode("utf-8")
+            if email_data["status"] == "success":
+                email_data = email_data["data"]
+                if email_data["disposible"] == False:
+                    if email_data["valid_syntax"] == True:
+                        if email_data["deliverable"] == True:
+                            request = {"CreateAccount": True}
+                            request["TitleId"] = playfabsettings.TitleId
+                            request["Email"] = email
+                            request["Password"] = password
+                            request["Username"] = username
 
-            # Upload the profile picture if it has been selected
-            if self.profile_picture:
-                request["ProfilePicture"] = self.profile_picture
+                            # Upload the profile picture if it has been selected
+                            if self.profile_picture:
+                                request["ProfilePicture"] = self.profile_picture
 
-            result = RegisterPlayFabUser(request, callback)
+                            result = RegisterPlayFabUser(request, callback)
 
-            if result is not None and "SessionTicket" in result:
-                signed_in = True
-                display_message("Account created and signed in.", (0, 255, 0))
+                            if result is not None and "SessionTicket" in result:
+                                signed_in = True
+                                display_message("Account created and signed in.", (0, 255, 0))
+                            else:
+                                None
+                        else:
+                            display_message("Invalid Email.", (0, 255, 0))
+                    else:
+                        display_message("Invalid Email Syntax.", (0, 255, 0))
+                else:
+                    display_message("Don't use a disposible email.", (0, 255, 0))
             else:
-                None
+                display_message("Couldn't check for email validness.", (0, 255, 0))
         except Exception as e:
             display_message(f"Account creation failed: {e}")
 
