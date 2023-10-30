@@ -5,17 +5,14 @@ import SquarePixels.render.Lighting as Lit
 import random
 import math
 
-# Define global variables for screen width and height
-SCREEN_WIDTH = 800  # Adjust this to your screen width
-SCREEN_HEIGHT = 600  # Adjust this to your screen height
+
 black_rectangles = []
 infoObject: object = pig.display.Info()
 # Fill the screen with black rectangles
-for x in range(infoObject.current_w // 20):
-    for y in range(infoObject.current_h // 20):
+for x in range(infoObject.current_w // 20 + 50):
+    for y in range(infoObject.current_h // 20 + 50):
         black_rect = pig.Rect((x * 20, y * 20, 20, 20))
         black_rectangles.append(black_rect)
-# Rest of your code...
 
 
 def render_terrain(
