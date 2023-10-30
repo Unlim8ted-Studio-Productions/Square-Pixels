@@ -35,5 +35,5 @@ def get_user_avatar(email):
                     
     result = playfab.PlayFabClientAPI.GetAccountInfo(request, callback)
     print(result)
-    request = {"ProfileConstraints":PlayerProfileViewConstraints(True),"PlayFabId":resultm}
+    request = {"ProfileConstraints":PlayerProfileViewConstraints(True),"PlayFabId":result}
     playfab.PlayFabClientAPI.GetPlayerProfile()
