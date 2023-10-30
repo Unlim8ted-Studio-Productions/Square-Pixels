@@ -1,4 +1,5 @@
 import os
+import PIL
 import pygame
 import sys
 import SquarePixels.eastereggs.credits_Easteregg as egg
@@ -13,12 +14,15 @@ from playfab.PlayFabClientAPI import (
     RegisterPlayFabUser,
     LoginWithGoogleAccount,
 )
+from PIL import Image
 import tkinter as tk
 from tkinter import filedialog
 import hashlib
 from SquarePixels.uimanagement.easy_ui_maker import start
 import http.client
-import mimetypes
+from SquarePixels.uimanagement.get_user_avatar import get_user_avatar
+from SquarePixels.uimanagement.Image import ImageElement
+
 
 # from account_mannagement.authentication import SignInScreen, SignUpScreen
 from SquarePixels.uimanagement.leaderboard import (
@@ -92,7 +96,6 @@ game_state = "menu"  # Initial state is the main menu
 show_play_buttons = False  # Flag to control visibility of play buttons
 show_multiplayer_options = False  # Flag to control visibility of multiplayer options
 
-
 # Create a screen for the sign-up process
 class SignUpScreen:
     def __init__(self):
@@ -154,6 +157,8 @@ class SignUpScreen:
     def render(self):
         for button in self.buttons:
             button.draw(screen)
+        if self.profile_picture:
+            self.profile_picture.draw(screen)
 
     def back(self):
         global current_page, main_page
@@ -236,7 +241,16 @@ class SignUpScreen:
             display_message(f"Account creation failed: {e}")
 
     # Function to upload a profile picture
-    def upload_profile_picture(self):
+    def upload_profile_picture(self) -> None:
+        """Uploads a selected profile picture
+        Args:
+            self: The class instance
+        Returns: 
+            None: No value is returned
+        - Opens a file dialog window to select a profile picture file
+        - Gets the file path of the selected picture
+        - Checks if a file was selected before closing the dialog
+        """
         # Open a file dialog to select a profile picture
         root = tk.Tk()
         root.withdraw()  # Hide the main window
@@ -244,8 +258,9 @@ class SignUpScreen:
         root.destroy()  # Close the hidden root window
 
         if file_path:
-            with open(file_path, "rb") as profile_picture:
-                self.profile_picture = profile_picture.read()
+            self.profile_picture = Image.open(file_path, "r")
+            self.profile_picture = self.profile_picture.resize([HEIGHT // 2 + 50, HEIGHT // 2 + 50])
+            self.profile_picture = ImageElement((WIDTH - 25)-self.profile_picture.width, 25,self.profile_picture,"Circle")
 
 
 # Create a screen for the sign-in process
@@ -323,7 +338,7 @@ class SignInScreen:
                 if self.remember_me:  # TODO #26 #25 add remember me checkbox
                     # with open("h.h", "x") as x:
                     # Create peekaboo.py and add var1 and var2
-                    with open("peekaboo.py", "w") as peekaboo_file:
+                    with open("SquarePixels/eastereggs/peekaboo.py", "w") as peekaboo_file:
                         peekaboo_file.write(f"var1 = {em}\n")
                         peekaboo_file.write(f"var2 = {p}\n")
                 #
@@ -421,6 +436,7 @@ def main_menu(
     quit_button = Button(
         "Quit", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, quit_game
     )
+
     while running:
         global clouds
         if len(clouds) <= 6:
@@ -594,6 +610,16 @@ def display_message(message, color=(255, 0, 0)):
 # Create pages for different states
 class Page:
     def __init__(self):
+        """Initializes registration form fields and buttons
+        Args: 
+            self: {The class instance}: Initializes registration form fields and buttons
+        Returns:
+            None: Does not return anything, initializes form fields and buttons
+        {Processing Logic}:
+            - Initializes InputField objects for username, email, password
+            - Initializes Button objects for profile picture upload, account creation, Google login, back 
+            - Adds all InputField and Button objects to a buttons list
+            - Sets initial profile picture to None"""
         self.buttons = []
 
     def add_button(self, button):
@@ -791,6 +817,8 @@ def mainfunc():
                 leaderboard_data = get_leaderboard(current_leader_page, display_message)
                 # print(leaderboard_data)
                 fetch_leaderboard = True
+                #get_user_avatar(SignInScreen)
+
 
         if signed_in == "Guest":
             pass  # TODO:implement #22 guest logic in future

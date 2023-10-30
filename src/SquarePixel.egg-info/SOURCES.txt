@@ -60,3 +60,4 @@ SquarePixels/uimanagement/logo.py
 SquarePixels/uimanagement/numeric_input.py
 SquarePixels/uimanagement/script.py
 SquarePixels/uimanagement/server_ui.py
+SquarePixels/uimanagement/get_user_avatar.py
