@@ -1,12 +1,12 @@
 import pygame
 import socket
 import pickle
-import player.player as play
+import SquarePixels.player.player as play
 
 # import playerdatc
 import typing as typi
 import pickle
-import render.render as render
+import SquarePixels.render.render as render
 
 
 def main(ip, name):

@@ -37,11 +37,11 @@ SquarePixels/soundmanagement/__init__.py
 SquarePixels/soundmanagement/music.py
 SquarePixels/terraingen/__init__.py
 SquarePixels/terraingen/terrain_gen.py
-SquarePixels/terraingen/water.py
+SquarePixels/tests/water.py
 SquarePixels/uimanagement/Character_creation.py
 SquarePixels/uimanagement/Image.py
 SquarePixels/uimanagement/MainMen.py
-SquarePixels/uimanagement/Nodes.py
+SquarePixels/uimanagement/unfinished/Nodes.py
 SquarePixels/uimanagement/TextElement.py
 SquarePixels/uimanagement/UIpanel.py
 SquarePixels/uimanagement/__init__.py

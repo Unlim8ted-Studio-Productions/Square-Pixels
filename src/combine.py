@@ -70,37 +70,53 @@ def combine_scripts_with_dependencies(script_files, output_file):
 if __name__ == "__main__":
     # List of script files to combine (in the correct order if they have dependencies)
     script_files = [
-        "SquarePixel.py",
-        "eastereggs\credits_Easteregg.py",
-        "enemymanagement\enemy_manager.py",
-        "enemymanagement\enemy.py",
-        "game\game.py",
-        "multiplayer\client.py",
-        "multiplayer\clientr.py",
-        "multiplayer\server.py",
-        "player\player.py",
-        r"render\render.py",
-        "render\Lighting.py",
-        "soundmanagement\music.py",
-        "soundmanagement\MusicManager.py",
-        r"terraingen\terrain_gen.py",
-        "uimanagement\Character_creation.py",
-        "uimanagement\client_ui.py",
-        "uimanagement\death.py",
-        "uimanagement\inventory.py",
-        "uimanagement\logo.py",
-        "uimanagement\MainMen.py",
-        "uimanagement\server_ui.py",
-        r"uimanagement\button.py",
-        "uimanagement\input_feild.py",
-        "uimanagement\clouds.py",
-        r"uimanagement\friends.py",
-        r"uimanagement\TextElement.py",
-        r"uimanagement\easy_ui_maker.py",
-        r"uimanagement\Checkbox.py",
-        r"uimanagement\Image.py",
-        r"uimanagement\Nodes.py",
+        r"SquarePixel.py",
+        r"SquarePixels\eastereggs\credits_Easteregg.py",
+        r"SquarePixels\enemymanagement\enemy_manager.py",
+        r"SquarePixels\enemymanagement\enemy.py",
+        r"SquarePixels\game\game.py",
+        r"SquarePixels\multiplayer\client.py",
+        r"SquarePixels\multiplayer\clientr.py",
+        r"SquarePixels\multiplayer\server.py",
+        r"SquarePixels\player\player.py",
+        r"SquarePixels\render\render.py",
+        r"SquarePixels\render\Lighting.py",
+        r"SquarePixels\soundmanagement\music.py",
+        r"SquarePixels\soundmanagement\MusicManager.py",
+        r"SquarePixels\terraingen\terrain_gen.py",
+        r"SquarePixels\uimanagement\Character_creation.py",
+        r"SquarePixels\uimanagement\client_ui.py",
+        r"SquarePixels\uimanagement\death.py",
+        r"SquarePixels\uimanagement\inventory.py",
+        r"SquarePixels\uimanagement\logo.py",
+        r"SquarePixels\uimanagement\MainMen.py",
+        r"SquarePixels\uimanagement\server_ui.py",
+        r"SquarePixels\uimanagement\button.py",
+        r"SquarePixels\uimanagement\input_feild.py",
+        r"SquarePixels\uimanagement\clouds.py",
+        r"SquarePixels\uimanagement\friends.py",
+        r"SquarePixels\uimanagement\TextElement.py",
+        r"SquarePixels\uimanagement\easy_ui_maker.py",
+        r"SquarePixels\uimanagement\Checkbox.py",
+        r"SquarePixels\uimanagement\Image.py",
+        r"SquarePixels\uimanagement\Nodes.py",
+        r"SquarePixels\uimanagement\UIpanel.py",
+        r"SquarePixels\uimanagement\get_user_avatar.py",
+        r"SquarePixels\uimanagement\color.py",
     ]  # Add your script file names here
+    #with open("SquarePixel.egg-info\SOURCES.txt", "r") as a:
+#    for index, line in enumerate(a):
+#        line = a.readline(index)
+#        if ".py" in line:
+#            if (
+#                not "combined_script" in line
+#                and not "obf-combined_script" in line
+#                and not "obs" in line
+#                and not "tests" in line
+#                and not "unfinished" in line
+#            ):
+#                line = line.replace("\n", "")
+#                script_files.append(line)
 
     # Output file where the combined script will be saved
     output_file = "combined_scriptV2.py"

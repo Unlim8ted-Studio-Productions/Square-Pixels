@@ -4,3 +4,4 @@ pymovie
 pyperclip
 playfab
 captcha
+astor
