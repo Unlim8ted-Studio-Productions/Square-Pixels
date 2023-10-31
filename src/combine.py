@@ -1,5 +1,5 @@
 combined_script = ""  # Define combined_script as a global variable
-
+extra=[]
 
 def combine_scripts_with_dependencies(script_files, output_file):
     """
@@ -19,11 +19,12 @@ def combine_scripts_with_dependencies(script_files, output_file):
     global combined_script  # Declare combined_script as a global variable
     processed_files = set()
 
-    def process_script(script_file):
+    def process_script(script_file, indent_level=1):
         global combined_script
         with open(script_file, "r") as file:
             script_contents = file.read()
-            combined_script += script_contents
+            indented_script = "\n".join([" " * 4 * indent_level + line for line in script_contents.splitlines()])
+            combined_script += indented_script
             processed_files.add(script_file)
 
     def find_dependencies(script_file):
@@ -43,6 +44,7 @@ def combine_scripts_with_dependencies(script_files, output_file):
 
             for line in lines:
                 if line.strip().startswith("import") or line.strip().startswith("from"):
+                    line = "\n" + line
                     parts = line.split()
                     if len(parts) >= 2:
                         dependency = parts[1].split(".")[0] + ".py"
@@ -54,18 +56,47 @@ def combine_scripts_with_dependencies(script_files, output_file):
 
             return dependencies
 
+    def sub_dependencies(script_file):
+        global extra
+        dependencies = find_dependencies(script_file)
+        for d in dependencies:
+            temp = find_dependencies(d)
+            for t in temp:
+                if find_dependencies(t) == []:
+                    extra.append(t)
+                else:
+                    sub_dependencies(t)
+        for g in dependencies:
+            extra.append(g)
+                    
     while script_files:
+        global extra
         for script_file in script_files[:]:
-            dependencies = find_dependencies(script_file)
-
+            sub_dependencies(script_file)
+            dependencies = extra
+            
             if not dependencies or all(dep in processed_files for dep in dependencies):
-                process_script(script_file)
+                process_script(script_file)#, indent_level=len(processed_files))
                 script_files.remove(script_file)
+                
+    # Wrap the combined script with an if __name__ == "__main__": statement
+    combined_script = "if __name__ == '__main__':\n" + combined_script
 
     # Write the combined script to the output file
     with open(output_file, "w") as output:
         output.write(combined_script)
 
+def count_indent(line):
+    """Count the number of leading whitespace characters (spaces or tabs) in a line."""
+    count = 0
+    for char in line:
+        if char == ' ':
+            count += 1
+        elif char == '\t':
+            count += 4  # Assuming a tab is equivalent to 4 spaces (you can adjust this value)
+        else:
+            break
+    return count
 
 if __name__ == "__main__":
     # List of script files to combine (in the correct order if they have dependencies)
@@ -99,7 +130,7 @@ if __name__ == "__main__":
         r"SquarePixels\uimanagement\easy_ui_maker.py",
         r"SquarePixels\uimanagement\Checkbox.py",
         r"SquarePixels\uimanagement\Image.py",
-        r"SquarePixels\uimanagement\Nodes.py",
+        r"SquarePixels\uimanagement\unfinished\Nodes.py",
         r"SquarePixels\uimanagement\UIpanel.py",
         r"SquarePixels\uimanagement\get_user_avatar.py",
         r"SquarePixels\uimanagement\color.py",
@@ -119,7 +150,53 @@ if __name__ == "__main__":
 #                script_files.append(line)
 
     # Output file where the combined script will be saved
-    output_file = "combined_scriptV2.py"
-
+    output_file = "combined_scriptV6.py"
+    icounts =[]
+    fcounts = []
     combine_scripts_with_dependencies(script_files, output_file)
+    with open(output_file, "r") as file:
+            lines = file.readlines()
+    combined_script=""
+    for line in lines:
+        if not any(s in line for s in ["#","'",'"',"from"]) and "import " in line:
+            count = count_indent(line)
+            icounts.append(count)
+            line = line.replace("import", "\nimport")
+            #line = (" " * count) + line
+        if not any(s in line for s in ["#","'",'"',"import"]) and "from " in line:
+            count = count_indent(line)
+            fcounts.append(count)
+            line = line.replace("from", "\nfrom")
+            #line = (" " * count) + line
+        combined_script += line
+        #if "import" in line or "from" in line and not any(["#","'",'"'] in line ):
+        #    
+        #    line = "\n" + line
+        #    combined_script += line
+        #else:
+        #    combined_script += line
+    with open(output_file, "w") as output:
+        output.write(combined_script)
+        
+    with open(output_file, "r") as file:
+        lines = file.readlines()
+        
+    combined_script =""
+    for line in lines:
+        try:
+            if not any(s in line for s in ["#","'",'"',"from"]) and "import " in line:
+                line = (" " * icounts[0]) + line
+                icounts.pop(0)
+                combined_script += line
+            elif not any(s in line for s in ["#","'",'"',"import"]) and "from " in line:
+                line = (" " * fcounts[0]) + line
+                fcounts.pop(0)
+                combined_script += line
+            else:
+                combined_script += line
+        except:
+            combined_script += line
+    with open(output_file, "w") as output:
+        output.write(combined_script)
+        
     print(f"Combined scripts with dependencies into '{output_file}'")

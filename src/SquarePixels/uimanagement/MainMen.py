@@ -549,7 +549,7 @@ def host_multiplayer_game():
     """
     Host a multiplayer game.
     """
-    import uimanagement.server_ui as server_ui
+    import SquarePixels.uimanagement.server_ui as server_ui
 
     server_ui.load_servers()
     server_ui.load_mplayers()
@@ -561,7 +561,7 @@ def join_multiplayer_game():
     """
     Join a multiplayer game.
     """
-    import uimanagement.client_ui as client_ui
+    import SquarePixels.uimanagement.client_ui as client_ui
 
     client_ui.find_servers()
     client_ui.main()

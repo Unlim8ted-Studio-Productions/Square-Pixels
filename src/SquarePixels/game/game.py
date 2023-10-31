@@ -97,7 +97,7 @@ def game(
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
-        print(player.xp)
+        #print(player.xp)
         # player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)
