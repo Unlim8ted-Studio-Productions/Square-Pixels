@@ -1,46 +1,40 @@
-import ast
-import random
-import re
-
-
-# Define the alphabet
-alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-
-# Create a substitution cipher with random binary values
-cipher = {
-    letter: "".join(
-        random.choice(
-            "Exx_xx__x___XEexeE_x_x_"
-        )
-        for _ in range(8)
-    )
-    for letter in alphabet
-}
-
-    
-
-# Note: for Python 2.7 compatibility, use ur"" to prefix the regex and u"" to prefix the test string and substitution.
-
-# Define the Python code
-import combined_scriptV6 as data
-
-# Define a flag to track whether the next word is a variable, function, or class name
-next_name_type = None
-
-# Split the code into lines
-#code_lines = python_code.split('\n')
-
-# Parse the code using the ast module
-#parsed_code = ast.parse(python_code)
-print([item for item in dir(data) if not item.startswith("__")])
-
-# Use regular expressions to find and replace variable, function, and class names
-def replace(match):
-    matched_name = match.group()
-    if matched_name in cipher:
-        return cipher[matched_name]
-    return matched_name
-
-python_code = re.sub(r'(?<=def )\w+|(?<=class )\w+|(\w+)(?=\s*=\s*)', replace, python_code)
-
-#print(python_code)
+import ast #line:1
+import random #line:2
+import re #line:3
+_O00OOO_00000O0O0O0_ ="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"#line:7
+_O00OOO00000O0O0O0_={OO00OO0O0OOO000OO:"".join (random.choice("OOO0OOOO00O0O0OOO")for _O00OOO00000O0O0O0 in range (8 ))for OO00OO0O0OOO000OO in _O00OOO_00000O0O0O0_ }#line:18
+_O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0_=None
+OO00OO_0O0OOO000O__ = [_O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0__O00OOO00000O0O0O0_]
+OO00OO_0O0OOO000O__.remove(None)
+for OO00OO_0O0OOO000O in _O00OOO00000O0O0O0_:
+    OO00OO_0O0OOO000O__.append(OO00OO_0O0OOO000O)
+for OO00OO_0O0OOO000O in _O00OOO00000O0O0O0_:
+    if OO00OO_0O0OOO000O in OO00OO_0O0OOO000O__:
+        OO00OO_0O0OOO00_0O__ = False
+        while not OO00OO_0O0OOO00_0O__:
+            OO00OO_0O0OOO000O += OO00OO_0O0OOO000O
+            if OO00OO_0O0OOO000O not in OO00OO_0O0OOO000O__:
+                OO00OO_0O0OOO00_0O__=True
+print(_O00OOO00000O0O0O0_ )#line:20
+with open(f"combined_scriptV{input('version number')}.py","r")as OO0000O0O0O0OOO00 :#line:25
+    xXExXXEe=OO0000O0O0O0OOO00 .read ()#line:26
+next_name_type=None #line:29
+_O000OOOO0O0OOOOO0O000OOOO0O0OOOOO0 = list(_O00OOO00000O0O0O0_.keys())
+def replace (O0O0O0O000000O000):#line:39
+    global _O000OOOO0O0OOOOO0O000OOOO0O0OOOOO0
+    O000OOOO0O0OOOOO0 =O0O0O0O000000O000 .group ()#line:40
+    for OO0000O0O0O0OOO00 ,O0OOOOO00OOO00O00 in enumerate (_O00OOO00000O0O0O0_ ):#line:41
+        O000OOOO0O0OOOOO0 .replace (_O000OOOO0O0OOOOO0O000OOOO0O0OOOOO0 [OO0000O0O0O0OOO00], O0OOOOO00OOO00O00)#line:42 
+    O000OOOO0O_0OOOOO0___ = [*O000OOOO0O0OOOOO0]
+    O00__0OOO_O_0O0OO_OOO0 = []
+    O00__0OOO_O_0O0OO_OOO0__ = ""
+    for O000OOO_O_0O0OO_OOO0 in O000OOOO0O_0OOOOO0___:
+        if O000OOO_O_0O0OO_OOO0 in _O00OOO00000O0O0O0_ :#line:43
+            O00__0OOO_O_0O0OO_OOO0.append(_O00OOO00000O0O0O0_[O000OOO_O_0O0OO_OOO0])
+    for O00__0OOO_O_0O0OO_OOO0O00__0OOO_O_0O0OO_OOO0 in O00__0OOO_O_0O0OO_OOO0:
+        O00__0OOO_O_0O0OO_OOO0__ += O00__0OOO_O_0O0OO_OOO0O00__0OOO_O_0O0OO_OOO0
+    return O00__0OOO_O_0O0OO_OOO0__#line:44
+xXExXXEe =re .sub (r'(?<=def )\w+|(?<=class )\w+|(\w+)(?=\s*=\s*)',replace ,xXExXXEe )#line:46
+with open(input("file name to write too", "x")) as i:
+    i.write(xXExXXEe)
+print ("finished" )

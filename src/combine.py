@@ -184,7 +184,7 @@ if __name__ == "__main__":
     combined_script =""
     for line in lines:
         try:
-            if not any(s in line for s in ["#","'",'"',"from"]) and "import " in line:
+            if not any(s in line for s in ["#","'",'"',"from"]) and "import" in line:
                 line = (" " * icounts[0]) + line
                 icounts.pop(0)
                 combined_script += line
