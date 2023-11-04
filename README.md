@@ -1,5 +1,5 @@
-# Flattened
-Welcome to Flattened!
+#Square Pixel
+Welcome to Square Pixel!
 
 ![Lighting Update - in development]![Screenshot 2023-09-22 183311](https://github.com/GusInfiniteLinesOfCode/Square-Pixels/blob/main/Screenshot%202023-09-22%20165106.png)
 
