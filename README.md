@@ -1,4 +1,4 @@
-#Square Pixel
+##Square Pixel
 Welcome to Square Pixel!
 
 ![Lighting Update - in development]![Screenshot 2023-09-22 183311](https://github.com/GusInfiniteLinesOfCode/Square-Pixels/blob/main/Screenshot%202023-09-22%20165106.png)
@@ -87,6 +87,7 @@ We welcome contributions to our project! If you wish to contribute, please adher
 ## ToDo
 
 - [ ] Fix collision handling
+- [ ] add pause screen
 - [x] add darkness wherever the player has not yet explored and a map
 - [ ] Finish settings
 - [ ] Add more world options
