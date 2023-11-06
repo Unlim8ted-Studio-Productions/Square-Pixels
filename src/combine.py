@@ -150,7 +150,7 @@ if __name__ == "__main__":
 #                script_files.append(line)
 
     # Output file where the combined script will be saved
-    output_file = "combined_scriptV6.py"
+    output_file = f"combined_scriptV{input('version number')}.py"
     icounts =[]
     fcounts = []
     combine_scripts_with_dependencies(script_files, output_file)
