@@ -40,6 +40,7 @@ SquarePixels/terraingen/terrain_gen.py
 SquarePixels/tests/water.py
 SquarePixels/uimanagement/Character_creation.py
 SquarePixels/uimanagement/Image.py
+SquarePixels/uimanagement/slider.py
 SquarePixels/uimanagement/MainMen.py
 SquarePixels/uimanagement/unfinished/Nodes.py
 SquarePixels/uimanagement/TextElement.py

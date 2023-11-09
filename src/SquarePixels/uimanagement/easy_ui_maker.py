@@ -8,16 +8,19 @@ from PIL import Image
 
 # Initialize Pygame
 pygame.init()
+if __name__ == "__main__":
+    from button import Button
+    from input_feild import InputField
+    from TextElement import TextElement
+    from checkbox import CheckBox
+    from color import ColorPickerInputField
+    from Image import ImageElement
+    from numeric_input import NumericInputField
+    from script import Script
+    from UIpanel import UIPanel
+    from slider import Slider
 
-from SquarePixels.uimanagement.button import Button
-from SquarePixels.uimanagement.input_feild import InputField
-from SquarePixels.uimanagement.TextElement import TextElement
-from SquarePixels.uimanagement.checkbox import CheckBox
-from SquarePixels.uimanagement.color import ColorPickerInputField
-from SquarePixels.uimanagement.Image import ImageElement
-from SquarePixels.uimanagement.numeric_input import NumericInputField
-from SquarePixels.uimanagement.script import Script
-from SquarePixels.uimanagement.UIpanel import UIPanel
+    # from Nodes import
 
 
 # Constants
@@ -33,7 +36,7 @@ screen: pygame.Surface = pygame.display.set_mode(
     (infoObject.current_w, infoObject.current_h)
 )
 pygame_icon = pygame.image.load(
-    r"Recources\program recources\Screenshot 2023-09-21 181742.png"
+    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
 )
 pygame.display.set_icon(pygame_icon)  # pygame.display.toggle_fullscreen()
 pygame.display.set_caption("Square Pixel")
@@ -238,8 +241,6 @@ def delete_selected_element():
             text_elements.remove(selected_element)
         elif isinstance(selected_element, CheckBox):
             checkboxes.remove(selected_element)
-        elif isinstance(selected_element, ImageElement):
-            images.remove(selected_element)
 
         selected_element = None
 
@@ -272,32 +273,40 @@ def export_ui_elements():
     """
     global buttons, input_fields, checkboxes, images
     code = [
-        "from SquarePixels.uimanagement.button import Button",
-        "from SquarePixels.uimanagement.input_feild import InputField",
-        "from SquarePixels.uimanagement.TextElement import TextElement",
-        "from SquarePixels.uimanagement.checkbox import CheckBox",
-        "from SquarePixels.uimanagement.color import ColorPickerInputField",
-        "from SquarePixels.uimanagement.Image import ImageElement",
+        "if __name__ == '__main__':",
+        "    from button import Button",
+        "    from input_feild import InputField",
+        "    from TextElement import TextElement",
+        "    from checkbox import CheckBox",
+        "    from color import ColorPickerInputField",
+        "    from Image import ImageElement",
+        "else:",
+        "    from uimanagement.button import Button",
+        "    from uimanagement.input_feild import InputField",
+        "    from uimanagement.TextElement import TextElement",
+        "    from uimanagement.checkbox import CheckBox",
+        "    from uimanagement.color import ColorPickerInputField",
+        "    from uimanagement.Image import ImageElement",
     ]
 
     # Create buttons
     for index, button in enumerate(buttons):
         code.append(
-            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, {button.command})"
+            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
         )
 
     # Create input fields
     for index, input_field in enumerate(input_fields):
         code.append(
-            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.text}')"
+            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
         )
     for index, text_element in enumerate(text_elements):
         code.append(
-            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.text}')"
+            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
         )
     for index, checkbox in enumerate(checkboxes):
         code.append(
-            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.text}')"
+            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
         )
     for index, image in enumerate(images):
         code.append(
@@ -355,14 +364,31 @@ def create_new_checkbox():
     checkboxes.append(checkbox)
 
 
+def add_slider():
+    """
+    Add an image to the canvas
+    Args:
+        circle: The circle object to add the image to
+    Returns:
+        None: Does not return anything
+    - Opens a file dialog to select an image file
+    - Checks if a file was selected
+    - If file selected, adds the image to the canvas"""
+
+    # Create an slider object and add it to your list of elements
+    slider_element = Slider(200, 400, 100, 50, 0, 100, 10)
+    images.append(slider_element)
+
+
 create_button_on_sidebar("New Button", 10, create_new_button)
 create_button_on_sidebar("New Input", 60, create_new_input_field)
 create_button_on_sidebar("New Text", 110, create_new_text_element)
 create_button_on_sidebar("Checkbox", 170, create_new_checkbox)
 create_button_on_sidebar("Add Image", 230, add_image)
 create_button_on_sidebar("Add Circle Image", 290, add_image, [True])  # circle
-create_button_on_sidebar("Save UI", 350, export_ui_elements)
-create_delete_button(410)
+create_button_on_sidebar("Add Slider", 350, add_slider)  # circle
+create_button_on_sidebar("Save UI", 410, export_ui_elements)
+create_delete_button(470)
 
 
 class Node:
