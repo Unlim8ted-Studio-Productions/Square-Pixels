@@ -376,7 +376,7 @@ def add_slider():
     - If file selected, adds the image to the canvas"""
 
     # Create an slider object and add it to your list of elements
-    slider_element = Slider(200, 400, 100, 50, 0, 100, 10)
+    slider_element = Slider(200, 400, 100, 10, 0, 100, 50)
     images.append(slider_element)
 
 

@@ -54,6 +54,9 @@ class Slider:
         self.text_position_below = text_position_below
         self.size = size
         self.font_name = None
+        self.bold = False
+        self.italics = False
+        self.underlined = False
 
     def draw(self, screen):
         """Draw the slider on the screen."""
@@ -71,6 +74,9 @@ class Slider:
 
         if self.text is not None:
             font = pygame.font.Font(self.font_name, self.size)
+            font.set_bold(self.bold)
+            font.set_italic(self.italics)
+            font.set_underline(self.underlined)
             text_surface = font.render(self.text, True, (255, 255, 255))
             text_rect = text_surface.get_rect()
 
