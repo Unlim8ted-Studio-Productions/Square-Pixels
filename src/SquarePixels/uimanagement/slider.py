@@ -17,6 +17,9 @@ class Slider:
         additional_data: list = None,
         color=(255, 255, 255),
         colortwo=(200, 200, 200),
+        text="",
+        text_position_below=True,
+        size=26,
     ):
         """
         Initialize a slider.
@@ -32,6 +35,8 @@ class Slider:
             command (function): The function to be executed when the slider is changed.
             additional_data (list): Arguments the slider's command needs to run.
             color (tuple): The color of the slider.
+            text (str): The text to be displayed above or below the slider bar.
+            text_position_below (bool): True if the text should be below the slider bar, False if above.
         """
         self.x = x
         self.y = y
@@ -45,6 +50,10 @@ class Slider:
         self.active = False
         self.color = color
         self.colortwo = colortwo
+        self.text = text
+        self.text_position_below = text_position_below
+        self.size = size
+        self.font_name = None
 
     def draw(self, screen):
         """Draw the slider on the screen."""
@@ -59,6 +68,18 @@ class Slider:
         pygame.draw.rect(
             screen, self.color, (self.x, self.y, slider_width, self.height)
         )
+
+        if self.text is not None:
+            font = pygame.font.Font(self.font_name, self.size)
+            text_surface = font.render(self.text, True, (255, 255, 255))
+            text_rect = text_surface.get_rect()
+
+            if self.text_position_below:
+                text_rect.midtop = (self.x + self.width / 2, self.y + self.height)
+            else:
+                text_rect.midbottom = (self.x + self.width / 2, self.y)
+
+            screen.blit(text_surface, text_rect)
 
     def handle_event(self, event):
         """
@@ -81,7 +102,8 @@ class Slider:
             self.value = self.min_value + normalized_value * (
                 self.max_value - self.min_value
             )
-            if self.command != None:
+            self.value = round(self.value, 10)
+            if self.command is not None:
                 if self.additional_data is not None:
                     self.command(self.value, *self.additional_data)
                 else:
