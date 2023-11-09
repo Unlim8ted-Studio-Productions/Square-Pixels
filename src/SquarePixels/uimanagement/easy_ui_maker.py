@@ -670,6 +670,15 @@ def handle_events():
                 ):
                     input_field.active = True
                     selected_element = input_field
+            for slider in sliders:
+                if (
+                    slider.x < event.pos[0] < slider.x + slider.width
+                    and slider.y
+                    < event.pos[1]
+                    < slider.y + slider.height
+                ):
+                    slider.active = True
+                    selected_element = slider
             for text in text_elements:
                 if text.x < event.pos[0] < text.x + (
                     text.width + text.size
@@ -732,6 +741,9 @@ def handle_events():
         for checkbox in checkboxes:
             checkbox.change_text(event)
             checkbox.handle_event(event)
+        for slider in sliders:
+            slider.change_text(event)
+            slider.handle_event(event)
         if selected_element:
             # Update UI panel with the selected element's properties
             text_input_field.text = selected_element.text
@@ -800,6 +812,8 @@ def main():
             checkbox.draw(screen)
         for image in images:
             image.draw(screen)
+        for slider in sliders:
+            slider.draw(screen)
             # Blit instructions on the screen
         instruction_surface = instruction_font.render(
             instruction_text, True, (255, 255, 255)

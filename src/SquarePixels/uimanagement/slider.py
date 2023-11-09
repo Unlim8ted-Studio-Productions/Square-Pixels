@@ -57,6 +57,7 @@ class Slider:
         self.bold = False
         self.italics = False
         self.underlined = False
+        self.hovered = False
 
     def draw(self, screen):
         """Draw the slider on the screen."""
@@ -77,7 +78,7 @@ class Slider:
             font.set_bold(self.bold)
             font.set_italic(self.italics)
             font.set_underline(self.underlined)
-            text_surface = font.render(self.text, True, (255, 255, 255))
+            text_surface = font.render(self.text, True, self.color)
             text_rect = text_surface.get_rect()
 
             if self.text_position_below:
@@ -114,6 +115,33 @@ class Slider:
                     self.command(self.value, *self.additional_data)
                 else:
                     self.command(self.value)
+    def change_text(self, event):
+        """
+        Change text on mouse events
+        Args: 
+            event: pygame event object
+        Returns: 
+            None
+        Processing Logic:
+        - Check if mouse is hovering over button on MOUSEMOTION
+        - Set button to active if mouse is pressed on button on MOUSEBUTTONDOWN 
+        - Change text if a key is pressed while button is active on KEYDOWN
+        """
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = (
+                self.x < event.pos[0] < self.x + self.width
+                and self.y < event.pos[1] < self.y + self.height
+            )
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hovered:
+                self.active = True
+            else:
+                self.active = False
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            else:
+                self.text += event.unicode
 
 
 if __name__ == "__main__":
