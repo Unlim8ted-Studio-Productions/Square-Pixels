@@ -19,7 +19,17 @@ if __name__ == "__main__":
     from script import Script
     from UIpanel import UIPanel
     from slider import Slider
-
+else:
+    from SquarePixels.uimanagement.button import Button
+    from SquarePixels.uimanagement.input_feild import InputField
+    from SquarePixels.uimanagement.TextElement import TextElement
+    from SquarePixels.uimanagement.checkbox import CheckBox
+    from SquarePixels.uimanagement.color import ColorPickerInputField
+    from SquarePixels.uimanagement.Image import ImageElement
+    from SquarePixels.uimanagement.numeric_input import NumericInputField
+    from SquarePixels.uimanagement.script import Script
+    from SquarePixels.uimanagement.UIpanel import UIPanel
+    from SquarePixels.uimanagement.slider import Slider
     # from Nodes import
 
 
@@ -245,6 +255,10 @@ def delete_selected_element():
             text_elements.remove(selected_element)
         elif isinstance(selected_element, CheckBox):
             checkboxes.remove(selected_element)
+        elif isinstance(selected_element, Slider):
+            sliders.remove(selected_element)
+        elif isinstance(selected_element, Image):
+            images.remove(selected_element)
 
         selected_element = None
 
