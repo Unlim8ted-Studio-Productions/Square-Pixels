@@ -7,6 +7,7 @@ Welcome to Square Pixel!
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
+
 totally working stats bar definitly not broken for some reason
 
 ## Table of Contents
