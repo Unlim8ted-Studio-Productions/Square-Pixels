@@ -36,7 +36,7 @@ screen: pygame.Surface = pygame.display.set_mode(
     (infoObject.current_w, infoObject.current_h)
 )
 pygame_icon = pygame.image.load(
-    r"terraria_styled_game\program recources\Screenshot 2023-09-21 181742.png"
+    r"recources\program recources\Screenshot 2023-09-21 181742.png"
 )
 pygame.display.set_icon(pygame_icon)  # pygame.display.toggle_fullscreen()
 pygame.display.set_caption("Square Pixel")
@@ -49,6 +49,7 @@ text_elements = []
 checkboxes = []
 scripts = []
 images = []
+sliders = []
 
 
 # Element that is currently being moved or scaled
@@ -93,7 +94,6 @@ def update_font_size(selected_element, scroll_direction):
     if isinstance(selected_element, Button):
         selected_element.font_size += scroll_direction * 2
 
-
 def create_button(text, x, y, width, height, command, additional_data=None):
     """
     Create a button widget
@@ -110,7 +110,233 @@ def create_button(text, x, y, width, height, command, additional_data=None):
     - Create a Button object with the given parameters
     - Return the Button object
     """
-    return Button(text, x, y, width, height, command, additional_data)
+    butn = Button(text, x, y, width, height, command, additional_data)
+    buttons .append(butn)
+    return butn
+
+
+def create_input_field(x, y, width, height, placeholder):
+    """
+    Creates an input field widget
+    Args:
+        x: X coordinate of input field
+        y: Y coordinate of input field
+        width: Width of input field
+        height: Height of input field
+        placeholder: Placeholder text for input field
+    Returns:
+        InputField: Input field widget object
+    - Creates an InputField object with the provided x, y, width, height
+    - Sets the placeholder text on the input field
+    - Returns the InputField object
+    """
+    ifield = InputField(x, y, width, height, placeholder)
+    input_fields.append(ifield)
+    return ifield
+
+
+def create_button_on_sidebar(text, y, create_function, extra=None):
+    """
+    Creates a button on the sidebar.
+    Args:
+        text: The text to display on the button.
+        y: The y coordinate for the button.
+        create_function: The function to call when button is clicked.
+        extra: Optional additional data to pass to create_function.
+    Returns:
+        new_button: The created button object.
+    - A new Button object is created with the given parameters
+    - The button is added to the sidebar_buttons list
+    - The button can now be clicked to call create_function, passing extra data
+    """
+    button_width = 120
+    button_height = 40
+    button_x = 10
+    new_button = Button(
+        text,
+        button_x,
+        y,
+        button_width,
+        button_height,
+        create_function,
+        additional_data=extra,
+    )
+    sidebar_buttons.append(new_button)
+
+
+def add_image(circle=None):
+    """
+    Add an image to the canvas
+    Args:
+        circle: The circle object to add the image to
+    Returns:
+        None: Does not return anything
+    - Opens a file dialog to select an image file
+    - Checks if a file was selected
+    - If file selected, adds the image to the canvas"""
+    root = tk.Tk()
+    root.withdraw()  # Hide the main tkinter window
+
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
+    )
+
+    if file_path:
+        # Load the selected image using PIL
+        image = Image.open(file_path)
+
+        # Create an ImageElement object and add it to your list of elements
+        if circle:
+            image_element = ImageElement(200, 400, image, "Circle")
+        else:
+            image_element = ImageElement(200, 400, image)
+        images.append(image_element)
+
+
+# Function for creating a new button
+def create_new_button():
+    """Creates a new button and adds it to the buttons list
+
+    Args:
+        None
+    Returns:
+        None: No value is returned
+
+    - A new button object is created with the label "Button", positioned at (200,200) with dimensions of 100x50 pixels
+    - The new button is appended to the global buttons list
+    - No value is returned as the button is added directly to the buttons list"""
+    button = create_button("Button", 200, 200, 100, 50, None)
+    buttons.append(button)
+
+
+# Function for creating a new text element
+def create_new_text_element():
+    """
+    Creates and adds a new text element to the list
+    Args:
+        None
+    Returns:
+        None: No value is returned
+    - Creates a new TextElement object with default values
+    - Adds the new TextElement to the text_elements list
+    - No value is returned, only side effect is adding to list"""
+    text_element = TextElement(200, 300, "Text", 24)
+    text_elements.append(text_element)
+
+
+def delete_selected_element():
+    """Deletes currently selected element
+    Args:
+        None
+    Returns:
+        None: Selected element is deleted from list
+    - Check if a selected element exists
+    - If it does, remove it from the global list storing all elements
+    - Clear the selected element variable
+    - Refresh the UI to remove the selected element"""
+    global selected_element
+
+    if selected_element:
+        if isinstance(selected_element, Button):
+            buttons.remove(selected_element)
+        elif isinstance(selected_element, InputField):
+            input_fields.remove(selected_element)
+        elif isinstance(selected_element, TextElement):
+            text_elements.remove(selected_element)
+        elif isinstance(selected_element, CheckBox):
+            checkboxes.remove(selected_element)
+
+        selected_element = None
+
+
+def create_delete_button(y=280):
+    """
+    Create and add a delete button to the sidebar
+    Args:
+        y: Position of the button from the top of the sidebar in pixels
+    Returns:
+        None: No value is returned
+    - Create a Button object with text "Delete", x position 10, y position from argument, width 120 and height 40
+    - Assign the delete_selected_element function to the button's command
+    - Append the button object to the sidebar_buttons list"""
+    delete_button = Button("Delete", 10, y, 120, 40, delete_selected_element)
+    sidebar_buttons.append(delete_button)
+
+
+def export_ui_elements():
+    """
+    Exports UI elements to Python code
+    Args:
+        None: No arguments
+    Returns:
+        None: Does not return anything
+    Processes Logic:
+        - Loops through button, input_field, checkbox, image lists and generates Python code to recreate each element
+        - Copies generated code to clipboard
+        - Displays message that code was copied
+    """
+    global buttons, input_fields, checkboxes, images, sliders, text_elements
+    code = [
+        "if __name__ == '__main__':",
+        "    from SquarePixels.uimanagement.button import Button",
+        "    from SquarePixels.uimanagement.input_feild import InputField",
+        "    from SquarePixels.uimanagement.TextElement import TextElement",
+        "    from SquarePixels.uimanagement.checkbox import CheckBox",
+        "    from SquarePixels.uimanagement.color import ColorPickerInputField",
+        "    from SquarePixels.uimanagement.Image import ImageElement",
+        "    from SquarePixels.uimanagement.slider import Slider",
+
+    ]
+
+    # Create buttons
+    for index, button in enumerate(buttons):
+        code.append(
+            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
+        )
+
+    # Create input fields
+    for index, input_field in enumerate(input_fields):
+        code.append(
+            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
+        )
+    for index, text_element in enumerate(text_elements):
+        code.append(
+            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
+        )
+    for index, checkbox in enumerate(checkboxes):
+        code.append(
+            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
+        )
+    for index, image in enumerate(images):
+        code.append(
+            f"Image{index + 1} = ImageElement({image.x}, {image.y}, {image.width}, {image.height})"
+        )
+    for index, slider in enumerate(sliders):
+        code.append(
+            f"SliderElement{index + 1} = Slider({slider.x}, {slider.y}, {slider.width}, {slider.height}, {slider.min_value}, {slider.max_value}, {slider.default_value}, {slider.command}, {slider.additional_data}, {slider.color}, {slider.colortwo}, {slider.text}, {slider.text_position_below}, {slider.size}"
+        )
+        Slider()
+    
+    code.append("code copied to clipboard")
+    result = "\n".join(code)
+    pyperclip.copy(result)
+    screen.fill((0, 0, 0))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        # Display the generated code on the screen
+        font = pygame.font.Font(None, 15)
+        for index, t in enumerate(code):
+            if index == len(code) - 1:
+                index += 5
+                font = pygame.font.Font(None, 25)
+            code_surface = font.render(t, True, (255, 255, 255))
+            screen.blit(
+                code_surface, (10, 60 + (15 * index))
+            )  # Adjust position as needed
+            pygame.display.flip()
 
 
 def create_input_field(x, y, width, height, placeholder):
@@ -259,81 +485,6 @@ def create_delete_button(y=280):
     sidebar_buttons.append(delete_button)
 
 
-def export_ui_elements():
-    """
-    Exports UI elements to Python code
-    Args:
-        None: No arguments
-    Returns:
-        None: Does not return anything
-    Processes Logic:
-        - Loops through button, input_field, checkbox, image lists and generates Python code to recreate each element
-        - Copies generated code to clipboard
-        - Displays message that code was copied
-    """
-    global buttons, input_fields, checkboxes, images
-    code = [
-        "if __name__ == '__main__':",
-        "    from button import Button",
-        "    from input_feild import InputField",
-        "    from TextElement import TextElement",
-        "    from checkbox import CheckBox",
-        "    from color import ColorPickerInputField",
-        "    from Image import ImageElement",
-        "else:",
-        "    from uimanagement.button import Button",
-        "    from uimanagement.input_feild import InputField",
-        "    from uimanagement.TextElement import TextElement",
-        "    from uimanagement.checkbox import CheckBox",
-        "    from uimanagement.color import ColorPickerInputField",
-        "    from uimanagement.Image import ImageElement",
-    ]
-
-    # Create buttons
-    for index, button in enumerate(buttons):
-        code.append(
-            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
-        )
-
-    # Create input fields
-    for index, input_field in enumerate(input_fields):
-        code.append(
-            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
-        )
-    for index, text_element in enumerate(text_elements):
-        code.append(
-            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
-        )
-    for index, checkbox in enumerate(checkboxes):
-        code.append(
-            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
-        )
-    for index, image in enumerate(images):
-        code.append(
-            f"Image{index + 1} = ImageElement({image.x}, {image.y}, {image.width}, {image.height})"
-        )
-    code.append("code copied to clipboard")
-    result = "\n".join(code)
-    pyperclip.copy(result)
-    screen.fill((0, 0, 0))
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-        # Display the generated code on the screen
-        font = pygame.font.Font(None, 15)
-        for index, t in enumerate(code):
-            if index == len(code) - 1:
-                index += 5
-                font = pygame.font.Font(None, 25)
-            code_surface = font.render(t, True, (255, 255, 255))
-            screen.blit(
-                code_surface, (10, 60 + (15 * index))
-            )  # Adjust position as needed
-            pygame.display.flip()
-
-
 # Function for creating a new input field
 def create_new_input_field():
     """
@@ -377,7 +528,7 @@ def add_slider():
 
     # Create an slider object and add it to your list of elements
     slider_element = Slider(200, 400, 100, 10, 0, 100, 50)
-    images.append(slider_element)
+    sliders.append(slider_element)
 
 
 create_button_on_sidebar("New Button", 10, create_new_button)
