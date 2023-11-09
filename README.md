@@ -39,11 +39,15 @@ To begin your adventure, follow these steps:
 1. Clone the game repository to your local machine:
 
    ```bash
-   git clone https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game.git
+   git clone https://github.com/GusInfiniteLinesOfCode/Square-Pixels.git
    ```
 
 2. Install any necessary dependencies.
 
+   ```bash
+   pip install pygame pillow pymovie pyperclip playfab captcha astor
+   ```
+   
 3. Launch the game executable or script.
 
 For detailed installation instructions, consult the Installation Guide.
