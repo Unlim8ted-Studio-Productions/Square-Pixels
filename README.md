@@ -127,7 +127,7 @@ Embark on a thrilling adventure in the realm of our pixelated sandbox game! Shou
 [issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
 [issues-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixels/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixels/blob/main/licence.md
+[license-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixela/blob/main/LICENSE.md
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: (javascript:Alert("nothing-here-yet"))
 [product-screenshot]: images/screenshot.png
