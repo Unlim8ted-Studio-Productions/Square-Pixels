@@ -6,7 +6,7 @@ Welcome to Square Pixel!
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![LinkedIn][linkedin-shield]][linkedin-url](javascript:function my_bookmarklet(\){alert('Nothing Here Yet'\);}my_bookmarklet(\);)
 
 
 totally working stats bar definitly not broken for some reason
