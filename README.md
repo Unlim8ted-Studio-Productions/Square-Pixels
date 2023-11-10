@@ -6,7 +6,7 @@ Welcome to Square Pixel!
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url](javascript:function my_bookmarklet(\){alert('Nothing Here Yet'\);}my_bookmarklet(\);)
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 totally working stats bar definitly not broken for some reason
@@ -129,7 +129,5 @@ Embark on a thrilling adventure in the realm of our pixelated sandbox game! Shou
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixela/blob/main/LICENSE.md
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url!][1]
-[Hello World!][1]
-[1]:javascript:alert('Nothing Here Yet')
+[linkedin-url!] (javascript:function my_bookmarklet(\){alert('Nothing Here Yet'\);}my_bookmarklet(\);)
 [product-screenshot]: images/screenshot.png
