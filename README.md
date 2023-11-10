@@ -1,20 +1,15 @@
-##Square Pixel
+# Square Pixel
 Welcome to Square Pixel!
 
-![Lighting Update - in development]![Screenshot 2023-09-22 183311](https://github.com/GusInfiniteLinesOfCode/Square-Pixels/blob/main/Screenshot%202023-09-22%20165106.png)
-
-![Game Screenshot]![Screenshot 2023-09-09 190654](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55)![Screenshot 2023-09-09 190738]![Screenshot 2023-09-10 103304](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/aa772f05-84d8-4488-b2f4-b26604ec0bab)
-
-https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/60913d36-27a7-488d-8ccb-946445185283
-![Screenshot 2023-09-11 173817](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/ef3c1316-8653-4df9-b829-ccba6d6203ab)
-
-
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
-
-
-
-
+totally working stats bar definitly not broken for some reason
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -44,11 +39,15 @@ To begin your adventure, follow these steps:
 1. Clone the game repository to your local machine:
 
    ```bash
-   git clone https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game.git
+   git clone https://github.com/GusInfiniteLinesOfCode/Square-Pixels.git
    ```
 
 2. Install any necessary dependencies.
 
+   ```bash
+   pip install pygame pillow pymovie pyperclip playfab captcha astor
+   ```
+   
 3. Launch the game executable or script.
 
 For detailed installation instructions, consult the Installation Guide.
@@ -101,9 +100,34 @@ We welcome contributions to our project! If you wish to contribute, please adher
 - [ ] Implement multiplayer
 - [ ] Implement friending
 
+## game screenshots
+
+![Lighting Update - in development]![Screenshot 2023-09-22 183311](https://github.com/GusInfiniteLinesOfCode/Square-Pixels/blob/main/Screenshot%202023-09-22%20165106.png)
+
+![Game Screenshot]![Screenshot 2023-09-09 190654](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55)![Screenshot 2023-09-09 190738]![Screenshot 2023-09-10 103304](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/aa772f05-84d8-4488-b2f4-b26604ec0bab)
+
+https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/60913d36-27a7-488d-8ccb-946445185283
+![Screenshot 2023-09-11 173817](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/ef3c1316-8653-4df9-b829-ccba6d6203ab)
 
 ## License
 
 This project is distributed under the a MODIFIED CREATIVE COMMONS ATTRIBUTION-NONCOMMERCIAL 3.0 LICENSE. Refer to the LICENSE file for specifics.
 
 Embark on a thrilling adventure in the realm of our pixelated sandbox game! Should you encounter any problems or have ideas for improvement, kindly share your feedback with us. Enjoy your gaming journey!
+
+
+
+
+[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
+[contributors-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixels/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
+[forks-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixels/network/members
+[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
+[stars-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixels/stargazers
+[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[issues-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixels/issues
+[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-url]: https://github.com/GusInfiniteLinesOfCode/Square-Pixela/blob/main/LICENSE.md
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: (javascript:%28function%28%29%7Balert%28%22Nothing%20Here%20Yet%22%29%7D%29%28%29%3B)
+[product-screenshot]: images/screenshot.png
