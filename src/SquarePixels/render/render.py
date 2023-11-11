@@ -160,7 +160,15 @@ def render_terrain(
         # Define a radius for the sphere
 
         # Create a transparent black color
-        transparent_black = (0, 0, 0, transparency)
+        #NewColors = Lit.LightAlgorithm(
+        #    colors, x, y, (playerpos.x), (playerpos.y), DayTime
+        #)
+        #if transparency > len(NewColors) - 1:
+        #    colorone = NewColors[len(NewColors) - 1]
+        #else:
+        #    colorone = NewColors[transparency]
+        #transparent_black = (colorone[0],colorone[1],colorone[2], transparency)
+        transparent_black=(0,0,0,transparency)
         # Create a surface with the transparent black color and same dimensions as the rectangle
         transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
         pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
