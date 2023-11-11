@@ -30,6 +30,7 @@ else:
     from SquarePixels.uimanagement.script import Script
     from SquarePixels.uimanagement.UIpanel import UIPanel
     from SquarePixels.uimanagement.slider import Slider
+
     # from Nodes import
 
 
@@ -104,6 +105,7 @@ def update_font_size(selected_element, scroll_direction):
     if isinstance(selected_element, Button):
         selected_element.font_size += scroll_direction * 2
 
+
 def create_button(text, x, y, width, height, command, additional_data=None):
     """
     Create a button widget
@@ -121,7 +123,7 @@ def create_button(text, x, y, width, height, command, additional_data=None):
     - Return the Button object
     """
     butn = Button(text, x, y, width, height, command, additional_data)
-    buttons .append(butn)
+    buttons.append(butn)
     return butn
 
 
@@ -299,7 +301,6 @@ def export_ui_elements():
         "    from SquarePixels.uimanagement.color import ColorPickerInputField",
         "    from SquarePixels.uimanagement.Image import ImageElement",
         "    from SquarePixels.uimanagement.slider import Slider",
-
     ]
 
     # Create buttons
@@ -315,12 +316,13 @@ def export_ui_elements():
         )
     for index, text_element in enumerate(text_elements):
         code.append(
-            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}, '{text_element.placeholder}')"
+            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}')"
         )
     for index, checkbox in enumerate(checkboxes):
         code.append(
-            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}, '{checkbox.placeholder}')"
+            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}')"
         )
+
     for index, image in enumerate(images):
         code.append(
             f"Image{index + 1} = ImageElement({image.x}, {image.y}, {image.width}, {image.height})"
@@ -330,7 +332,7 @@ def export_ui_elements():
             f"SliderElement{index + 1} = Slider({slider.x}, {slider.y}, {slider.width}, {slider.height}, {slider.min_value}, {slider.max_value}, {slider.default_value}, {slider.command}, {slider.additional_data}, {slider.color}, {slider.colortwo}, {slider.text}, {slider.text_position_below}, {slider.size}"
         )
         Slider()
-    
+
     code.append("code copied to clipboard")
     result = "\n".join(code)
     pyperclip.copy(result)
@@ -687,9 +689,7 @@ def handle_events():
             for slider in sliders:
                 if (
                     slider.x < event.pos[0] < slider.x + slider.width
-                    and slider.y
-                    < event.pos[1]
-                    < slider.y + slider.height
+                    and slider.y < event.pos[1] < slider.y + slider.height
                 ):
                     slider.active = True
                     selected_element = slider

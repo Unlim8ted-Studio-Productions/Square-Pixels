@@ -38,6 +38,15 @@ if __name__ == "__main__":
     image_folder: str = r"Recources\\NewHorizonsFrames"
     logo.play_intro_video(image_folder, not_skipped, screen, 1)
     play_music(r"Recources\sounds\music\Menu.mp3")
+    with open(r"Recources\data\first.txt", "r") as first:
+        bool_value = first.readlines()
+        if bool(bool_value[0]):
+            import SquarePixels.uimanagement.EllipsesWarning
+
+            # with open(r"Recources\data\first.txt", "w") as first:
+            #    None
+            #    # first.write("False") disabled for developmental purposes
+
     MainMen.mainfunc()
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
