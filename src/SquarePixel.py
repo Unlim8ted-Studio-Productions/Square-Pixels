@@ -43,9 +43,9 @@ if __name__ == "__main__":
         if bool(bool_value[0]):
             import SquarePixels.uimanagement.EllipsesWarning
 
-            # with open(r"Recources\data\first.txt", "w") as first:
-            #    None
-            #    # first.write("False") disabled for developmental purposes
+            # with open(r"Recources\data\first.txt", "w") as first:3423434234234
+            #    None564523454324324
+            #    first.write("False") disabled for developmental purposes423423423423
 
     MainMen.mainfunc()
     # Rest of game code goes here...
