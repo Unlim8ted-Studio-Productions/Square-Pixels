@@ -9,7 +9,7 @@ pygame.init()
 infoObject: object = pygame.display.Info()
 width, height = infoObject.current_w, infoObject.current_h
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-pygame.display.set_caption("Ellipse Warnings")
+pygame.display.set_caption("Square Pixel")
 
 # Define colors
 black = (0, 0, 0)
