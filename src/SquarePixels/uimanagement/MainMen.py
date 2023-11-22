@@ -53,7 +53,7 @@ FPS = 60
 good = False
 backround = pygame.transform.scale(
     pygame.image.load(r"Recources\ui\mainmen\backround\cover.png"),
-    (infoObject.current_w + 20, infoObject.current_h + 20),
+    (infoObject.current_w + 100, infoObject.current_h + 80),
 )
 # Initialize the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -75,6 +75,8 @@ BUTTON_HOVER_COLOR = (100, 100, 100)
 
 white = (255, 255, 255)
 
+# Initial position of the background
+bg_x, bg_y = 0, 0
 
 # Load cloud images
 cloud_images = [
@@ -416,7 +418,7 @@ def main_menu(
     )
     UImaker = Button(
         "Make UI (for testing purposes only) <unless future mod system...>",
-        684,
+        infoObject.current_w /2 - 822,
         800,
         822,
         50,
@@ -484,9 +486,20 @@ def main_menu(
         screen.fill(BACKGROUND_COLOR)
 
         # Draw buttons
-        screen.blit(
-            backround, (0, 0, infoObject.current_w / 20, infoObject.current_h / 20)
-        )
+        x, y = pygame.mouse.get_pos()
+        
+        # Calculate the offset for the panoramic effect
+        offset_x = (infoObject.current_w / 2 - x) / 20
+        offset_y = (infoObject.current_h / 2 - y) / 20
+
+        # Apply smoothing to gradually move toward the target position
+        smoothing_factor = 0.1
+        bg_x += (offset_x - bg_x) * smoothing_factor
+        bg_y += (offset_y - bg_y) * smoothing_factor
+
+        # Blit the background with the calculated offset
+        screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
+        
         # Move and draw clouds
         for cloud in clouds:
             cloud.move()
@@ -689,9 +702,51 @@ def show_signin_popup(leaderboard_page):
     )
 
     while True:
-        screen.blit(
-            backround, (0, 0, infoObject.current_w / 20, infoObject.current_h / 20)
-        )
+        global clouds, bg_x, bg_y
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                
+        if len(clouds) <= 6:
+            if random.randint(0, 100) < 2:
+                cloud_image = random.choice(cloud_images)
+                cloud_x = random.randint(0, infoObject.current_w)
+                cloud_y = random.randint(0, 200)
+                cloud_speed = random.uniform(0.1, 20)  # Random speed between 1 and 4
+                new_cloud = Cloud(cloud_x, cloud_y, cloud_image, cloud_speed)
+                clouds.append(new_cloud)
+                
+        # Remove clouds that are off-screen
+        for cloud in clouds:
+            if cloud.image == cloud_images[1]:
+                if cloud.x <= -300:
+                    clouds.remove(cloud)
+            else:
+                if cloud.x <= -500:
+                    clouds.remove(cloud)
+                    
+                
+        x, y = pygame.mouse.get_pos()
+        
+        # Calculate the offset for the panoramic effect
+        offset_x = (infoObject.current_w / 2 - x) / 20
+        offset_y = (infoObject.current_h / 2 - y) / 20
+
+        # Apply smoothing to gradually move toward the target position
+        smoothing_factor = 0.1
+        bg_x += (offset_x - bg_x) * smoothing_factor
+        bg_y += (offset_y - bg_y) * smoothing_factor
+
+        # Blit the background with the calculated offset
+        screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
+        
+        # Move and draw clouds
+        for cloud in clouds:
+            cloud.move()
+            cloud.draw(screen)
+        
         display_message(current_message)
         popup_text_render = popup_font.render(popup_text, True, WHITE)
         popup_text2_render = popup_font.render(popup_text2, True, WHITE)
