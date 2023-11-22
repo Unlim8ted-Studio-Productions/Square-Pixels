@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # Path to your video file
     video_file: str = r"Recources\\Company Animated Logo.mov"
     infoObject: object = pig.display.Info()
-    screen: pig.Surface = pig.display.set_mode(
+    screen: pig.Surface = pig.display.set_mode( 
         (infoObject.current_w, infoObject.current_h)
     )
     pygame_icon = pig.image.load(

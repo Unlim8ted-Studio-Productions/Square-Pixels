@@ -1,8 +1,10 @@
+from random import choice, randint, uniform
 import pygame
 import sys
 import tkinter as tk
 from tkinter import filedialog
 import os
+from SquarePixels.uimanagement.clouds import Cloud
 
 # Get the current working directory
 path = os.getcwd()
@@ -39,6 +41,15 @@ pygame.display.set_icon(pygame_icon)
 background = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
 font = pygame.font.Font(None, 36)
 
+# Initial position of the background
+bg_x, bg_y = 0, 0
+
+backround = pygame.transform.scale(
+    pygame.image.load(r"Recources\ui\mainmen\backround\cover.png"),
+    (infoObject.current_w + 100, infoObject.current_h + 80),
+)
+
+
 # List of character paths
 character_list = [
     r"Recources\characters\thumbnails\blue.gif",
@@ -56,7 +67,7 @@ for character_path in character_list:
 # Sidebar position and size
 sidebar_width = 150
 sidebar_rect = pygame.Rect(
-    infoObject.current_w - (sidebar_width + 20), 0, sidebar_width, infoObject.current_h
+    infoObject.current_w - (sidebar_width), 0, sidebar_width, infoObject.current_h
 )
 
 # Button position and size
@@ -64,7 +75,7 @@ button_height = 100
 button_spacing = 10
 button_rects = [
     pygame.Rect(
-        infoObject.current_w - sidebar_width - 7,
+        infoObject.current_w - sidebar_width - 7 + 20,
         10 + (button_height + button_spacing) * idx,
         sidebar_width - 20,
         button_height,
@@ -122,6 +133,77 @@ def draw_character():
     )
 
 
+def transition():
+    global bg_x, bg_y
+    black_rectangles = []
+    
+    x, y = pygame.mouse.get_pos()
+        
+    # Calculate the offset for the panoramic effect
+    offset_x = (infoObject.current_w / 2 - x) / 20
+    offset_y = (infoObject.current_h / 2 - y) / 20
+
+    # Apply smoothing to gradually move toward the target position
+    smoothing_factor = 0.1
+    bg_x += (offset_x - bg_x) * smoothing_factor
+    bg_y += (offset_y - bg_y) * smoothing_factor
+    clouds = []
+    # Blit the background with the calculated offset
+    screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
+    
+    # Load cloud images
+    cloud_images = [
+        pygame.transform.scale(
+            pygame.image.load(r"Recources\ui\mainmen\backround\clouds1.png"),
+            (infoObject.current_w / 4, infoObject.current_h / 4),
+        ),
+        pygame.transform.scale(
+            pygame.image.load(r"Recources\ui\mainmen\backround\clouds2.png"),
+            (infoObject.current_w / 4, infoObject.current_h / 4),
+        ),
+    ]
+    while len(clouds) <= 50:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        cloud_image = choice(cloud_images)
+        cloud_x = randint(0, infoObject.current_w)
+        cloud_y = randint(0, infoObject.current_h)
+        cloud_speed = uniform(1, 20)  # Random speed between 1 and 4
+        new_cloud = Cloud(cloud_x, cloud_y, cloud_image, cloud_speed)
+        clouds.append(new_cloud)
+
+        # Remove clouds that are off-screen
+        for cloud in clouds:
+            if cloud.image == cloud_images[1]:
+                if cloud.x <= -300:
+                    clouds.remove(cloud)
+            else:
+                if cloud.x <= -500:
+                    clouds.remove(cloud)
+                    
+        # Move and draw clouds
+        for cloud in clouds:
+            cloud.move()
+            cloud.draw(screen)
+        pygame.display.update()
+        pygame.display.flip()
+    ## Fill the screen with black rectangles
+    #for x in range(infoObject.current_w // 250 + 50):
+    #    for y in range(infoObject.current_h // 250 + 50):
+    #        black_rect = pygame.Rect((x * 250, y * 250, 250, 250))
+    #        black_rectangles.append(black_rect)
+    #while len(black_rectangles) > 0:
+    #    for event in pygame.event.get():
+    #        if event.type == pygame.QUIT:
+    #            pygame.quit()
+    #            sys.exit()
+    #    i = randint(0, len(black_rectangles) - 1)
+    #    pygame.draw.rect(screen, (0,0,0), black_rectangles[i])
+    #    black_rectangles.pop(i)
+    #    pygame.display.update()
+    #    pygame.display.flip()
 def draw_shapes():
     """
     Draw shapes and buttons on the background.
@@ -134,6 +216,10 @@ def draw_shapes():
 
     # Draw buttons
     for button in buttons:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
         pygame.draw.rect(
             background, (100, 100, 100), button["rect"]
         )  # Button background color
@@ -173,7 +259,7 @@ def main():
     Returns:
         None
     """
-    global head_size, body_height, trails
+    global head_size, body_height, trails, bg_x, bg_y
     running = True
     buttoncount = 0
     hoveredbuttons = []
@@ -218,6 +304,20 @@ def main():
 
         # Clear the screen with transparency
         background.fill(TRANSPARENT)
+        
+        x, y = pygame.mouse.get_pos()
+        
+        # Calculate the offset for the panoramic effect
+        offset_x = (infoObject.current_w / 2 - x) / 20
+        offset_y = (infoObject.current_h / 2 - y) / 20
+
+        # Apply smoothing to gradually move toward the target position
+        smoothing_factor = 0.1
+        bg_x += (offset_x - bg_x) * smoothing_factor
+        bg_y += (offset_y - bg_y) * smoothing_factor
+
+        # Blit the background with the calculated offset
+        screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
 
         if drawchar[0]:
             char = character_thumbnails[drawchar[1]]
@@ -375,6 +475,7 @@ def finish():
     # character_sprite.sprite.image = background.copy()
     # shapes.clear()
     export_character(path + r"\\Recources\\characters\\current.png")
+    transition()
     return path + r"\\Recources\\characters\\current.png"
 
 

@@ -400,6 +400,7 @@ def main_menu(
         host_button (Button): The button for hosting a multiplayer game.
         join_button (Button): The button for joining a multiplayer game.
     """
+    global bg_x, bg_y
     multiplayer_button = Button(
         "Multiplayer",
         WIDTH // 2 - 100,
