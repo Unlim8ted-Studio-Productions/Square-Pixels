@@ -316,7 +316,7 @@ def export_ui_elements():
         )
     for index, text_element in enumerate(text_elements):
         code.append(
-            f"TextElement{index + 1} = TextElement(WIDTH / {WIDTH / text_element.x}, HEIGHT / {HEIGHT / text_element.y}, WIDTH / {WIDTH / text_element.width}, HEIGHT / {HEIGHT / text_element.height}')"
+            f"TextElement{index + 1} = TextElement(WIDTH / {WIDTH / text_element.x}, HEIGHT / {HEIGHT / text_element.y}, {text_element.text})"
         )
     for index, checkbox in enumerate(checkboxes):
         code.append(
