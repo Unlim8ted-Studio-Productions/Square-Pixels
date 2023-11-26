@@ -1,6 +1,6 @@
 import pygame
 import sys
-from SquarePixels.uimanagement.button import Button
+from SquarePixels.uimanagement.elements.button import Button
 
 # Initialize Pygame
 pygame.init()

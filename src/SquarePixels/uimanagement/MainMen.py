@@ -21,7 +21,7 @@ import hashlib
 from SquarePixels.uimanagement.easy_ui_maker import start
 import http.client
 from SquarePixels.uimanagement.get_user_avatar import get_user_avatar
-from SquarePixels.uimanagement.Image import ImageElement
+from SquarePixels.uimanagement.elements.Image import ImageElement
 
 
 # from account_mannagement.authentication import SignInScreen, SignUpScreen
@@ -33,8 +33,8 @@ from SquarePixels.uimanagement.leaderboard import (
     previous_leadeboard_page,
     search_input_callback_l,
 )
-from SquarePixels.uimanagement.input_feild import InputField
-from SquarePixels.uimanagement.button import Button
+from SquarePixels.uimanagement.elements.input_feild import InputField
+from SquarePixels.uimanagement.elements.button import Button
 from SquarePixels.uimanagement.clouds import Cloud
 from SquarePixels.uimanagement.friends import instance
 

@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # Path to your video file
     video_file: str = r"Recources\\Company Animated Logo.mov"
     infoObject: object = pig.display.Info()
-    screen: pig.Surface = pig.display.set_mode( 
+    screen: pig.Surface = pig.display.set_mode(
         (infoObject.current_w, infoObject.current_h)
     )
     pygame_icon = pig.image.load(
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     MainMen.mainfunc()
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
-        width=(0, infoObject.current_w // 10), height=infoObject.current_h // 15
+        width=(0, infoObject.current_w // 15), height=infoObject.current_h // 15
     )
     player_sprite = main()
     terrain_gen.generate_terrain(screen)

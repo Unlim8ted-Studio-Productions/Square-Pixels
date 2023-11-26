@@ -13,9 +13,8 @@ import json
 
 pygame.init()
 
-from SquarePixels.uimanagement.button import Button
-from SquarePixels.uimanagement.input_feild import InputField
-
+from SquarePixels.uimanagement.elements.button import Button
+from SquarePixels.uimanagement.elements.input_feild import InputField
 
 infoObject: object = pygame.display.Info()
 screen: pygame.Surface = pygame.display.set_mode(

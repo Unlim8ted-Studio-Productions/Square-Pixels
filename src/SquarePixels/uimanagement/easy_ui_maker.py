@@ -9,27 +9,27 @@ from PIL import Image
 # Initialize Pygame
 pygame.init()
 if __name__ == "__main__":
-    from button import Button
-    from input_feild import InputField
-    from TextElement import TextElement
-    from checkbox import CheckBox
-    from color import ColorPickerInputField
-    from Image import ImageElement
-    from numeric_input import NumericInputField
+    from elements.button import Button
+    from elements.input_feild import InputField
+    from elements.TextElement import TextElement
+    from elements.checkbox import CheckBox
+    from elements.color import ColorPickerInputField
+    from elements.Image import ImageElement
+    from elements.numeric_input import NumericInputField
     from script import Script
     from UIpanel import UIPanel
-    from slider import Slider
+    from elements.slider import Slider
 else:
-    from SquarePixels.uimanagement.button import Button
-    from SquarePixels.uimanagement.input_feild import InputField
-    from SquarePixels.uimanagement.TextElement import TextElement
-    from SquarePixels.uimanagement.checkbox import CheckBox
-    from SquarePixels.uimanagement.color import ColorPickerInputField
-    from SquarePixels.uimanagement.Image import ImageElement
-    from SquarePixels.uimanagement.numeric_input import NumericInputField
+    from SquarePixels.uimanagement.elements.button import Button
+    from SquarePixels.uimanagement.elements.input_feild import InputField
+    from SquarePixels.uimanagement.elements.TextElement import TextElement
+    from SquarePixels.uimanagement.elements.checkbox import CheckBox
+    from SquarePixels.uimanagement.elements.color import ColorPickerInputField
+    from SquarePixels.uimanagement.elements.Image import ImageElement
+    from SquarePixels.uimanagement.elements.numeric_input import NumericInputField
     from SquarePixels.uimanagement.script import Script
     from SquarePixels.uimanagement.UIpanel import UIPanel
-    from SquarePixels.uimanagement.slider import Slider
+    from SquarePixels.uimanagement.elements.slider import Slider
 
     # from Nodes import
 

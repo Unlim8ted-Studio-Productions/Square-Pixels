@@ -59,6 +59,7 @@ class Player:
         self.health_bar_length = health_bar_length
         self.health_ratio = self.max_health / self.health_bar_length
         self.health_change_speed = 5
+        self.state = f"falling{0}"
 
     def respawn(self, sky, infoObject, active_chunks=[(int, int)]):
         """
@@ -325,21 +326,9 @@ class Player:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE:
                     self.player_jump()
                 elif event.key == pig.K_LEFT or event.key == ord("a"):
-                    self.velocity_x = -self.speed
-                    music.play_music(
-                        r"Recources\sounds\player\running.mp3",
-                        1,
-                        channel=2,
-                        volume=15,
-                    )
+                    self.player_move_left()
                 elif event.key == pig.K_RIGHT or event.key == ord("d"):
-                    self.velocity_x = self.speed
-                    music.play_music(
-                        r"Recources\sounds\player\running.mp3",
-                        1,
-                        channel=2,
-                        volume=15,
-                    )
+                    self.player_move_right()
                 elif event.key == pig.K_r:
                     return True, False
                 elif event.key == pig.K_e or event.key == ord("e"):
@@ -535,6 +524,24 @@ class Player:
             1,
             channel=3,
             volume=5,
+        )
+
+    def player_move_left(self):
+        self.velocity_x = -self.speed
+        music.play_music(
+            r"Recources\sounds\player\running.mp3",
+            1,
+            channel=2,
+            volume=15,
+        )
+
+    def player_move_right(self):
+        self.velocity_x = self.speed
+        music.play_music(
+            r"Recources\sounds\player\running.mp3",
+            1,
+            channel=2,
+            volume=15,
         )
 
     def render_selection(self, screen, mousex, mousey, font):

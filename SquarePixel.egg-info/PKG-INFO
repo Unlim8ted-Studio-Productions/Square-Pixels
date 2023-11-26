@@ -2,3 +2,8 @@ Metadata-Version: 2.1
 Name: SquarePixel
 Version: 1.0
 License-File: LICENSE.md
+Requires-Dist: pygame
+Requires-Dist: pillow
+Requires-Dist: pymovie
+Requires-Dist: pyperclip
+Requires-Dist: playfab
