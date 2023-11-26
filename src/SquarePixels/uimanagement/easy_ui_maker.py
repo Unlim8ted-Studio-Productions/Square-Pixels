@@ -39,9 +39,9 @@ BUTTON_COLOR = (50, 50, 50)
 BUTTON_HOVER_COLOR = (100, 100, 100)
 WHITE = (255, 255, 255)
 
-
 # Set the screen size
 infoObject: object = pygame.display.Info()
+WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 screen_width, screen_height = infoObject.current_w, infoObject.current_h
 screen: pygame.Surface = pygame.display.set_mode(
     (infoObject.current_w, infoObject.current_h)
@@ -294,45 +294,43 @@ def export_ui_elements():
     global buttons, input_fields, checkboxes, images, sliders, text_elements
     code = [
         "if __name__ == '__main__':",
-        "    from SquarePixels.uimanagement.button import Button",
-        "    from SquarePixels.uimanagement.input_feild import InputField",
-        "    from SquarePixels.uimanagement.TextElement import TextElement",
-        "    from SquarePixels.uimanagement.checkbox import CheckBox",
-        "    from SquarePixels.uimanagement.color import ColorPickerInputField",
-        "    from SquarePixels.uimanagement.Image import ImageElement",
-        "    from SquarePixels.uimanagement.slider import Slider",
+        "    from SquarePixels.uimanagement.elements.button import Button",
+        "    from SquarePixels.uimanagement.elements.input_feild import InputField",
+        "    from SquarePixels.uimanagement.elements.TextElement import TextElement",
+        "    from SquarePixels.uimanagement.elements.checkbox import CheckBox",
+        "    from SquarePixels.uimanagement.elements.color import ColorPickerInputField",
+        "    from SquarePixels.uimanagement.elements.Image import ImageElement",
+        "    from SquarePixels.uimanagement.elements.slider import Slider",
     ]
 
-    # Create buttons
+    # Create buttons  screen_width/{screen_width/x}
     for index, button in enumerate(buttons):
         code.append(
-            f"button{index + 1} = Button('{button.text}',{button.x}, {button.y}, {button.width}, {button.height}, None)"
+            f"button{index + 1} = Button('{button.text}', WIDTH / {WIDTH / button.x}, HEIGHT / {HEIGHT / button.y}, WIDTH / {WIDTH / button.width}, HEIGHT / {HEIGHT / button.height}, None)"
         )
 
     # Create input fields
     for index, input_field in enumerate(input_fields):
         code.append(
-            f"input_field{index + 1} = InputField({input_field.x}, {input_field.y}, {input_field.width}, {input_field.height}, '{input_field.placeholder}')"
+            f"input_field{index + 1} = InputField(WIDTH / {WIDTH / input_field.x}, HEIGHT / {HEIGHT / input_field.y}, WIDTH / {WIDTH / input_field.width}, HEIGHT / {HEIGHT / input_field.height}, '{input_field.placeholder}')"
         )
     for index, text_element in enumerate(text_elements):
         code.append(
-            f"TextElement{index + 1} = TextElement({text_element.x}, {text_element.y}, {text_element.width}, {text_element.height}')"
+            f"TextElement{index + 1} = TextElement(WIDTH / {WIDTH / text_element.x}, HEIGHT / {HEIGHT / text_element.y}, WIDTH / {WIDTH / text_element.width}, HEIGHT / {HEIGHT / text_element.height}')"
         )
     for index, checkbox in enumerate(checkboxes):
         code.append(
-            f"CheckBox{index + 1} = CheckBox({checkbox.x}, {checkbox.y}, {checkbox.width}, {checkbox.height}')"
+            f"CheckBox{index + 1} = CheckBox(WIDTH / {WIDTH / checkbox.x}, HEIGHT / {HEIGHT / checkbox.y}, WIDTH / {WIDTH / checkbox.width}, HEIGHT / {HEIGHT / checkbox.height}')"
         )
 
     for index, image in enumerate(images):
         code.append(
-            f"Image{index + 1} = ImageElement({image.x}, {image.y}, {image.width}, {image.height})"
+            f"Image{index + 1} = ImageElement(WIDTH / {WIDTH / image.x}, HEIGHT / {HEIGHT / image.y}, WIDTH / {WIDTH / image.width}, HEIGHT / {HEIGHT / image.height})"
         )
     for index, slider in enumerate(sliders):
         code.append(
-            f"SliderElement{index + 1} = Slider({slider.x}, {slider.y}, {slider.width}, {slider.height}, {slider.min_value}, {slider.max_value}, {slider.default_value}, {slider.command}, {slider.additional_data}, {slider.color}, {slider.colortwo}, {slider.text}, {slider.text_position_below}, {slider.size}"
+            f"SliderElement{index + 1} = Slider(WIDTH / {WIDTH / slider.x}, HEIGHT / {HEIGHT / slider.y}, WIDTH / {WIDTH / slider.width}, HEIGHT / {HEIGHT / slider.height}, {slider.min_value}, {slider.max_value}, {slider.default_value}, {slider.command}, {slider.additional_data}, {slider.color}, {slider.colortwo}, {slider.text}, {slider.text_position_below}, {slider.size})"
         )
-        Slider()
-
     code.append("code copied to clipboard")
     result = "\n".join(code)
     pyperclip.copy(result)
