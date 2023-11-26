@@ -98,6 +98,7 @@ game_state = "menu"  # Initial state is the main menu
 show_play_buttons = False  # Flag to control visibility of play buttons
 show_multiplayer_options = False  # Flag to control visibility of multiplayer options
 
+
 # Create a screen for the sign-up process
 class SignUpScreen:
     def __init__(self):
@@ -202,12 +203,12 @@ class SignUpScreen:
 
         try:
             conn = http.client.HTTPSConnection("api.eva.pingutil.com")
-            payload = ''
+            payload = ""
             headers = {}
             conn.request("GET", f"/email?email={email}", payload, headers)
             res = conn.getresponse()
             data = res.read()
-            #https://www.loginradius.com/blog/engineering/email-verification-api/
+            # https://www.loginradius.com/blog/engineering/email-verification-api/
             email_data = data.decode("utf-8")
             if email_data["status"] == "success":
                 email_data = email_data["data"]
@@ -228,7 +229,9 @@ class SignUpScreen:
 
                             if result is not None and "SessionTicket" in result:
                                 signed_in = True
-                                display_message("Account created and signed in.", (0, 255, 0))
+                                display_message(
+                                    "Account created and signed in.", (0, 255, 0)
+                                )
                             else:
                                 None
                         else:
@@ -247,7 +250,7 @@ class SignUpScreen:
         """Uploads a selected profile picture
         Args:
             self: The class instance
-        Returns: 
+        Returns:
             None: No value is returned
         - Opens a file dialog window to select a profile picture file
         - Gets the file path of the selected picture
@@ -261,8 +264,15 @@ class SignUpScreen:
 
         if file_path:
             self.profile_picture = Image.open(file_path, "r")
-            self.profile_picture = self.profile_picture.resize([HEIGHT // 2 + 50, HEIGHT // 2 + 50])
-            self.profile_picture = ImageElement((WIDTH - 25)-self.profile_picture.width, 25,self.profile_picture,"Circle")
+            self.profile_picture = self.profile_picture.resize(
+                [HEIGHT // 2 + 50, HEIGHT // 2 + 50]
+            )
+            self.profile_picture = ImageElement(
+                (WIDTH - 25) - self.profile_picture.width,
+                25,
+                self.profile_picture,
+                "Circle",
+            )
 
 
 # Create a screen for the sign-in process
@@ -340,7 +350,9 @@ class SignInScreen:
                 if self.remember_me:  # TODO #26 #25 add remember me checkbox
                     # with open("h.h", "x") as x:
                     # Create peekaboo.py and add var1 and var2
-                    with open("SquarePixels/eastereggs/peekaboo.py", "w") as peekaboo_file:
+                    with open(
+                        "SquarePixels/eastereggs/peekaboo.py", "w"
+                    ) as peekaboo_file:
                         peekaboo_file.write(f"var1 = {em}\n")
                         peekaboo_file.write(f"var2 = {p}\n")
                 #
@@ -419,13 +431,21 @@ def main_menu(
     )
     UImaker = Button(
         "Make UI (for testing purposes only) <unless future mod system...>",
-        infoObject.current_w /2 - 822,
+        infoObject.current_w / 2 - 411,
         800,
         822,
         50,
         start,
     )
     UImaker.size = 20
+    store = Button(
+        "Store",
+        infoObject.current_w / 2 - 411,
+        800,
+        822,
+        50,
+        None,
+    )
     back_button = Button("Back", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, back)
     play_button = Button(
         "Play", WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, toggle_play_buttons
@@ -488,7 +508,7 @@ def main_menu(
 
         # Draw buttons
         x, y = pygame.mouse.get_pos()
-        
+
         # Calculate the offset for the panoramic effect
         offset_x = (infoObject.current_w / 2 - x) / 20
         offset_y = (infoObject.current_h / 2 - y) / 20
@@ -500,7 +520,7 @@ def main_menu(
 
         # Blit the background with the calculated offset
         screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
-        
+
         # Move and draw clouds
         for cloud in clouds:
             cloud.move()
@@ -625,13 +645,13 @@ def display_message(message, color=(255, 0, 0)):
 class Page:
     def __init__(self):
         """Initializes registration form fields and buttons
-        Args: 
+        Args:
             self: {The class instance}: Initializes registration form fields and buttons
         Returns:
             None: Does not return anything, initializes form fields and buttons
         {Processing Logic}:
             - Initializes InputField objects for username, email, password
-            - Initializes Button objects for profile picture upload, account creation, Google login, back 
+            - Initializes Button objects for profile picture upload, account creation, Google login, back
             - Adds all InputField and Button objects to a buttons list
             - Sets initial profile picture to None"""
         self.buttons = []
@@ -704,12 +724,12 @@ def show_signin_popup(leaderboard_page):
 
     while True:
         global clouds, bg_x, bg_y
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-                
+
         if len(clouds) <= 6:
             if random.randint(0, 100) < 2:
                 cloud_image = random.choice(cloud_images)
@@ -718,7 +738,7 @@ def show_signin_popup(leaderboard_page):
                 cloud_speed = random.uniform(0.1, 20)  # Random speed between 1 and 4
                 new_cloud = Cloud(cloud_x, cloud_y, cloud_image, cloud_speed)
                 clouds.append(new_cloud)
-                
+
         # Remove clouds that are off-screen
         for cloud in clouds:
             if cloud.image == cloud_images[1]:
@@ -727,10 +747,9 @@ def show_signin_popup(leaderboard_page):
             else:
                 if cloud.x <= -500:
                     clouds.remove(cloud)
-                    
-                
+
         x, y = pygame.mouse.get_pos()
-        
+
         # Calculate the offset for the panoramic effect
         offset_x = (infoObject.current_w / 2 - x) / 20
         offset_y = (infoObject.current_h / 2 - y) / 20
@@ -742,12 +761,12 @@ def show_signin_popup(leaderboard_page):
 
         # Blit the background with the calculated offset
         screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
-        
+
         # Move and draw clouds
         for cloud in clouds:
             cloud.move()
             cloud.draw(screen)
-        
+
         display_message(current_message)
         popup_text_render = popup_font.render(popup_text, True, WHITE)
         popup_text2_render = popup_font.render(popup_text2, True, WHITE)
@@ -873,8 +892,7 @@ def mainfunc():
                 leaderboard_data = get_leaderboard(current_leader_page, display_message)
                 # print(leaderboard_data)
                 fetch_leaderboard = True
-                #get_user_avatar(SignInScreen)
-
+                # get_user_avatar(SignInScreen)
 
         if signed_in == "Guest":
             pass  # TODO:implement #22 guest logic in future
