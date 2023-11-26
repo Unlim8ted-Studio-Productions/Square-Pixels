@@ -1,3 +1,4 @@
+from pickle import TRUE
 import pygame
 import sys
 import random
@@ -102,9 +103,7 @@ def start():
     # Game loop
     running = True
     won = False
-    credits_font = pygame.font.Font(
-        "Recources\Fonts\PixelifySans-Regular.ttf", 50
-    )
+    credits_font = pygame.font.Font("Recources\Fonts\PixelifySans-Regular.ttf", 50)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -233,7 +232,7 @@ def start():
             credits_font = pygame.font.Font(
                 r"Recources\Fonts\PixelifySans-Regular.ttf", 36
             )
-            asciiartfont = pygame.font.SysFont("monospace", 20)
+            asciiartfont = pygame.font.SysFont("monospace", 20, True)
 
             while credits_y >= -len(credits_text) * 40 and won:
                 screen.fill(WHITE)

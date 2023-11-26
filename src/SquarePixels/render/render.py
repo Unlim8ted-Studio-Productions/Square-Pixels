@@ -6,13 +6,13 @@ import random
 import math
 
 
-black_rectangles = []
+hidden_area = []
 infoObject: object = pig.display.Info()
 # Fill the screen with black rectangles
 for x in range(infoObject.current_w // 20 + 50):
     for y in range(infoObject.current_h // 20 + 50):
         black_rect = pig.Rect((x * 20, y * 20, 20, 20))
-        black_rectangles.append(black_rect)
+        hidden_area.append(black_rect)
 
 
 def render_terrain(
@@ -140,7 +140,7 @@ def render_terrain(
                     screen.blit(block_images[1], currentblock)
                 colliders.append(currentblock)
 
-    for rect in black_rectangles:
+    for rect in hidden_area:
         # Calculate the center point of the black rectangle
         rect_center = rect.center
 
@@ -160,15 +160,15 @@ def render_terrain(
         # Define a radius for the sphere
 
         # Create a transparent black color
-        #NewColors = Lit.LightAlgorithm(
+        # NewColors = Lit.LightAlgorithm(
         #    colors, x, y, (playerpos.x), (playerpos.y), DayTime
-        #)
-        #if transparency > len(NewColors) - 1:
+        # )
+        # if transparency > len(NewColors) - 1:
         #    colorone = NewColors[len(NewColors) - 1]
-        #else:
+        # else:
         #    colorone = NewColors[transparency]
-        #transparent_black = (colorone[0],colorone[1],colorone[2], transparency)
-        transparent_black=(0,0,0,transparency)
+        # transparent_black = (colorone[0],colorone[1],colorone[2], transparency)
+        transparent_black = (0, 0, 0, transparency)
         # Create a surface with the transparent black color and same dimensions as the rectangle
         transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
         pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
@@ -176,8 +176,8 @@ def render_terrain(
         screen.blit(transparent_surface, rect.topleft)
         # Remove the black rectangle if it's fully transparent
         if transparency == 0 or distance <= 60:
-            black_rectangles.remove(rect)
-    return sky, colliders
+            hidden_area.remove(rect)
+    return sky, colliders, hidden_area
 
 
 def render_player(

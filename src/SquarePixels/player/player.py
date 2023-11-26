@@ -323,7 +323,7 @@ class Player:
                     return tmp
             elif event.type == pig.KEYDOWN:
                 if event.key == pig.K_UP or event.key == pig.K_SPACE:
-                    self.player_jump
+                    self.player_jump()
                 elif event.key == pig.K_LEFT or event.key == ord("a"):
                     self.velocity_x = -self.speed
                     music.play_music(

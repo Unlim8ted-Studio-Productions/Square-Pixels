@@ -5,6 +5,8 @@ from SquarePixels.uimanagement import death, MainMen
 import SquarePixels.soundmanagement.music as music
 import random
 
+hidden_area = []
+
 
 def game(
     screen,
@@ -36,7 +38,7 @@ def game(
             DayTime = DayTime - 0.005
             if DayTime <= 0:
                 Morning = 0
-        sky, colliders = render.render_terrain(
+        sky, colliders, hidden_area = render.render_terrain(
             screen,
             terrain_gen.width,
             terrain_gen.height,
@@ -97,7 +99,7 @@ def game(
         terrain_gen.camera_x += vx
         terrain_gen.camera_y += vy
         player.draw(screen, player_sprite)
-        #print(player.xp)
+        # print(player.xp)
         # player.draw_trail(screen)
         pig.display.flip()
         clock.tick(60)
