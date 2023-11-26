@@ -52,7 +52,7 @@ To begin your adventure, follow these steps:
 
 For detailed installation instructions, consult the Installation Guide.
 
-You can also go onto the releases page and download the windows executable
+ You can also download the latest executable version from the releases page. For help with the built version of the code you can contact our support team at support-team@unlim8ted.com.
 
 ## How to Play
 
