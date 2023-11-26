@@ -23,7 +23,7 @@ pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
 
 
 button1 = Button(
-    "TTrraaiillss",
+    "Trails",
     WIDTH / 3.5164835164835164,
     HEIGHT / 4.302788844621514,
     WIDTH / 10.726256983240223,
