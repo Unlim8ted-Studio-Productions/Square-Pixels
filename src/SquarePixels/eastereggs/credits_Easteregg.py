@@ -192,6 +192,7 @@ def start():
                 "Music from #Uppbeat (free for Creators!):",
                 "https://uppbeat.io/t/kevin-macleod/cyborg-ninja",
                 "License code: CYD3DXMQBEOXDEAY",
+                "chiptune music generator: https://pernyblom.github.io/abundant-music/"
                 "  ---JOSHUA CHIVERS---",
                 "Combat - body smack,",
                 "Combat - heavy hit,",
@@ -237,7 +238,7 @@ def start():
             while credits_y >= -len(credits_text) * 40 and won:
                 screen.fill(WHITE)
                 for i, text in enumerate(credits_text):
-                    if i <= 42:
+                    if i <= 43:
                         text_surface = credits_font.render(text, True, RED)
                         screen.blit(
                             text_surface,
