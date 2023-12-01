@@ -73,6 +73,7 @@ def render_terrain(
     place_blocks = [
         13,
     ]
+    camera_x, camera_y = pos_x, pos_y
     if morning == 0:
         pig.draw.rect(
             screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime * 200), 100, 100)
@@ -80,10 +81,16 @@ def render_terrain(
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
+                    # Calculate the offset for the panoramic effect
+            offset_x = (infoObject.current_w / 2 - playerpos.x) / 20
+                    # Apply smoothing to gradually move toward the target position
+            smoothing_factor = 0.1
+            camera_x += (offset_x - camera_x) * smoothing_factor
+            
             currentblock = pig.Rect(
                 (
-                    (x + pos_x - camera_x) * tile_size,
-                    (y + pos_y - camera_y) * tile_size,
+                    (x + pos_x + camera_x) * tile_size,
+                    (y + pos_y) * tile_size,
                 ),
                 (tile_size, tile_size),
             )
@@ -168,12 +175,13 @@ def render_terrain(
         # else:
         #    colorone = NewColors[transparency]
         # transparent_black = (colorone[0],colorone[1],colorone[2], transparency)
+    
         transparent_black = (0, 0, 0, transparency)
         # Create a surface with the transparent black color and same dimensions as the rectangle
         transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
         pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
         # Blit the transparent surface onto the main screen
-        screen.blit(transparent_surface, rect.topleft)
+        screen.blit(transparent_surface, (rect.topleft[0]+playerpos.x, rect.topleft[1]))
         # Remove the black rectangle if it's fully transparent
         if transparency == 0 or distance <= 60:
             hidden_area.remove(rect)

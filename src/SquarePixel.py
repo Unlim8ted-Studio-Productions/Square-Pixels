@@ -50,7 +50,7 @@ if __name__ == "__main__":
     MainMen.mainfunc()
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
-        width=(0, infoObject.current_w // 15), height=infoObject.current_h // 15
+        width=(-100, infoObject.current_w // 15), height=infoObject.current_h // 15
     )
     player_sprite = main()
     terrain_gen.generate_terrain(screen)
