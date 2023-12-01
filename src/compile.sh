@@ -61,7 +61,7 @@ xxd -i $MAIN_SCRIPT > $OUTPUT_DIR/$MAIN_SCRIPT.h
 echo -e "#include <Python.h>\n" > $OUTPUT_CPP
 for DEPENDENCY in "${DEPENDENCIES[@]}"; do
     HEADER_NAME="${DEPENDENCY//\//_}.h"
-    echo -e "#include \"$OUTPUT_DIR/$HEADER_NAME\"" >> $OUTPUT_CPP
+    echo -e "#include \"$HEADER_NAME\"" >> $OUTPUT_CPP
 done
 echo -e "\nint main() {" >> $OUTPUT_CPP
 echo -e "\tPy_Initialize();\n" >> $OUTPUT_CPP

@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\modules"
   ],
-  "SelectedNode": "\\main.py",
+  "SelectedNode": "\\modules\\embedded_python.cpp",
   "PreviewInSolutionExplorer": false
 }
