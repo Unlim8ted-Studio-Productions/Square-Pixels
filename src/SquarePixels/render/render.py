@@ -13,7 +13,7 @@ for x in range(infoObject.current_w // 20 + 50):
     for y in range(infoObject.current_h // 20 + 50):
         black_rect = pig.Rect((x * 20, y * 20, 20, 20))
         hidden_area.append(black_rect)
-
+playerx = 0
 
 def render_terrain(
     screen: pig.Surface,
@@ -40,13 +40,14 @@ def render_terrain(
         pos_y (float | int): Y-coordinate position of the player.
         camera_x (float | int): X-coordinate of the camera.
         camera_y (float | int): Y-coordinate of the camera.
-        playerpos: Player position.
+        playerpos: Player object.
         DayTime: The current time of day.
         morning: Indicates whether it's morning or not.
 
     Returns:
         list: A list containing sky and colliders.
     """
+    global playerx
     tile_size = 15
     block_images = [
         r"Recources\Textures\grass.jpg",
@@ -73,6 +74,8 @@ def render_terrain(
     place_blocks = [
         13,
     ]
+    
+    movement = playerpos.x - playerx
     camera_x, camera_y = pos_x, pos_y
     if morning == 0:
         pig.draw.rect(
@@ -81,16 +84,16 @@ def render_terrain(
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
-                    # Calculate the offset for the panoramic effect
-            offset_x = (infoObject.current_w / 2 - playerpos.x) / 20
-                    # Apply smoothing to gradually move toward the target position
+             # Calculate the offset for the panoramic effect
+            offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
+             # Apply smoothing to gradually move toward the target position
             smoothing_factor = 0.1
             camera_x += (offset_x - camera_x) * smoothing_factor
             
             currentblock = pig.Rect(
                 (
                     (x + pos_x + camera_x) * tile_size,
-                    (y + pos_y) * tile_size,
+                    (y) * tile_size,
                 ),
                 (tile_size, tile_size),
             )
@@ -147,6 +150,8 @@ def render_terrain(
                     screen.blit(block_images[1], currentblock)
                 colliders.append(currentblock)
 
+    camera_x = pos_x
+    transparent_surface = pig.Surface((infoObject.current_w, infoObject.current_h), pig.SRCALPHA)
     for rect in hidden_area:
         # Calculate the center point of the black rectangle
         rect_center = rect.center
@@ -178,13 +183,18 @@ def render_terrain(
     
         transparent_black = (0, 0, 0, transparency)
         # Create a surface with the transparent black color and same dimensions as the rectangle
-        transparent_surface = pig.Surface(rect.size, pig.SRCALPHA)
-        pig.draw.rect(transparent_surface, transparent_black, (0, 0, *rect.size))
-        # Blit the transparent surface onto the main screen
-        screen.blit(transparent_surface, (rect.topleft[0]+playerpos.x, rect.topleft[1]))
+        pig.draw.rect(transparent_surface, transparent_black, (rect.topleft[0], rect.topleft[1], *rect.size))
         # Remove the black rectangle if it's fully transparent
         if transparency == 0 or distance <= 60:
             hidden_area.remove(rect)
+    # Calculate the offset for the panoramic effect
+    offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
+    # Apply smoothing to gradually move toward the target position
+    smoothing_factor = 0.1
+    camera_x += (offset_x - camera_x) * smoothing_factor
+    # Blit the transparent surface onto the main screen
+    screen.blit(transparent_surface, (movement, 0))
+    playerx = playerpos.x
     return sky, colliders, hidden_area
 
 
