@@ -183,9 +183,9 @@ def render_terrain(
     
         transparent_black = (0, 0, 0, transparency)
         # Create a surface with the transparent black color and same dimensions as the rectangle
-        pig.draw.rect(transparent_surface, transparent_black, (rect.topleft[0], rect.topleft[1], *rect.size))
+        pig.draw.rect(transparent_surface, transparent_black, (rect.topleft[0] - (0 - playerpos.x), rect.topleft[1], *rect.size))
         # Remove the black rectangle if it's fully transparent
-        if transparency == 0 or distance <= 60:
+        if transparency == 0 or distance <= 60:  #TODO: #55 won't work with scrolling
             hidden_area.remove(rect)
     # Calculate the offset for the panoramic effect
     offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
@@ -193,7 +193,7 @@ def render_terrain(
     smoothing_factor = 0.1
     camera_x += (offset_x - camera_x) * smoothing_factor
     # Blit the transparent surface onto the main screen
-    screen.blit(transparent_surface, (movement, 0))
+    screen.blit(transparent_surface, ((0 - playerpos.x), 0))
     playerx = playerpos.x
     return sky, colliders, hidden_area
 

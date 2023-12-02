@@ -29,6 +29,7 @@ def game(
         clicked = False
         if reset_terrain:
             terrain_gen.run(screen)
+            reset_terrain = False
         # pig.draw.rect(screen,(.100,.100,.100,50),rect)
         screen.fill((0.035, 206, 235))
 

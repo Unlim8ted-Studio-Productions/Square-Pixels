@@ -536,7 +536,7 @@ class Player:
         )
 
     def player_move_right(self):
-        self.velocity_x = self.speed
+        self.velocity_x += self.speed
         music.play_music(
             r"Recources\sounds\player\running.mp3",
             1,

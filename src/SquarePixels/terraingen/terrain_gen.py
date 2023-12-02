@@ -170,7 +170,7 @@ class TerrainGenerator:
     def run(self, screen):
         clock = pg.time.Clock()
 
-        self.generate_terrain()
+        self.generate_terrain(screen)
 
         vx = 0
         vy = 0
