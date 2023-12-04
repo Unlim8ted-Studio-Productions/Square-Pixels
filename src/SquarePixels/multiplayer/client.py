@@ -15,9 +15,11 @@ def main(ip, name):
 
     # Set up the game window
     o_p_c: list = []
-    screen_width: int = 800
-    screen_height: int = 600
-    screen: pygame.Surface = pygame.display.set_mode((screen_width, screen_height))
+    infoObject: object = pig.display.Info()
+    sceen_width, screen_height = infoObject.current_w, infoObject.current_h
+    screen: pig.Surface = pig.display.set_mode(
+        (infoObject.current_w, infoObject.current_h)
+    )
     pygame.display.set_caption("Multiplayer Platform Game - Client")
 
     # Information
@@ -68,16 +70,26 @@ def main(ip, name):
     input_box: str = ""
     clock: object = pygame.time.Clock()
     FPS: int = 120
-    # Game loop
-    running: bool = True
-    while running:
-        clock.tick(FPS)
-        # Handle events
+    
+    import SquarePixels.render.render as render
+    import pygame as pig
+    import SquarePixels.enemymanagement.enemy_manager as enemy_manager
+    from SquarePixels.uimanagement import death, MainMen
+    import SquarePixels.soundmanagement.music as music
+    import random
+
+    hidden_area = []
+
+
+
+    music.play_music(r"Recources\sounds\music\ingame\music\Ingame1.mp3", volume=0.2)
+    enemymanager = enemy_manager.Enemy_manager([(0, infoObject.current_w)])
+    while running:   
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and player.y == screen_height - 20:
+                if event.key == pygame.K_UP and player.y == infoObject.current_h - 20:
                     player.velocity_y -= 1
                 elif event.key == pygame.K_LEFT:
                     player.velocity_x = -player.speed
@@ -92,57 +104,154 @@ def main(ip, name):
                     typing = False
                 elif event.key == pygame.K_BACKSPACE:
                     input_box = input_box[:-1]
-                elif event.key == pygame.K_p and typing == False:
-                    if paint == False:
-                        paint = True
-                    else:
-                        paint = False
-                elif event.key == pygame.K_g and typing == False:
-                    if gravity == False:
-                        gravity = True
-                        player.gravityi = gravity
-                    else:
-                        gravity = False
-                        player.gravityi = gravity
-                elif event.key == pygame.K_i and typing == False:
-                    if player.inverse == False:
-                        player.inverse = True
-                    else:
-                        player.inverse = False
-                elif event.key == pygame.K_r and typing == False:
-                    if player.rainbow == False:
-                        player.rainbow = True
-                    else:
-                        player.rainbow = False
-                elif event.key == pygame.K_0 and typing == False:
-                    if ai == False:
-                        print("AI activated")
-                        ai = True
-                    else:
-                        print("AI deactivated")
-                        ai = False
-                elif event.key == pygame.K_g and typing:
-                    input_box += "g"
-                elif event.key == pygame.K_p and typing:
-                    input_box += "p"
-                elif event.key == pygame.K_i and typing == True:
-                    input_box += "i"
-                elif event.key == pygame.K_r and typing == True:
-                    input_box += "r"
-                elif event.key <= 127 and typing:
-                    input_box += chr(event.key)
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
-                    player.velocity_x = -0.9
-                if event.key == pygame.K_RIGHT:
-                    player.velocity_x = 0.9
+        clicked = False
+        if reset_terrain:
+            terrain_gen.run(screen)
+            reset_terrain = False
+        # pig.draw.rect(screen,(.100,.100,.100,50),rect)
+        screen.fill((0.035, 206, 235))
 
-        # Update AI player if AI flag is True
-        if ai:
-            aiplayer.update(circle_x, circle_y)
+        if Morning == 0:
+            DayTime = DayTime + 0.005
+        else:
+            DayTime = DayTime - 0.005
+            if DayTime <= 0:
+                Morning = 0
+        sky, colliders, hidden_area = render.render_terrain(
+            screen,
+            terrain_gen.width,
+            terrain_gen.height,
+            terrain_gen.terrain,
+            terrain_gen.pos_x,
+            terrain_gen.pos_y,
+            terrain_gen.camera_x,
+            terrain_gen.camera_y,
+            player,
+            DayTime,
+            Morning,
+        )
 
-        # Update player location
-        player.update(screen_height, screen_width)
+        if DayTime > 6.5:
+            Morning = 1
+        result = player.move(screen, infoObject, tile, terrain_gen.terrain)
+        if result != None:
+            if len(result) <= 5:
+                reset_terrain = result[0]
+                clicked = result[1]
+                try:
+                    objectheld = result[2]
+                except:
+                    pass
+            else:
+                terrain_gen.terrain = result
+        tile = [-1, 0]
+        if clicked:
+            if random.randint(0, 1) == 1:
+                music.play_music(
+                    r"Recources\sounds\block break\block break.mp3",
+                    0,
+                    channel=1,
+                    volume=5,
+                )
+            else:
+                music.play_music(
+                    r"Recources\sounds\block break\blockbreak1.mp3",
+                    0,
+                    channel=1,
+                    volume=5,
+                )
+            tile = player.delete_tile(terrain_gen.terrain, tile)
+        player.update(
+            infoObject.current_h, infoObject.current_w, colliders, screen
+        )  # terrain_gen.colliders)
+        enemymanager.update(
+            player.x, player.y, sky, infoObject, colliders, screen, player, Morning
+        )
+        if player.current_health <= 0:
+            if death.draw_death_screen(
+                screen, infoObject.current_w, infoObject.current_h, player.xp
+            ):
+                player.respawn(sky, infoObject, [(0, infoObject.current_w)])
+            else:
+                player.respawn(sky, infoObject, [(0, infoObject.current_w)])
+                MainMen.mainfunc()
+        terrain_gen.camera_x += vx
+        terrain_gen.camera_y += vy
+        player.draw(screen, player_sprite)
+        # print(player.xp)
+        # player.draw_trail(screen)
+        pig.display.flip()
+        
+        client_socket.sendall(pickle.dumps(player))
+
+        # Receive and update the game state from the server
+        data = client_socket.recv(4096)
+        game_state = pickle.loads(data)
+        players = game_state["players"]
+        chat_messages = game_state["chat_messages"]
+        circle_x = game_state["circle_x"]
+        circle_y = game_state["circle_y"]
+        allpoints = game_state["points"]
+        
+        clock.tick(60)
+
+    # Game loop
+    running: bool = True
+    while running:
+        #clock.tick(FPS)
+        ## Handle events
+
+        #        elif event.key == pygame.K_p and typing == False:
+        #            if paint == False:
+        #                paint = True
+        #            else:
+        #                paint = False
+        #        elif event.key == pygame.K_g and typing == False:
+        #            if gravity == False:
+        #                gravity = True
+        #                player.gravityi = gravity
+        #            else:
+        #                gravity = False
+        #                player.gravityi = gravity
+        #        elif event.key == pygame.K_i and typing == False:
+        #            if player.inverse == False:
+        #                player.inverse = True
+        #            else:
+        #                player.inverse = False
+        #        elif event.key == pygame.K_r and typing == False:
+        #            if player.rainbow == False:
+        #                player.rainbow = True
+        #            else:
+        #                player.rainbow = False
+        #        elif event.key == pygame.K_0 and typing == False:
+        #            if ai == False:
+        #                print("AI activated")
+        #                ai = True
+        #            else:
+        #                print("AI deactivated")
+        #                ai = False
+        #        elif event.key == pygame.K_g and typing:
+        #            input_box += "g"
+        #        elif event.key == pygame.K_p and typing:
+        #            input_box += "p"
+        #        elif event.key == pygame.K_i and typing == True:
+        #            input_box += "i"
+        #        elif event.key == pygame.K_r and typing == True:
+        #            input_box += "r"
+        #        elif event.key <= 127 and typing:
+        #            input_box += chr(event.key)
+        #    elif event.type == pygame.KEYUP:
+        #        if event.key == pygame.K_LEFT:
+        #            player.velocity_x = -0.9
+        #        if event.key == pygame.K_RIGHT:
+        #            player.velocity_x = 0.9
+#
+        ## Update AI player if AI flag is True
+        #if ai:
+        #    aiplayer.update(circle_x, circle_y)
+#
+        ## Update player location
+        #player.update(screen_height, screen_width)
 
         # Send player data to the server
         client_socket.sendall(pickle.dumps(player))

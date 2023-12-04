@@ -70,7 +70,7 @@ def save_servers():
 
 # Create a Pygame screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Server Manager")
+pygame.display.set_caption("Square Pixels Server Manager")
 
 
 # Function to draw the sidebar

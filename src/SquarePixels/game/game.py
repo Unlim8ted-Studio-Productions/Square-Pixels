@@ -23,6 +23,33 @@ def game(
     DayTime,
     tile,
 ):
+    """Generates the game world and handles gameplay logic.
+    
+    Args:
+        screen: {Screen}: The game display surface.
+        running: {Bool}: Whether the game is running.
+        terrain_gen: {TerrainGenerator}: Handles terrain generation. 
+        player: {Player}: The player character.
+        infoObject: {InfoObject}: Game info like dimensions. 
+        player_sprite: {Surface}: The player sprite image.
+        clock: {Clock}: Controls framerate.
+        vx: {Int}: Camera x velocity. 
+        vy: {Int}: Camera y velocity.
+        reset_terrain: {Bool}: Resets the terrain.
+        Morning: {Int}: Time of day flag.
+        DayTime: {Float}: Current time of day.
+        tile: {List}: Tile being interacted with.
+    
+    Returns: 
+        None
+    
+    Processes Logic:
+    - Generates/updates terrain based on player position 
+    - Handles player input and movement
+    - Updates enemies and checks for player death
+    - Animates time of day  
+    - Renders game world and redraws on each frame
+    """
     music.play_music(r"Recources\sounds\music\ingame\music\Ingame1.mp3", volume=0.2)
     enemymanager = enemy_manager.Enemy_manager([(0, infoObject.current_w)])
     while running:
