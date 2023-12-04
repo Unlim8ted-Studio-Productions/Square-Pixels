@@ -4,7 +4,7 @@ import SquarePixels.player.player as player
 import SquarePixels.render.Lighting as Lit
 import random
 import math
-
+from SquarePixels.render.weather_manager import weather_manager, draw_weather
 
 hidden_area = []
 infoObject: object = pig.display.Info()
@@ -75,12 +75,21 @@ def render_terrain(
         13,
     ]
     
+    frame_count = 0  # Count frames for lightning duration
+    lightning_duration = 10  # Adjust the duration of the lightning effect
+    
     movement = playerpos.x - playerx
     camera_x, camera_y = pos_x, pos_y
     if morning == 0:
         pig.draw.rect(
             screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime * 200), 100, 100)
         )
+    weather = weather_manager()
+    
+    if weather == "rain":
+        darkness = DayTime + .5
+    else:
+        darkness = DayTime
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
@@ -105,7 +114,7 @@ def render_terrain(
                     else:
                         color = (211, 211, 211)
                 NewColors = Lit.LightAlgorithm(
-                    colors, x, y, (playerpos.x), (playerpos.y), DayTime
+                    colors, x, y, (playerpos.x), (playerpos.y), darkness
                 )
                 if not color == (211, 211, 211):
                     color = NewColors[block_type]
@@ -149,7 +158,9 @@ def render_terrain(
                 if block_type == 11:
                     screen.blit(block_images[1], currentblock)
                 colliders.append(currentblock)
-
+    
+    draw_weather(screen)
+    
     camera_x = pos_x
     transparent_surface = pig.Surface((infoObject.current_w, infoObject.current_h), pig.SRCALPHA)
     for rect in hidden_area:
