@@ -38,6 +38,7 @@ def main(ip, name):
     terrain_gen = tgen.TerrainGenerator(
         width=(-100, infoObject.current_w // 15), height=infoObject.current_h // 15
     )
+    terrain_gen.run(screen)
 
     # Define AI player class
     class AIPlayer:
@@ -61,7 +62,7 @@ def main(ip, name):
     client_socket: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((ip, 12345))
-        terrain_gen.terrain = client_socket.recv(4096)
+        # terrain_gen.terrain = pickle.loads(client_socket.recv(10000)) freezes it
     except:
         print("error connecting to device.")
         print(socket.error)
@@ -70,7 +71,7 @@ def main(ip, name):
     # name: str = input("Enter your name: ")
     points[0] = name
 
-    player: play.Player(0, 0)
+    player: play.Player = play.Player(0, 0, infoObject.current_w - 40, 0)
     aiplayer: AIPlayer = AIPlayer(0, 0)
     # Initialize the input box and chat that player has connected
     client_socket.sendall(pickle.dumps(f"{name} has joined this server"))
@@ -85,12 +86,15 @@ def main(ip, name):
     import SquarePixels.soundmanagement.music as music
     import random
 
+    DayTime = 0
+    Morning = 0
     hidden_area = []
     first = True
     running = True
     music.play_music(r"Recources\sounds\music\ingame\music\Ingame1.mp3", volume=0.2)
     enemymanager = enemy_manager.Enemy_manager([(0, infoObject.current_w)])
     while running:
+        tile = [-1, 0]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -147,7 +151,7 @@ def main(ip, name):
                     pass
             else:
                 terrain_gen.terrain = result
-        tile = [-1, 0]
+
         if clicked:
             if random.randint(0, 1) == 1:
                 music.play_music(
@@ -182,19 +186,10 @@ def main(ip, name):
         pygame.draw.circle(screen, (255, 0, 0), (player.x, player.y), 10)
         # print(player.xp)
         # player.draw_trail(screen)
-        for other_player in players:
-            if other_player.name != player.name:
-                pygame.draw.circle(
-                    screen, (255, 0, 0), (other_player.x, other_player.y), 10
-                )
-                nametag = render.Nametag(other_player)
-                nametag.draw(screen)
+
         pygame.draw.circle(screen, (0, 0, 255), (player.x, player.y), 10)
         nametag = render.Nametag(player)
         nametag.draw(screen)
-
-        render.render_chat(chat_messages, screen_height, screen)
-        render.render_scores(allpoints, screen)
 
         # Render the input box
         font = pygame.font.Font(None, 20)
@@ -203,8 +198,6 @@ def main(ip, name):
         )
         input_box_rect = input_box_text.get_rect(left=10, top=screen_height - 30)
         screen.blit(input_box_text, input_box_rect)
-
-        pygame.display.flip()
 
         client_socket.sendall(pickle.dumps(player))
 
@@ -216,6 +209,19 @@ def main(ip, name):
         circle_x = game_state["circle_x"]
         circle_y = game_state["circle_y"]
         allpoints = game_state["points"]
+
+        for other_player in players:
+            if other_player.name != player.name:
+                pygame.draw.circle(
+                    screen, (255, 0, 0), (other_player.x, other_player.y), 10
+                )
+                nametag = render.Nametag(other_player)
+                nametag.draw(screen)
+
+        render.render_chat(chat_messages, screen_height, screen)
+        render.render_scores(allpoints, screen)
+
+        pygame.display.flip()
 
         clock.tick(60)
     # Clean up
