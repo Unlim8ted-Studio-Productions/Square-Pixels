@@ -38,7 +38,7 @@ def main(ip, name):
     terrain_gen = tgen.TerrainGenerator(
         width=(-100, infoObject.current_w // 15), height=infoObject.current_h // 15
     )
-    terrain_gen.run(screen)
+    # terrain_gen.run(screen)
 
     # Define AI player class
     class AIPlayer:
@@ -62,7 +62,7 @@ def main(ip, name):
     client_socket: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((ip, 12345))
-        # terrain_gen.terrain = pickle.loads(client_socket.recv(10000)) freezes it
+       # terrain_gen.terrain = pickle.loads(client_socket.recv(10000))  # freezes it
     except:
         print("error connecting to device.")
         print(socket.error)
