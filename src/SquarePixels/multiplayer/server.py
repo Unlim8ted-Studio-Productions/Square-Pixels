@@ -13,21 +13,18 @@ from SquarePixels.player import player as pl
 
 
 def main(max_players, server_name):
-    
     # Set up the game window
     infoObject: object = pygame.display.Info()
     screen_width, screen_height = infoObject.current_w, infoObject.current_h
     screen: pygame.Surface = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption(f"Square Pixels - Server - {server_name}")
-    
+
     # Initialize the game
     pygame.init()
     terrain_gen = tgen.TerrainGenerator(
         width=(-100, infoObject.current_w // 15), height=infoObject.current_h // 15
     )
     terrain_gen.generate_terrain(screen)
-
-
 
     # Set the desired time interval for sending updates (in seconds)
     update_interval: float = 0.1  # 100 milliseconds
@@ -40,7 +37,7 @@ def main(max_players, server_name):
     points: typing.Dict[str, int] = dict()
     DayTime = 0
     Morning = 0
-
+    another = False
     # Initialize the game state
     players: typing.List[Player] = [pl.Player(200, 200, infoObject.current_w - 40, 0)]
     chat_messages: typing.List[str] = []
@@ -74,6 +71,7 @@ def main(max_players, server_name):
                     client_socket, client_address = server_socket.accept()
                     sockets_list.append(client_socket)
                     print("New client connected:", client_address)
+                    another = True
 
         # Receive and process client data
         for client_socket in sockets_list[1:]:
@@ -103,10 +101,9 @@ def main(max_players, server_name):
                                 break
                         else:
                             players.append(
-                                Player(
-                                    player_data.x, player_data.y, player_data.name
-                                )
+                                Player(player_data.x, player_data.y, player_data.name)
                             )
+                            client_socket.sendall(pickle.dumps(terrain_gen.terrain))
             except:
                 print("Client disconnected")
                 sockets_list.remove(client_socket)
@@ -175,6 +172,7 @@ def main(max_players, server_name):
 
     # Clean up
     pygame.quit()
+
 
 if __name__ == "__main__":
     main(5, "")
