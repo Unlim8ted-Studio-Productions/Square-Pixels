@@ -312,7 +312,7 @@ def urlretrieve(url, filename=None, reporthook=None, data=None, tpcobject=None):
             filename = tfp.name
             _url_tempfiles.append(filename)
         if tpcobject != None:
-            progress_bar = ttk.Progressbar(tpcobject, mode="determinate", maximum=82559)
+            progress_bar = ttk.Progressbar(tpcobject, mode="determinate", maximum=262162)
             progress_bar.pack()
             details_label = tkinter.Label(
                 tpcobject, text="", pady=10
@@ -341,7 +341,7 @@ def urlretrieve(url, filename=None, reporthook=None, data=None, tpcobject=None):
                 if tpcobject is not None:
                     progress_bar["value"] = blocknum
                     progress_bar.update()
-                    details_label.config(text=f"Loading Objects {blocknum}/82559")
+                    details_label.config(text=f"Loading Objects {blocknum}/262162")
 
                     # details_.config(text=str(block))
                 blocknum += 1

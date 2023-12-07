@@ -12,7 +12,25 @@ from modified_requests import urlretrieve
 
 # uc?id=&download=1&confirm=t
 # Specify the URLs for the game archive and icon on Google Drive (very specific url minipulations do not change for regular share url)
-archive_url = "https://drive.google.com/uc?id=1GYmDlRhRTMIV-pBAQx_8C7zHzomfFljR&download=1&confirm=t&uuid=0dc20ea1-74e0-4bbb-a868-1bc282f97370&at=AB6BwCBxVB0vHdXu5I9RsO4Tp8cy:1696975557238"
+
+#def get_drive_link(file_url):
+#    # Extract the file ID using regular expressions
+#    file_url = file_url.remove()
+#
+#    if match:
+#        file_id = match.group(1)
+#        # Construct the new download link
+#        download_link = f'https://drive.google.com/uc?id={file_id}&download=1&confirm=t'
+#        return download_link
+#    else:
+#        return None
+#
+# Example usage
+#google_drive_link = 'https://drive.google.com/file/d/1pYF5tSAs2ewZZL4oLx1LRSC_wa1KQbTI/view?usp=sharing'
+
+#new_download_link = get_drive_link(google_drive_link)
+
+archive_url = "https://drive.google.com/uc?id=1TQWrk-kV9c7XKmG4uZdkWo2V1XoLH6LD&download=1&confirm=t&uuid=9e0ddc8c-2a1f-41cb-8995-79b251815003&at=AB6BwCBDHYMZyr5KOMRRaG3ahcoZ:1701983429510"
 icon_path = urlretrieve(
     "https://drive.google.com/uc?id=14lGwOvuIN4sAWe560LDiJ8LdmQZeEuEl&download=1&confirm=t"
 )
@@ -27,7 +45,6 @@ cleaned_temp = False
 
 
 def create_start_menu_shortcut(extract_path, shortcut_name):
-    extract_path += "Square Pixel\\"
     shortcut_folder = os.path.join(winshell.programs(), "Unlim8ted Studio Productions")
     if not os.path.exists(shortcut_folder):
         os.makedirs(shortcut_folder)
@@ -51,7 +68,6 @@ def create_start_menu_shortcut(extract_path, shortcut_name):
 
 
 def create_desktop_shortcut(extract_path, shortcut_name):
-    extract_path += "Square Pixel\\"
     shortcut_path = os.path.join(
         os.path.expanduser("~"), "Desktop", f"{shortcut_name}.lnk"
     )
@@ -125,6 +141,7 @@ def install_game():
     global archive_path, cleaned_temp
     # archive_path = download_file_to_temp(archive_path)
     install_location = install_location_entry.get()
+    install_location += "Square Pixels/"
     # shortcut_name = shortcut_name_entry.get()
     temp_files = []  # List to hold temporary file paths
 

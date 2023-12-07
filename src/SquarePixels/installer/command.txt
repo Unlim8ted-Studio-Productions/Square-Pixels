@@ -1,2 +1,2 @@
 pyinstaller "SquarePixelInstaller.py" --onefile --add-data "Square Pixel.zip;Square Pixel.zip" --add-data "icons scalable.ico;icons scalable.ico" --noconsole --icon="icons scalable.ico"
-pyinstaller "SquarePixelInstaller.py" --onefile --noconsole --icon="icons scalable.ico"      
+pyinstaller "SquarePixelInstaller.py" --onefile --noconsole --clean --icon="icons scalable.ico"      
