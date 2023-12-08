@@ -1,3 +1,6 @@
+import ctypes
+
+
 if __name__ == "__main__":
     import pygame as pig
     from SquarePixels.terraingen import terrain_gen as tgen
@@ -19,8 +22,12 @@ if __name__ == "__main__":
     video_file: str = r"Recources\\Company Animated Logo.mov"
     infoObject: object = pig.display.Info()
     screen: pig.Surface = pig.display.set_mode(
-        (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE
+        (infoObject.current_w, infoObject.current_h), pig.RESIZABLE
     )
+    ## Move the window down by 32 pixels
+    # ctypes.windll.user32.SetWindowPos(
+    #    pig.display.get_wm_info()["window"], 0, 0, 24, 0, 0, 0x0001
+    # )
 
     pygame_icon = pig.image.load(
         r"Recources\program recources\Screenshot 2023-09-21 181742.png"
