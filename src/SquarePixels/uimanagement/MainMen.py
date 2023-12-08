@@ -34,7 +34,10 @@ from SquarePixels.uimanagement.leaderboard import (
     search_input_callback_l,
 )
 from SquarePixels.uimanagement.elements.input_feild import InputField
+from SquarePixels.uimanagement.elements.checkbox import CheckBox
 from SquarePixels.uimanagement.elements.button import Button
+from SquarePixels.uimanagement.elements.TextElement import TextElement
+from SquarePixels.uimanagement.elements.slider import Slider
 from SquarePixels.uimanagement.clouds import Cloud
 from SquarePixels.uimanagement.friends import instance
 
@@ -412,7 +415,7 @@ def main_menu(
         host_button (Button): The button for hosting a multiplayer game.
         join_button (Button): The button for joining a multiplayer game.
     """
-    global bg_x, bg_y
+    global bg_x, bg_y, clouds, game_state
     multiplayer_button = Button(
         "Multiplayer",
         WIDTH // 2 - 100,
@@ -456,12 +459,59 @@ def main_menu(
     credits_button = Button(
         "Credits", WIDTH // 2 - 100, HEIGHT // 4 + 50, 200, 50, egg.start
     )
-    quit_button = Button(
-        "Quit", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, quit_game
+    quit_button = Button("Quit", WIDTH // 2 - 100, HEIGHT // 2 + 150, 200, 50, quit)
+
+    fogwareffect = CheckBox(
+        WIDTH / 3.5489833641404807,
+        HEIGHT / 3.857142857142857,
+        "fog of war effect",
+        False,
+        15,
+    )
+    shadefogwareffect = CheckBox(
+        WIDTH / 3.5489833641404807,
+        HEIGHT / 2.857142857142857,
+        "shade fog of war effect",
+        False,
+        15,
+    )
+    volume = Slider(
+        WIDTH / 2.591093117408907,
+        HEIGHT / 3.8028169014084505,
+        WIDTH / 19.2,
+        HEIGHT / 108.0,
+        0,
+        3,
+        1.0,
+        None,
+        None,
+        (255, 255, 255, 255),
+        (200, 200, 200),
+        "volume",
+        True,
+        26,
+    )
+
+    savesettings = Button(
+        "save",
+        WIDTH / 2.4935064935064934,
+        HEIGHT / 2.4107142857142856,
+        WIDTH / 19.2,
+        HEIGHT / 21.6,
+        savesettingstofile,
+        [volume.value, fogwareffect.is_checked, shadefogwareffect.is_checked],
+    )
+
+    exitsettings = Button(
+        "back",
+        WIDTH / 3.1578947368421053,
+        HEIGHT / 2.4053452115812917,
+        WIDTH / 19.2,
+        HEIGHT / 21.6,
+        lambda: globals().update({"game_state": "menu"}),
     )
 
     while running:
-        global clouds
         if len(clouds) <= 6:
             if random.randint(0, 100) < 2:
                 cloud_image = random.choice(cloud_images)
@@ -483,23 +533,30 @@ def main_menu(
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if game_state == "settings":
+                volume.handle_event(event)
+                fogwareffect.handle_event(event)
+                shadefogwareffect.handle_event(event)
+                exitsettings.handle_event(event)
+                savesettings.handle_event(event)
 
             # Handle events for buttons
-            for button in instance.activebuttons:
-                button.handle_event(event)
-            play_button.handle_event(event)
-            settings_button.handle_event(event)
-            quit_button.handle_event(event)
-            credits_button.handle_event(event)
-            UImaker.handle_event(event)
-            update_leaderboard(
-                event, search_input, next_button, search_button, previous_button
-            )
-            if show_play_buttons:
+            if not game_state == "settings":
+                for button in instance.activebuttons:
+                    button.handle_event(event)
+                play_button.handle_event(event)
+                settings_button.handle_event(event)
+                quit_button.handle_event(event)
+                credits_button.handle_event(event)
+                UImaker.handle_event(event)
+                update_leaderboard(
+                    event, search_input, next_button, search_button, previous_button
+                )
+            if show_play_buttons and not game_state == "settings":
                 singleplayer_button.handle_event(event)
                 multiplayer_button.handle_event(event)
                 back_button.handle_event(event)
-            if show_multiplayer_options:
+            if show_multiplayer_options and not game_state == "settings":
                 host_button.handle_event(event)
                 join_button.handle_event(event)
 
@@ -525,7 +582,14 @@ def main_menu(
         for cloud in clouds:
             cloud.move()
             cloud.draw(screen)
-        if not show_play_buttons:
+        if game_state == "settings":
+            volume.draw(screen)
+            fogwareffect.draw(screen)
+            shadefogwareffect.draw(screen)
+            exitsettings.draw(screen)
+            savesettings.draw(screen)
+
+        if not show_play_buttons and not game_state == "settings":
             credits_button.draw(screen)
             play_button.draw(screen)
             settings_button.draw(screen)
@@ -832,6 +896,28 @@ def quit_game():
     sys.exit()
 
 
+def exitsettingsmenu(game_state):
+    game_state = "menu"
+
+
+def savesettingstofile(volume, fogofwar, shadefogofwar):
+    with open("config.py", "r") as file:
+        lines = file.readlines()
+
+    # Find and replace the values in the lines list
+    for i, line in enumerate(lines):
+        if "volume" in line:
+            lines[i] = f"volume = {volume}\n"
+        elif "fogofwar" in line:
+            lines[i] = f"fogofwar = {fogofwar}\n"
+        elif "shadefogofwar" in line:
+            lines[i] = f"shadefogofwar = {shadefogofwar}\n"
+
+    # Write the modified contents back to the config.py file
+    with open("config.py", "w") as file:
+        file.writelines(lines)
+
+
 def mainfunc():
     """
     Main function to run the game.
@@ -867,6 +953,7 @@ def mainfunc():
         previous_leadeboard_page,
         [current_leader_page, leaderboard_data, display_message],
     )
+
     # Add the search button in the display_leaderboard function
     search_button = Button("Search", WIDTH - 320, 20, 80, 30, search_input_callback_l)
     # Add the search bar for filtering leaderboard entries
@@ -897,7 +984,7 @@ def mainfunc():
         if signed_in == "Guest":
             pass  # TODO:implement #22 guest logic in future
         # TODO #23 add function checking acount variable for having bought this game
-        if game_state == "menu":
+        if game_state == "menu" or "settings":
             main_menu(
                 host_button,
                 join_button,
@@ -916,9 +1003,6 @@ def mainfunc():
             import SquarePixel
 
             SquarePixel.main()
-        elif game_state == "settings":
-            # Implement the settings menu here
-            pass
 
         # Add other game states as needed
         pygame.display.update()
