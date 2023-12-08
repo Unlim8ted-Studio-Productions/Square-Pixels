@@ -89,9 +89,11 @@ class Button:
             if self.hovered:
                 self.active = True
                 if self.additional_data != None:
-                    self.command(*self.additional_data)
+                    a = self.command(*self.additional_data)
                 else:
-                    self.command()
+                    a = self.command()
+                if a:
+                    return a
             else:
                 self.active = False
 

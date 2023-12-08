@@ -92,7 +92,7 @@ cloud_images = [
         (infoObject.current_w / 4, infoObject.current_h / 4),
     ),
 ]
-
+volume, fogofwar, shadefogofwar = 1, False, False
 # Create a list to hold cloud objects
 clouds = []
 # Game state
@@ -415,7 +415,7 @@ def main_menu(
         host_button (Button): The button for hosting a multiplayer game.
         join_button (Button): The button for joining a multiplayer game.
     """
-    global bg_x, bg_y, clouds, game_state
+    global bg_x, bg_y, clouds, game_state, volume, fogofwar, shadefogofwar
     multiplayer_button = Button(
         "Multiplayer",
         WIDTH // 2 - 100,
@@ -475,7 +475,7 @@ def main_menu(
         False,
         15,
     )
-    volume = Slider(
+    volumet = Slider(
         WIDTH / 2.591093117408907,
         HEIGHT / 3.8028169014084505,
         WIDTH / 19.2,
@@ -499,7 +499,6 @@ def main_menu(
         WIDTH / 19.2,
         HEIGHT / 21.6,
         savesettingstofile,
-        [volume.value, fogwareffect.is_checked, shadefogwareffect.is_checked],
     )
 
     exitsettings = Button(
@@ -508,7 +507,7 @@ def main_menu(
         HEIGHT / 2.4053452115812917,
         WIDTH / 19.2,
         HEIGHT / 21.6,
-        lambda: globals().update({"game_state": "menu"}),
+        exitsettingsmenu,
     )
 
     while running:
@@ -534,11 +533,11 @@ def main_menu(
                 pygame.quit()
                 sys.exit()
             if game_state == "settings":
-                volume.handle_event(event)
+                volumet.handle_event(event)
                 fogwareffect.handle_event(event)
                 shadefogwareffect.handle_event(event)
-                exitsettings.handle_event(event)
                 savesettings.handle_event(event)
+                exitsettings.handle_event(event)
 
             # Handle events for buttons
             if not game_state == "settings":
@@ -562,10 +561,14 @@ def main_menu(
 
         # Clear the screen
         screen.fill(BACKGROUND_COLOR)
-
+        volume, fogofwar, shadefogofwar = (
+            volumet.value,
+            fogwareffect.is_checked,
+            shadefogwareffect.is_checked,
+        )
         # Draw buttons
         x, y = pygame.mouse.get_pos()
-
+        #print(shadefogwareffect.is_checked)
         # Calculate the offset for the panoramic effect
         offset_x = (infoObject.current_w / 2 - x) / 20
         offset_y = (infoObject.current_h / 2 - y) / 20
@@ -583,7 +586,7 @@ def main_menu(
             cloud.move()
             cloud.draw(screen)
         if game_state == "settings":
-            volume.draw(screen)
+            volumet.draw(screen)
             fogwareffect.draw(screen)
             shadefogwareffect.draw(screen)
             exitsettings.draw(screen)
@@ -896,11 +899,13 @@ def quit_game():
     sys.exit()
 
 
-def exitsettingsmenu(game_state):
-    game_state = "menu"
+def exitsettingsmenu():
+    global game_state
+    game_state = "settings"
 
 
-def savesettingstofile(volume, fogofwar, shadefogofwar):
+def savesettingstofile():
+    global volume, fogofwar, shadefogofwar
     with open("config.py", "r") as file:
         lines = file.readlines()
 
@@ -914,7 +919,8 @@ def savesettingstofile(volume, fogofwar, shadefogofwar):
             lines[i] = f"shadefogofwar = {shadefogofwar}\n"
 
     # Write the modified contents back to the config.py file
-    with open("config.py", "w") as file:
+    os.remove("config.py")
+    with open("config.py", "x") as file:
         file.writelines(lines)
 
 

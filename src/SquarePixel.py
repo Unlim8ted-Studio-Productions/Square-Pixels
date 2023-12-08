@@ -18,12 +18,13 @@ if __name__ == "__main__":
     video_file: str = r"Recources\\Company Animated Logo.mov"
     infoObject: object = pig.display.Info()
     screen: pig.Surface = pig.display.set_mode(
-        (infoObject.current_w, infoObject.current_h)
+        (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE
     )
+    
     pygame_icon = pig.image.load(
         r"Recources\program recources\Screenshot 2023-09-21 181742.png"
     )
-    pig.display.set_icon(pygame_icon)  # pig.display.toggle_fullscreen() 
+    pig.display.set_icon(pygame_icon)  # pig.display.toggle_fullscreen()
 
     pig.display.set_caption("Square Pixel")
     pig.mouse.set_cursor(pig.SYSTEM_CURSOR_CROSSHAIR)
