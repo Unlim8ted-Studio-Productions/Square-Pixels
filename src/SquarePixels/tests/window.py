@@ -3,8 +3,6 @@ import random
 import time
 import pygame
 
-from SquarePixels.uimanagement import logo
-
 
 # Define RECT structure
 class RECT(ctypes.Structure):
@@ -19,16 +17,12 @@ class RECT(ctypes.Structure):
 def generate_terrain(width, height):
     terrain = []
     for x in range(width):
-        terrain.append(random.randint(height // 2, height - 1))
+        terrain.append(random.randint(0, height // 2))  # Adjusted terrain generation
     return terrain
 
 
 # Set up the window width and height
 window_width, window_height = 800, 600
-
-# Get a handle to the current window
-hwnd = ctypes.windll.kernel32.GetConsoleWindow()
-dc = ctypes.windll.user32.GetDC(hwnd)
 
 # Initialize Pygame
 pygame.init()
@@ -38,7 +32,7 @@ screen_info = pygame.display.Info()
 screen = pygame.display.set_mode(
     (window_width, window_height), pygame.NOFRAME, pygame.RESIZABLE
 )
-pygame.display.set_caption("Square Pixels")
+pygame.display.set_caption("Cool Pattern")
 
 # Calculate the size of each square piece
 square_size = 40
@@ -53,31 +47,35 @@ loaded_squares = 0  # Counter for loaded squares
 left_terrain = generate_terrain(num_horizontal // 2, window_height)
 right_terrain = generate_terrain(num_horizontal // 2, window_height)
 
-regions = []  # Store created regions
+# Store created regions
+regions = []
 
 starting = True
 while starting:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             starting = False
-    # Get the Pygame window's handle
+
     hwnd = pygame.display.get_wm_info()["window"]
 
-    # Calculate the number of squares to load in this iteration
     squares_to_load = min(total_squares, loaded_squares + loading_speed)
 
-    # Load squares incrementally or update existing regions
-    combined_region = None  # Initialize combined region variable
+    combined_region = None
     for i in range(squares_to_load):
-        left = (i % num_horizontal) * square_size
-        top = (i // num_horizontal) * square_size
-        right = left + square_size
-        bottom = top + square_size
+        x = i % num_horizontal
+        y = i // num_horizontal
+
+        # Adjust position for the desired effect
+        x, y = x - num_horizontal // 2, y - num_vertical // 2
+        x, y = x * square_size, y * square_size
+
+        # Calculate the position for the pattern
+        left, top = window_width // 2 + x, window_height // 2 + y
+        right, bottom = left + square_size, top + square_size
 
         rect = RECT(left, top, right, bottom)
         region = ctypes.windll.gdi32.CreateRectRgnIndirect(ctypes.byref(rect))
 
-        # Combine the new region with the existing combined region
         if combined_region:
             temp_region = ctypes.windll.gdi32.CreateRectRgn(0, 0, 0, 0)
             ctypes.windll.gdi32.CombineRgn(temp_region, combined_region, region, 2)
@@ -87,43 +85,17 @@ while starting:
         else:
             combined_region = region
 
-    regions.append(combined_region)  # Store the combined region in the list
-    ctypes.windll.user32.SetWindowRgn(
-        hwnd, combined_region, True
-    )  # Set the window shape to the combined region
+    regions.append(combined_region)
+    ctypes.windll.user32.SetWindowRgn(hwnd, combined_region, True)
 
-    # Update the loaded squares counter
     loaded_squares = squares_to_load
 
     pygame.display.update()
 
-    # If all squares are loaded, exit the loop
     if loaded_squares >= total_squares:
         break
 
-
-## Generate terrain on each side of the window
-# for x, height in enumerate(left_terrain):
-#    left = x * square_size
-#    top = window_height - height
-#    right = left + square_size
-#    bottom = window_height
-#    rect = RECT(left, top, right, bottom)
-#  v  region = ctypes.windll.gdi32.CreateRectRgnIndirect(ctypes.byref(rect))
-#    regions.append(region)
-#
-# for x, height in enumerate(right_terrain):
-#    left = (num_horizontal // 2 + x) * square_size
-#    top = window_height - height
-#    right = left + square_size
-#    bottom = window_height
-#    rect = RECT(left, top, right, bottom)
-#   v region = ctypes.windll.gdi32.CreateRectRgnIndirect(ctypes.byref(rect))
-#   regions.append(region)
-
-
 for region in regions:
     ctypes.windll.gdi32.DeleteObject(region)
-
 
 pygame.quit()
