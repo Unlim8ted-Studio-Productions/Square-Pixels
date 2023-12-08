@@ -329,8 +329,9 @@ def export_ui_elements():
         )
     for index, slider in enumerate(sliders):
         code.append(
-            f"SliderElement{index + 1} = Slider(WIDTH / {WIDTH / slider.x}, HEIGHT / {HEIGHT / slider.y}, WIDTH / {WIDTH / slider.width}, HEIGHT / {HEIGHT / slider.height}, {slider.min_value}, {slider.max_value}, {slider.max_value / 2}, {slider.command}, {slider.additional_data}, {slider.color}, {slider.colortwo}, {slider.text}, {slider.text_position_below}, {slider.size})"
+            f"SliderElement{index + 1} = Slider(WIDTH / {WIDTH / slider.x}, HEIGHT / {HEIGHT / slider.y}, WIDTH / {WIDTH / slider.width}, HEIGHT / {HEIGHT / slider.height}, {slider.min_value}, {slider.max_value}, {slider.value}, {slider.command}, {slider.additional_data}, {slider.color}, {slider.colortwo}, {slider.text}, {slider.text_position_below}, {slider.size})"
         )
+
     code.append("code copied to clipboard")
     result = "\n".join(code)
     pyperclip.copy(result)
