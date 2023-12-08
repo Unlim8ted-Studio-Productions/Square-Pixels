@@ -2,6 +2,7 @@ if __name__ == "__main__":
     import pygame as pig
     from SquarePixels.terraingen import terrain_gen as tgen
     from SquarePixels.uimanagement import logo, MainMen
+    from SquarePixels.uimanagement.window import start
     from SquarePixels.player import player as pl
     from SquarePixels.uimanagement.Character_creation import main
     from SquarePixels.game.game import game
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     screen: pig.Surface = pig.display.set_mode(
         (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE
     )
-    
+
     pygame_icon = pig.image.load(
         r"Recources\program recources\Screenshot 2023-09-21 181742.png"
     )
@@ -36,6 +37,10 @@ if __name__ == "__main__":
     vx, vy = 0, 0  # infoObject.current_w/2, 0#infoObject.current_h /2
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen, 0)
+    # start()
+    screen: pig.Surface = pig.display.set_mode(
+        (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE
+    )
     image_folder: str = r"Recources\\NewHorizonsFrames"
     logo.play_intro_video(image_folder, not_skipped, screen, 1)
     play_music(r"Recources\sounds\music\Menu.mp3")

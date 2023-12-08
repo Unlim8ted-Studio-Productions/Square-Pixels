@@ -31,6 +31,8 @@ def play_intro_video(image_folder, not_skipped, screen, intro):
     else:
         image_files: str = sorted(glob.glob(image_folder + "/frame*.png"))
     # Load the audio file
+    pig.mixer.init()
+    pig.font.init()
     audio_file: str = image_folder + "/audio.wav"
     pig.mixer.music.load(audio_file)
 
@@ -38,9 +40,7 @@ def play_intro_video(image_folder, not_skipped, screen, intro):
     pig.mixer.music.play()
 
     # Load each image and display it on the screen
-    credits_font = pig.font.Font(
-        "Recources\Fonts\PixelifySans-Regular.ttf", 50
-    )
+    credits_font = pig.font.Font("Recources\Fonts\PixelifySans-Regular.ttf", 50)
     for image_file in image_files:
         if not_skipped == True:
             image = pig.image.load(image_file).convert()
