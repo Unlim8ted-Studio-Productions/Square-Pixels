@@ -5,6 +5,7 @@ import SquarePixels.render.Lighting as Lit
 import random
 import math
 from SquarePixels.render.weather_manager import weather_manager, draw_weather
+import config
 
 hidden_area = []
 infoObject: object = pig.display.Info()
@@ -14,6 +15,7 @@ for x in range(infoObject.current_w // 20 + 50):
         black_rect = pig.Rect((x * 20, y * 20, 20, 20))
         hidden_area.append(black_rect)
 playerx = 0
+
 
 def render_terrain(
     screen: pig.Surface,
@@ -74,10 +76,10 @@ def render_terrain(
     place_blocks = [
         13,
     ]
-    
+
     frame_count = 0  # Count frames for lightning duration
     lightning_duration = 10  # Adjust the duration of the lightning effect
-    
+
     movement = playerpos.x - playerx
     camera_x, camera_y = pos_x, pos_y
     if morning == 0:
@@ -85,20 +87,20 @@ def render_terrain(
             screen, (255, 255, 51), ((DayTime * 250) + 300, (DayTime * 200), 100, 100)
         )
     weather = weather_manager()
-    
+
     if weather == "rain":
-        darkness = DayTime + .5
+        darkness = DayTime + 0.5
     else:
         darkness = DayTime
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
-             # Calculate the offset for the panoramic effect
+            # Calculate the offset for the panoramic effect
             offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
-             # Apply smoothing to gradually move toward the target position
+            # Apply smoothing to gradually move toward the target position
             smoothing_factor = 0.1
             camera_x += (offset_x - camera_x) * smoothing_factor
-            
+
             currentblock = pig.Rect(
                 (
                     (x + pos_x + camera_x) * tile_size,
@@ -158,54 +160,71 @@ def render_terrain(
                 if block_type == 11:
                     screen.blit(block_images[1], currentblock)
                 colliders.append(currentblock)
-    
-    draw_weather(screen)
-    
+
+    draw_weather(screen)  # TODO: #62 add weather setting
+
     camera_x = pos_x
-    transparent_surface = pig.Surface((infoObject.current_w, infoObject.current_h), pig.SRCALPHA)
-    for rect in hidden_area:
-        # Calculate the center point of the black rectangle
-        rect_center = rect.center
+    transparent_surface = pig.Surface(
+        (infoObject.current_w, infoObject.current_h), pig.SRCALPHA
+    )
 
-        # Calculate the distance from the player to the center of the black rectangle
-        distance = math.sqrt(
-            (rect_center[0] - playerpos.x) ** 2 + (rect_center[1] - playerpos.y) ** 2
-        )
-        # Calculate the transparency based on the distance to the center
-        transparency = int(distance)
-        # Closer is less transparent
-        if transparency >= 255:
-            transparency = 255
-        if transparency <= 0:
-            transparency = abs(transparency)
-        if transparency >= 255:
-            transparency = 255
-        # Define a radius for the sphere
+    if config.shadefogofwar:
+        for rect in hidden_area:
+            # Calculate the center point of the black rectangle
+            rect_center = rect.center
 
-        # Create a transparent black color
-        # NewColors = Lit.LightAlgorithm(
-        #    colors, x, y, (playerpos.x), (playerpos.y), DayTime
-        # )
-        # if transparency > len(NewColors) - 1:
-        #    colorone = NewColors[len(NewColors) - 1]
-        # else:
-        #    colorone = NewColors[transparency]
-        # transparent_black = (colorone[0],colorone[1],colorone[2], transparency)
-    
-        transparent_black = (0, 0, 0, transparency)
-        # Create a surface with the transparent black color and same dimensions as the rectangle
-        pig.draw.rect(transparent_surface, transparent_black, (rect.topleft[0] - (0 - playerpos.x), rect.topleft[1], *rect.size))
-        # Remove the black rectangle if it's fully transparent
-        if transparency == 0 or distance <= 60:  #TODO: #55 won't work with scrolling
-            hidden_area.remove(rect)
-    # Calculate the offset for the panoramic effect
-    offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
-    # Apply smoothing to gradually move toward the target position
-    smoothing_factor = 0.1
-    camera_x += (offset_x - camera_x) * smoothing_factor
-    # Blit the transparent surface onto the main screen
-    screen.blit(transparent_surface, ((0 - playerpos.x), 0))
-    playerx = playerpos.x
+            # Calculate the distance from the player to the center of the black rectangle
+            distance = math.sqrt(
+                (rect_center[0] - playerpos.x) ** 2
+                + (rect_center[1] - playerpos.y) ** 2
+            )
+            # Calculate the transparency based on the distance to the center
+            transparency = int(distance)
+            # Closer is less transparent
+            if transparency >= 255:
+                transparency = 255
+            if transparency <= 0:
+                transparency = abs(transparency)
+            if transparency >= 255:
+                transparency = 255
+            # Define a radius for the sphere
+
+            if config.shadefogofwar:
+                # Create a transparent black color
+                NewColors = Lit.LightAlgorithm(
+                    colors, x, y, (playerpos.x), (playerpos.y), DayTime
+                )
+                if transparency > len(NewColors) - 1:
+                    colorone = NewColors[len(NewColors) - 1]
+                else:
+                    colorone = NewColors[transparency]
+                transparent_black = (
+                    colorone[0],
+                    colorone[1],
+                    colorone[2],
+                    transparency,
+                )
+            else:
+                transparent_black = (0, 0, 0, transparency)
+            # Create a surface with the transparent black color and same dimensions as the rectangle
+            pig.draw.rect(
+                transparent_surface,
+                transparent_black,
+                (rect.topleft[0] - (0 - playerpos.x), rect.topleft[1], *rect.size),
+            )
+            # Remove the black rectangle if it's fully transparent
+            if (
+                transparency == 0 or distance <= 60
+            ):  # TODO: #55 won't work with scrolling
+                hidden_area.remove(rect)
+        # Calculate the offset for the panoramic effect
+        offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
+        # Apply smoothing to gradually move toward the target position
+        smoothing_factor = 0.1
+        camera_x += (offset_x - camera_x) * smoothing_factor
+        # Blit the transparent surface onto the main screen
+        screen.blit(transparent_surface, ((0 - playerpos.x), 0))
+        playerx = playerpos.x
     return sky, colliders, hidden_area
 
 
