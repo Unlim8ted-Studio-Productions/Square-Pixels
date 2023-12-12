@@ -1,5 +1,5 @@
 volume = 1.0
-fogofwar = True
-shadefogofwar = True
+fogofwar = False
+shadefogofwar = False
 fullscreen = True
 bordered = False
