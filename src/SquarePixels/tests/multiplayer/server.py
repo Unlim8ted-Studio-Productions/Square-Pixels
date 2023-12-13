@@ -205,7 +205,7 @@ def update_weatherstuff(weather, raindrops, lightning_pos, clouds, leaves, wind)
 def server_receive():
     global weather, chat_messages
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("127.0.0.1", 5555))
+    server.bind(("0.0.0.0", 12345))
     server.listen(5)
     print("Server started, waiting for clients...")
 
