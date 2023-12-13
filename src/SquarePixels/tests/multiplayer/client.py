@@ -197,7 +197,7 @@ def client_program():
     receive_thread.start()
 
     pygame.init()
-    screen = pygame.display.set_mode((800, 800))
+    screen = pygame.display.set_mode((400, 400))
     pygame.display.set_caption("Chat Client")
     clock = pygame.time.Clock()
 

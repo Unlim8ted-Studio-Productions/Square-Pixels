@@ -252,7 +252,7 @@ if __name__ == "__main__":
     # Define a dictionary to store usernames and corresponding client sockets
     client_usernames = {}
     input_text = ""
-    screen = pygame.display.set_mode((800, 800))
+    screen = pygame.display.set_mode((400, 400))
     pygame.display.set_caption("Chat Server")
     running = True
     while running:
