@@ -5,16 +5,38 @@ import socket
 import threading
 import pygame
 import typing
+import pickle
 
 
 def handle_client(client_socket):
-    global weather, chat_messages
+    global weather, chat_messages, screen
     while True:
         data = client_socket.recv(1024)
         if not data:
             break
         if data.decode() == "exit":
             break
+        # try:
+        #    if isinstance(pickle.loads(data), []):
+        #        data = pickle.loads(data)
+        #        user = data[0]
+        #        pos = data[1]
+        #        pygame.draw.rect(screen, (255, 255, 255), (*pos, 20, 20))
+        #        font = pygame.font.Font(None, 20)
+        #        text = font.render(user, True, (255, 255, 255))
+        #        text_rect = text.get_rect(*pos)
+        #        screen.blit(text, text_rect)
+        #        pygame.display.update()
+        #        for sock in client_sockets:
+        #            if sock != client_socket:
+        #                try:
+        #                    sock.send(pickle.dumps(data))
+        #                except socket.error as e:
+        #                    # print(f"Error sending message to {sock}: {e}")
+        #                    client_sockets.remove(sock)
+        #
+        # except:
+        #    pass
         elif data.decode().startswith("MSG:"):
             message = data.decode()[4:]
             print(f"Received message: {message}")
@@ -242,7 +264,7 @@ if __name__ == "__main__":
                 if event.key == pygame.K_RETURN:
                     # Send the current input_text as a chat message
                     for sock in client_sockets:
-                        sock.send(f"MSG:{input_text}".encode())
+                        sock.send(f"MSG:server - {input_text}".encode())
                     chat_messages.append(input_text)
                     input_text = ""
                 elif event.key == pygame.K_BACKSPACE:

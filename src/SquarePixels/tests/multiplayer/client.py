@@ -5,6 +5,7 @@ import socket
 import threading
 import pygame
 import typing
+import pickle
 
 
 def draw_rain(screen, raindrops, wind):
@@ -118,6 +119,20 @@ def receive_weather(client_socket, chat_messages):
         data = client_socket.recv(1024)
         if not data:
             break
+        # try:
+        #    if isinstance(pickle.loads(data), []):
+        #        data = pickle.loads(data)
+        #        user = data[0]
+        #        pos = data[1]
+        #        pygame.draw.rect(screen, (255, 255, 255), (*pos, 20, 20))
+        #        font = pygame.font.Font(None, 20)
+        #        text = font.render(user, True, (255, 255, 255))
+        #        text_rect = text.get_rect(*pos)
+        #        screen.blit(text, text_rect)
+        #        pygame.display.update()
+        #
+        # except:
+        #    pass
         if data.decode().startswith("MSG:"):
             message = data.decode()[4:]
             chat_messages.append(message)
@@ -165,7 +180,7 @@ def render_chat(
 
 
 def client_program():
-    global weather, raindrops, lightning_pos, clouds, leaves, wind, screen, lightning_pos, lightning_duration, frame_count, clouds, leaves, newwind
+    global weather, raindrops, lightning_pos, clouds, leaves, wind, screen, lightning_pos, lightning_duration, frame_count, clouds, leaves, newwind, username
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(("127.0.0.1", 5555))
 
@@ -200,7 +215,7 @@ def client_program():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     # Send the current input_text as a chat message
-                    client.send(f"MSG:{input_text}".encode())
+                    client.send(f"MSG: {username} - {input_text}".encode())
                     chat_messages.append(input_text)
                     # if (
                     #    input_text == "rain"
@@ -216,6 +231,8 @@ def client_program():
                 else:
                     # Add pressed key to input_text
                     input_text += event.unicode
+
+        # client.send(pickle.dumps(["username", [20, 20]]))
 
         screen.fill((30, 30, 30))
         input_text = render_chat(chat_messages, 400, screen, input_text)
@@ -240,6 +257,8 @@ def client_program():
 
 if __name__ == "__main__":
     pygame.init()
+
+    username = input("enter a username") + f"{random.randrange(0, 10, 1)}"
     clock = pygame.time.Clock()
     frame_count = 0  # Count frames for lightning duration
     lightning_duration = 10  # Adjust the duration of the lightning effect
