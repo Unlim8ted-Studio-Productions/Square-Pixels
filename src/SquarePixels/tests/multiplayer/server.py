@@ -1,11 +1,14 @@
 # Server code with chat functionality
 
+import ctypes
 import random
 import socket
 import threading
 import pygame
 import typing
 import pickle
+import win32con
+import win32gui
 
 
 def handle_client(client_socket):
@@ -253,9 +256,20 @@ if __name__ == "__main__":
     client_usernames = {}
     input_text = ""
     screen = pygame.display.set_mode((400, 400))
+
     pygame.display.set_caption("Chat Server")
     running = True
     while running:
+        hwnd = pygame.display.get_wm_info()["window"]
+        win32gui.SetWindowPos(
+            hwnd,
+            win32con.HWND_TOPMOST,
+            0,
+            0,
+            0,
+            0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE,
+        )
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
