@@ -203,9 +203,9 @@ def update_weatherstuff(weather, raindrops, lightning_pos, clouds, leaves, wind)
 
 
 def server_receive():
-    global weather, chat_messages
+    global weather, chat_messages, client_sockets
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("0.0.0.0", 12345))
+    server.bind(("0.0.0.0", 5555))
     server.listen(5)
     print("Server started, waiting for clients...")
 
@@ -215,6 +215,8 @@ def server_receive():
         client_sockets.append(client)
         for message in chat_messages:
             client.send(f"MSG:{message}".encode())
+            pygame.time.delay(100)
+
         client_handler = threading.Thread(target=handle_client, args=(client,))
         client_handler.start()
 
@@ -246,10 +248,10 @@ if __name__ == "__main__":
     weather = "thunderstorm"  # Initial weather
     client_sockets = []
     pygame.init()
-    change_weather_thread = threading.Thread(target=update_weather)
+    # change_weather_thread = threading.Thread(target=update_weather)
     receive_thread = threading.Thread(target=server_receive)
 
-    change_weather_thread.start()
+    # change_weather_thread.start()
     receive_thread.start()
     chat_messages = []
     # Define a dictionary to store usernames and corresponding client sockets

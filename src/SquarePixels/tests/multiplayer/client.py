@@ -15,25 +15,26 @@ import socket
 import threading
 import ipaddress
 
-SERVER_PORT = 12345
+SERVER_PORT = 5555
 TIMEOUT = 1.0  # Timeout value for socket operations
 SCAN_TIMEOUT = 2.0  # Timeout value for server scanning
 SCAN_THREADS = 50  # Number of threads for concurrent scanning
 pygame.init()
 infoObject: object = pygame.display.Info()
-WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
+WIDTH, HEIGHT = 400, 400
 BACKGROUND_COLOR = (255, 255, 255)
 TEXT_COLOR = (0, 0, 0)
 ip = ""
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), RESIZABLE)
-pygame.display.set_caption("Server Finder")
+pygame.display.set_caption("chat client")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 24)
 
 running = True
 servers = []
 selected_server = None
+usernamee = ""
 input_text = "Name"
 settings = True
 
@@ -88,9 +89,9 @@ def handle_server_click(selected_server):
 
 
 def handle_server_options(ip) -> None:
-    global player_name, character_image, input_text, settings
+    global player_name, character_image, input_text, settings, usernamee
 
-    input_rect = pygame.Rect(10, 400, 200, 30)
+    input_rect = pygame.Rect(10, 40, 200, 30)
     character_rect = pygame.Rect(220, 400, 100, 100)
     input_active = True
 
@@ -113,9 +114,10 @@ def handle_server_options(ip) -> None:
                         global ipp
                         ipp = ip
                         player_name = input_text
+                        usernamee = input_text
                         # character_image = ...  # Save the selected character image
                         print("Player Name:", player_name)
-                        print("Character Image:", character_image)
+                        # print("Character Image:", character_image)
                         return
                     elif event.key == pygame.K_BACKSPACE:
                         input_text = input_text[:-1]
@@ -164,13 +166,6 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
-
-    pygame.quit()
-
-
-if __name__ == "__main__":
-    find_servers()
-    main()
 
 
 def draw_rain(screen, raindrops, wind):
@@ -344,8 +339,8 @@ def render_chat(
     return input_text  # Return the updated input text
 
 
-def client_program():
-    global weather, raindrops, lightning_pos, clouds, leaves, wind, screen, lightning_pos, lightning_duration, frame_count, clouds, leaves, newwind, username, ipp
+def client_program(ipp):
+    global weather, raindrops, lightning_pos, clouds, leaves, wind, screen, lightning_pos, lightning_duration, frame_count, clouds, leaves, newwind, username
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ipp, 5555))
 
@@ -370,7 +365,8 @@ def client_program():
     ctypes.windll.user32.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0040)
     pygame.display.set_caption("Chat Client")
     clock = pygame.time.Clock()
-
+    client.send(f"MSG: {username} has connected to the server".encode())
+    chat_messages.append(f"{username} has connected to the server")
     input_text = ""
 
     running = True
@@ -436,9 +432,19 @@ def client_program():
 
 
 if __name__ == "__main__":
+    find_servers()
+    main()
     pygame.init()
 
-    username = input("enter a username") + f"{random.randrange(0, 10, 1)}"
+    ipp = socket.gethostbyaddr(ipp)[0]
+    ipp = ipp.split(".")[0]
+    print(ipp)
+    username = (
+        usernamee
+        + f"{random.randrange(0, 10, 1)}"
+        + f"{random.randrange(0, 10, 1)}"
+        + f"{random.randrange(0, 10, 1)}"
+    )
     clock = pygame.time.Clock()
     frame_count = 0  # Count frames for lightning duration
     lightning_duration = 10  # Adjust the duration of the lightning effect
@@ -449,4 +455,4 @@ if __name__ == "__main__":
     wind = 0
     newwind = 0
     weather = "thunderstorm"  # Initial weather
-    client_program()
+    client_program(ipp)
