@@ -58,8 +58,8 @@ def scan_servers(ip_range):
 
 
 def find_servers():
-    global running
-    if running:
+    global running, ipp
+    if running and ipp == "":
         hostname = socket.gethostname()
         ip_address = socket.gethostbyname(hostname)
         network = ipaddress.ip_network(ip_address, strict=False)
@@ -150,7 +150,9 @@ def main():
 
         screen.fill(BACKGROUND_COLOR)
         draw_text("Found Servers:", 10, 10)
-
+        global ipp
+        if ipp != "":
+            not running
         for i, server in enumerate(servers):
             text = f"Server {i+1}: {server}"
             text_surface = font.render(text, True, TEXT_COLOR)
@@ -431,7 +433,16 @@ def client_program(ipp):
     client.close()
 
 
+def customip():
+    global ipp, running, username
+    ipp = input("type a custom ip")
+    username = input("type a custom username")
+    running = False
+
+
 if __name__ == "__main__":
+    inputc = threading.Thread(target=customip)
+    inputc.start()
     find_servers()
     main()
     pygame.init()
