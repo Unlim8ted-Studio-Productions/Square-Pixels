@@ -394,7 +394,7 @@ def client_program(ipp):
                 if event.key == pygame.K_RETURN:
                     # Send the current input_text as a chat message
                     client.send(f"MSG: {username} - {input_text}".encode())
-                    chat_messages.append(input_text)
+                    chat_messages.append(f"{username} - {input_text}")
                     # if (
                     #    input_text == "rain"
                     #    or weather == "thunderstorm"
