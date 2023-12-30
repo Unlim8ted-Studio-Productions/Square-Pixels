@@ -182,12 +182,16 @@ def draw_rain(screen, raindrops, wind):
         dx = drop[0] - mouse_x  # Difference in x
         dy = drop[1] - mouse_y  # Difference in y
         distance = (dx**2 + dy**2) ** 0.5  # Calculate distance
-
-        if distance < threshold_distance:
-            # Move raindrop away from the mouse
-            avoidance_strength = (threshold_distance - distance) / threshold_distance
-            drop[0] += (dx / distance) * avoidance_strength * 2
-            drop[1] += (dy / distance) * avoidance_strength * 2
+        try:
+            if distance < threshold_distance:
+                # Move raindrop away from the mouse
+                avoidance_strength = (
+                    threshold_distance - distance
+                ) / threshold_distance
+                drop[0] += (dx / distance) * avoidance_strength * 2
+                drop[1] += (dy / distance) * avoidance_strength * 2
+        except:
+            pass
 
         # Update raindrop position based on wind
         drop[0] += wind + random.uniform(-0.1, 0.1)
