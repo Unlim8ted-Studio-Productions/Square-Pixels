@@ -170,8 +170,25 @@ def main():
         clock.tick(60)
 
 
+import pygame
+import random
+
+
 def draw_rain(screen, raindrops, wind):
+    mouse_x, mouse_y = pygame.mouse.get_pos()  # Get mouse position
+    threshold_distance = 100  # Threshold distance for mouse effect
+
     for drop in raindrops:
+        dx = drop[0] - mouse_x  # Difference in x
+        dy = drop[1] - mouse_y  # Difference in y
+        distance = (dx**2 + dy**2) ** 0.5  # Calculate distance
+
+        if distance < threshold_distance:
+            # Move raindrop away from the mouse
+            avoidance_strength = (threshold_distance - distance) / threshold_distance
+            drop[0] += (dx / distance) * avoidance_strength * 2
+            drop[1] += (dy / distance) * avoidance_strength * 2
+
         # Update raindrop position based on wind
         drop[0] += wind + random.uniform(-0.1, 0.1)
         drop[1] += 5  # Move down
@@ -429,7 +446,7 @@ def client_program(ipp):
         # draw_leaves(screen, leaves)
         pygame.display.flip()
         clock.tick(60)
-
+    client.send(f"MSG: {username} has left the server".encode())
     client.close()
 
 
@@ -446,7 +463,10 @@ if __name__ == "__main__":
     find_servers()
     main()
     pygame.init()
-
+    umbrella_cursor = pygame.image.load("umbrella.png")
+    umbrella_cursor = pygame.transform.scale(
+        umbrella_cursor, (32, 32)
+    )  # Scale it to the desired cursor size
     ipp = socket.gethostbyaddr(ipp)[0]
     ipp = ipp.split(".")[0]
     print(ipp)
