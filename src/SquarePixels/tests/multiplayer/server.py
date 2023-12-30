@@ -280,7 +280,7 @@ if __name__ == "__main__":
                 if event.key == pygame.K_RETURN:
                     # Send the current input_text as a chat message
                     for sock in client_sockets:
-                        sock.send(f"MSG: server - {input_text}".encode())
+                        sock.send(f"MSG:server - {input_text}".encode())
                     chat_messages.append(f"server - {input_text}")
                     input_text = ""
                 elif event.key == pygame.K_BACKSPACE:
