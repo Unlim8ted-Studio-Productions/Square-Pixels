@@ -205,7 +205,7 @@ def update_weatherstuff(weather, raindrops, lightning_pos, clouds, leaves, wind)
 def server_receive():
     global weather, chat_messages, client_sockets
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((socket.gethostname(), 5555))
+    server.bind(("0.0.0.0", 5555))
     server.listen(5)
     print("Server started, waiting for clients...")
 
@@ -229,7 +229,7 @@ def update_weather():
             break
         for sock in client_sockets:
             try:
-                sock.send(f"MSG:Weather updated to {weather}".encode())
+                sock.send(f"MSG: Weather updated to {weather}".encode())
             except socket.error as e:
                 print(f"Error sending message to {sock}: {e}")
                 client_sockets.remove(sock)
@@ -281,7 +281,7 @@ if __name__ == "__main__":
                     # Send the current input_text as a chat message
                     for sock in client_sockets:
                         sock.send(f"MSG: server - {input_text}".encode())
-                    chat_messages.append(input_text)
+                    chat_messages.append(f"server - {input_text}")
                     input_text = ""
                 elif event.key == pygame.K_BACKSPACE:
                     # Remove last character from input_text
