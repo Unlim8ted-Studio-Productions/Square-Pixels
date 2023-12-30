@@ -100,7 +100,7 @@ def render_chat(
 def server_receive():
     global weather, chat_messages, client_sockets
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("0.0.0.0", 5555))
+    server.bind(("0.0.0.0", 9999))
     server.listen(5)
     print("Server started, waiting for clients...")
 

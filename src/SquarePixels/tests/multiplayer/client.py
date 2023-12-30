@@ -15,7 +15,7 @@ import socket
 import threading
 import ipaddress
 
-SERVER_PORT = 5555
+SERVER_PORT = 9999
 TIMEOUT = 1.0  # Timeout value for socket operations
 SCAN_TIMEOUT = 2.0  # Timeout value for server scanning
 SCAN_THREADS = 50  # Number of threads for concurrent scanning
@@ -365,7 +365,7 @@ def render_chat(
 def client_program(ipp):
     global weather, raindrops, lightning_pos, clouds, leaves, wind, screen, lightning_pos, lightning_duration, frame_count, clouds, leaves, newwind, username
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((ipp, 5555))
+    client.connect((ipp, 9999))
 
     chat_messages = []
 
