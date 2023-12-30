@@ -463,10 +463,10 @@ if __name__ == "__main__":
     find_servers()
     main()
     pygame.init()
-    umbrella_cursor = pygame.image.load("umbrella.png")
-    umbrella_cursor = pygame.transform.scale(
-        umbrella_cursor, (32, 32)
-    )  # Scale it to the desired cursor size
+    # umbrella_cursor = pygame.image.load("umbrella.png")
+    # umbrella_cursor = pygame.transform.scale(
+    #    umbrella_cursor, (32, 32)
+    # )  # Scale it to the desired cursor size
     ipp = socket.gethostbyaddr(ipp)[0]
     ipp = ipp.split(".")[0]
     print(ipp)
