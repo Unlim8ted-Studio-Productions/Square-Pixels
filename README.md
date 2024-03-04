@@ -108,7 +108,8 @@ We welcome contributions to our project! If you wish to contribute, please adher
 
 
 https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/60913d36-27a7-488d-8ccb-946445185283
-![Screenshot 2023-09-11 173817](https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/ef3c1316-8653-4df9-b829-ccba6d6203ab)
+![image](https://github.com/Unlim8ted-Studio-Productions/Square-Pixels/assets/138305056/2efa985e-19bc-4d97-abc8-2336d5e878dd)
+
 
 ## License
 
