@@ -1,107 +1,318 @@
+
+    <style>
 /* Enhancements for Typography */
+
+
 body, html {
-  font-family: 'Nunito', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 0;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  margin-bottom: 1rem;
-  font-family: 'Roboto', sans-serif;
-}
-
-p {
-  margin-bottom: 1rem;
-}
-
-/* Improved Color Scheme */
-:root {
-  --primary-color: #0056b3;
-  --secondary-color: #6c757d;
-  --success-color: #28a745;
-  --info-color: #17a2b8;
-  --warning-color: #ffc107;
-  --danger-color: #dc3545;
-  --light-color: #f8f9fa;
-  --dark-color: #343a40;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .row {
-    flex-direction: column;
+    font-family: 'Nunito', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
   }
-
-  .col, .col-md-6 {
-    flex-basis: 100%;
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    font-family: 'Roboto', sans-serif;
   }
-}
+  
+  p {
+    margin-bottom: 1rem;
+  }
+  
+  /* Improved Color Scheme */
+  :root {
+    --primary-color: #0056b3;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .row {
+      flex-direction: column;
+    }
+  
+    .col, .col-md-6 {
+      flex-basis: 100%;
+    }
+  }
+  
+  /* Interactive Elements */
+  .btn {
+    background: var(--primary-color);
+    color: #696969;
+    border: lightblue;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .btn:hover, .btn:focus {
+    background: darken(var(--primary-color), 20%);
+  }
+  
+  /* Enhancements for Forms */
+  .input {
+    border-radius: 0.3rem;
+    border: 1px solid #ccc;
+    padding: 0.75rem;
+  }
+    .parallax {
+      /* The image used */
+      background-image: url("https://github.com/Unlim8ted-Studio-Productions/Square-Pixels/blob/main/src/Recources/program%20recources/Screenshot%202023-09-21%20181742.png?raw=true");
+    
+      /* Set a specific height */
+      min-height: 500px;
+    
+      /* Create the parallax scrolling effect */
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: repeat;
+      background-size: cover;
+    }
+    .parallax-container {
+        overflow: hidden;
+        position: relative;
+        height: auto; /* Adjust based on your preference */
+        margin: auto; /* Space out images */
+        padding: 500;
+    }
+    .parallax-image {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.2s ease-out; /* Smooth transition for scaling */
+    }
+    
+  /* Visual Enhancements */
+  .card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 0.3rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  
+  /* Utility Classes */
+  .text-center {
+    text-align: center;
+  }
+  
+  .mt-1 { margin-top: 0.25rem; }
+  .mt-2 { margin-top: 0.5rem; }
+  .mt-3 { margin-top: 1rem; }
+  .mt-4 { margin-top: 1.5rem; }
+  .mt-5 { margin-top: 3rem; }
+  
+  /* Additional Enhancements */
+  .container {
+    max-width: 1140px;
+    margin: auto;
+    padding: 0 15px;
+  }
+  
+  /* Make badge more distinct */
+  .badge {
+    font-weight: bold;
+    background: var(--dark-color);
+  }
+  
+  /* Ensure images in content are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  
+    </style>
+    <div class="parallax"></div>
+<h1 id="square-pixel">Square Pixel</h1>
+<script>
+    // JavaScript to scale the background image on scroll
+    var scrollPosition = window.pageYOffset;
+    var backgroundScale = 50 + scrollPosition / 10; // Adjust scaling factor here
+    document.querySelector('.parallax').style.backgroundSize = backgroundScale + "%";
+    window.addEventListener('scroll', function() {
+        var scrollPosition = window.pageYOffset;
+        var backgroundScale = 50 + scrollPosition / 10; // Adjust scaling factor here
 
-/* Interactive Elements */
-.btn {
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
+        document.querySelector('.parallax').style.backgroundSize = backgroundScale + "%";
+    });
+</script>
+<p>Welcome to Square Pixel!</p>
+<p><button  class='.btn'href="https://github.com/GusInfiniteLinesOfCode/Square-Pixels/graphs/contributors"><img
+             src="https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge"
+             alt="Contributors"></button>
+    <button class='.btn' href="https://github.com/GusInfiniteLinesOfCode/Square-Pixels/network/members"><img
+             src="https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge"
+             alt="Forks"></button>
+    <button class='.btn' href="https://github.com/GusInfiniteLinesOfCode/Square-Pixels/stargazers"><img
+             src="https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge"
+             alt="Stargazers"></button>
+    <button class='.btn' href="https://github.com/GusInfiniteLinesOfCode/Square-Pixels/issues"><img
+             src="https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge"
+             alt="Issues"></button>
+    <button class='.btn' href="https://github.com/GusInfiniteLinesOfCode/Square-Pixela/blob/main/LICENSE.md"><img
+             src="https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge"
+             alt="MIT License"></button>
+    <button class='.btn' href="(javascript:%28function%28%29%7Balert%28%22Nothing%20Here%20Yet%22%29%7D%29%28%29%3B)"><img
+            src="https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&amp;logo=linkedin&amp;colorB=555"
+            alt="LinkedIn"></button>
+</p>
+<p>totally working stats bar definitly not broken for some reason</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#how-to-play">How to Play</a></li>
+    <li><a href="#contribution">Contribution</a></li>
+    <li><a href="#license">License</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>Welcome to our pixelated sandbox adventure! Inspired by the beloved classic Terraria, this 2D game offers an exciting
+    blend of exploration, crafting, and action-packed adventures. Immerse yourself in a captivating pixel world with
+    endless possibilities!</p>
+<h2 id="features">Features</h2>
+<ul>
+    <li><strong>Expansive World:</strong> Embark on a journey through a dynamically generated 2D world teeming with
+        diverse biomes, mysterious dungeons, and valuable treasures.</li>
+    <li><strong>Craft and Construct:</strong> Gather resources, master the art of crafting, and construct your dream
+        structures.</li>
+    <li><strong>Monstrous Challenges:</strong> Confront a variety of menacing creatures and formidable bosses as you
+        progress through your adventure.</li>
+    <li><strong>Multiplayer Magic:</strong> Invite friends to join you in the sandbox, either locally or online, for
+        cooperative fun.</li>
+    <li><strong>Modder&#39;s Paradise:</strong> Enhance and expand your gaming experience with robust modding support.
+    </li>
+    <li><strong>Day and Night:</strong> Experience the ebb and flow of day and night, influencing your gameplay and
+        encounters.</li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<p>To begin your adventure, follow these steps:</p>
+<ol>
+    <li>
+        <p>Clone the game repository to your local machine:</p>
+        <pre><code class="lang-bash">git <span class="hljs-keyword">clone</span> <span class="hljs-title">https</span>://github.com/Gus<span class="hljs-literal">Inf</span>initeLinesOfCode/Square-Pixels.git
+</code></pre>
+    </li>
+    <li>
+        <p>Install any necessary dependencies.</p>
+        <pre><code class="lang-bash">pip <span class="hljs-keyword">install</span> pygame pillow pymovie pyperclip playfab captcha astor
+</code></pre>
+    </li>
+    <li>
+        <p>Launch the game executable or script.</p>
+    </li>
+</ol>
+<p>For detailed installation instructions, consult the Installation Guide.</p>
+<p> You can also download the latest executable version from the releases page. For help with the built version of the
+    code you can contact our support team at support-team@unlim8ted.com.</p>
+<h2 id="how-to-play">How to Play</h2>
+<p><strong>Controls:</strong></p>
+<ul>
+    <li>Move your character using the <strong>WASD</strong> keys or arrow keys.</li>
+    <li>Open your inventory with the <strong>E</strong> key.</li>
+    <li>Close your inventory with any button.</li>
+    <li>Right-click in your inventory to create an item.</li>
+    <li>Left-click to place an item in an inventory slot.</li>
+    <li>Left-click on blocks to destroy them.</li>
+</ul>
+<p><strong>Objective:</strong></p>
+<ol>
+    <li>
+        <p>Launch the game and create a new character.</p>
+    </li>
+    <li>
+        <p>Begin your adventure by exploring the world, gathering resources, and crafting items.</p>
+    </li>
+    <li>
+        <p>Construct buildings and structures to fortify your position and store your loot.</p>
+    </li>
+    <li>
+        <p>Defend yourself against monsters and powerful bosses that emerge during your journey.</p>
+    </li>
+    <li>
+        <p>Survive and thrive in this dynamic world, mastering the art of survival and adventure.</p>
+    </li>
+</ol>
+<p>For comprehensive gameplay instructions and advanced tips, please refer to the User Manual.</p>
+<h2 id="contribution">Contribution</h2>
+<p>We welcome contributions to our project! If you wish to contribute, please adhere to the guidelines provided in our
+    Contribution Guide. We greatly appreciate bug reports, feature requests, and pull requests.</p>
+<h2 id="todo">ToDo</h2>
+<ul>
+    <li>[ ] Fix collision handling</li>
+    <li>[ ] add pause screen</li>
+    <li>[x] add darkness wherever the player has not yet explored and a map</li>
+    <li>[ ] Finish settings</li>
+    <li>[ ] Add more world options</li>
+    <li>[ ] add saving/loading game</li>
+    <li>[ ] add the code to load new chunks</li>
+    <li>[ ] Add pre-built characters</li>
+    <li>[ ] Add item drop and implement with inventory</li>
+    <li>[ ] Add crafting and item placing</li>
+    <li>[ ] Add tools</li>
+    <li>[ ] Add the ability to drop items</li>
+    <li>[ ] Implement multiplayer</li>
+    <li>[ ] Implement friending</li>
+</ul>
+<h2 id="game-screenshots">game screenshots</h2>
+<div class="parallax-container">
+    <img src="https://github.com/GusInfiniteLinesOfCode/Square-Pixels/blob/main/Screenshot%202023-09-22%20165106.png" class="parallax-image" alt="Image Description">
+</div>
+<div class="parallax-container">
+    <img src="https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/7458632a-b966-46ca-a98c-60db0b508d55" class="parallax-image" alt="Image Description">
+</div>
+<div class="parallax-container">
+    <img src="https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/aa772f05-84d8-4488-b2f4-b26604ec0bab" class="parallax-image" alt="Image Description">
+</div>
+<div class="parallax-container">
+    <img src="https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/60913d36-27a7-488d-8ccb-946445185283" class="parallax-image" alt="Image Description">
+</div>
+<div class="parallax-container">
+    <img src="https://github.com/GusInfiniteLinesOfCode/Terraria_styled_game/assets/101442959/ef3c1316-8653-4df9-b829-ccba6d6203ab" class="parallax-image" alt="Image Description">
+</div>
 
-.btn:hover, .btn:focus {
-  background: darken(var(--primary-color), 10%);
-}
+<script>
+document.addEventListener('scroll', function() {
+    document.querySelectorAll('.parallax-container').forEach(container => {
+        const image = container.querySelector('.parallax-image');
+        const scrollPosition = window.pageYOffset;
+        const containerRect = container.getBoundingClientRect();
+        
+        // Calculate the percentage of the container in view
+        const inViewPercentage = Math.max(0, Math.min(1, (window.innerHeight - containerRect.top) / window.innerHeight));
+        
+        // Scale the image based on inViewPercentage
+        // Adjust the scale factor as needed
+        const scale = 1 + (0.5 * inViewPercentage); // Starting scale is 1, scales up to 1.5
+        image.style = `padding(${scale})`;
+        image.style.transform = `height(${scale})`;
+        
+        // Optional: Adjust opacity based on inViewPercentage for a fade effect
+        // image.style.opacity = inViewPercentage;
+    });
+});
+</script>
 
-/* Enhancements for Forms */
-.input {
-  border-radius: 0.3rem;
-  border: 1px solid #ccc;
-  padding: 0.75rem;
-}
 
-/* Visual Enhancements */
-.card {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 0.3rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.card:hover {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* Utility Classes */
-.text-center {
-  text-align: center;
-}
-
-.mt-1 { margin-top: 0.25rem; }
-.mt-2 { margin-top: 0.5rem; }
-.mt-3 { margin-top: 1rem; }
-.mt-4 { margin-top: 1.5rem; }
-.mt-5 { margin-top: 3rem; }
-
-/* Additional Enhancements */
-.container {
-  max-width: 1140px;
-  margin: auto;
-  padding: 0 15px;
-}
-
-/* Make badge more distinct */
-.badge {
-  font-weight: bold;
-  background: var(--dark-color);
-}
-
-/* Ensure images in content are responsive */
-img {
-  max-width: 100%;
-  height: auto;
-}
+<h2 id="license">License</h2>
+<p>This project is distributed under a MODIFIED CREATIVE COMMONS ATTRIBUTION-NONCOMMERCIAL 3.0 LICENSE. Refer to the
+    LICENSE file for specifics.</p>
+<p>Embark on a thrilling adventure in the realm of our pixelated sandbox game! Should you encounter any problems or have
+    ideas for improvement, kindly share your feedback with us. Enjoy your gaming journey!</p>
