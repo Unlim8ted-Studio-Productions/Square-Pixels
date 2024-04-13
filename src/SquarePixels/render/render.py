@@ -168,7 +168,7 @@ def render_terrain(
         (infoObject.current_w, infoObject.current_h), pig.SRCALPHA
     )
 
-    if config.shadefogofwar:
+    if config.shadefogwar:
         for rect in hidden_area:
             # Calculate the center point of the black rectangle
             rect_center = rect.center
