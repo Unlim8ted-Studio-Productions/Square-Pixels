@@ -7,13 +7,13 @@ infoObject = pig.display.Info()
 screen = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
 
 # Create item surfaces
-items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(4)]
+items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(7)]
 wood = pig.image.load(r"Recources\Textures\wood.png")
-leaves = pig.image.load(r"Recources\Textures\leaves.png")
-hatchet = pig.image.load(r"Recources\Textures\hatchet.jpg")
+leaves = pig.image.load(r"Recources\Textures\leaves.jpg")
+hatchet = pig.image.load(r"Recources\Textures\hatchet.png")
 dirt = pig.image.load(r"Recources\Textures\dirt.jpg")
 stone = pig.image.load(r"Recources\Textures\stone.jpg")
-iron = pig.image.load(r"Recources\Textures\iron.jpg")
+iron = pig.image.load(r"Recources\Textures\iron.png")
 stonesword = pig.image.load(r"Recources\Textures\ssword.png")
 scale = (25, 25)
 wood = pig.transform.scale(wood, scale)
@@ -30,7 +30,6 @@ items[3].blit(hatchet, (15, 15, 100, 100))
 items[4].blit(dirt, (15, 15, 100, 100))
 items[5].blit(iron, (15, 15, 100, 100))
 items[6].blit(stonesword, (15, 15, 100, 100))
-
 
 
 font = pig.font.Font(pig.font.match_font("calibri"), 26)
@@ -276,7 +275,6 @@ selected = None
 crafting_grid = Inventory(
     rows=3, col=3, box_size=50, x=50, y=infoObject.current_h / 1.2, border=3
 )
-
 
 iid = {"wood":0,"stone":1,"leaves":2,"hatchet":3,"dirt":4,"iron":5,"stonesword":6,}
 crafting_recipes = [
