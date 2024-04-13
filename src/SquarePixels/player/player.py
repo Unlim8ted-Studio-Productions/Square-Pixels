@@ -3,10 +3,7 @@ import typing
 import colorsys
 import math
 import random
-from SquarePixels.uimanagement.inventory import Item
-from SquarePixels.uimanagement.inventory import player_inventory
-from SquarePixels.uimanagement.inventory import item_bar
-from SquarePixels.uimanagement.inventory import crafting_grid
+from SquarePixels.uimanagement.inventory import Item, player_inventory, item_bar, crafting_grid, crafting_recipes
 import SquarePixels.soundmanagement.music as music
 
 selected = None
