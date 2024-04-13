@@ -672,6 +672,9 @@ class Player:
                                     item_bar.items[gridpos[0]][gridpos[1]] = None
                         except:
                             None  # Handle errors gracefully
+            for recipe in crafting_recipes:
+                if crafting_grid.items == recipe["pattern"]:
+                    crafting_grid.items = recipe["output"]
         item_bar.y = infoObject.current_h / 1.2
 
     def draw_trail(self, screen: pig.Surface) -> None:
