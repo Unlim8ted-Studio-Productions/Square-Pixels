@@ -284,7 +284,9 @@ crafting_recipes = [
         "pattern": [[(iid["stone"], 1), iid["leaves"], iid["stone"]], 
                     [None, (iid["wood"], 1), None], 
                     [None, (iid["wood"], 1), None]],
-        "output": (iid["stonesword"], 1), 
+        "output": [[(iid["stonesword"], 1), None, None],
+                   [None, None, None],
+                   [None, None, None]]
     },
     # Add more recipes as needed
 ]
