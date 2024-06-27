@@ -901,7 +901,7 @@ def quit_game():
 
 def exitsettingsmenu():
     global game_state
-    game_state = "settings"
+    game_state = "menu"
 
 
 def savesettingstofile():
