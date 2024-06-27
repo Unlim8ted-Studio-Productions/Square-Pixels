@@ -5,6 +5,7 @@ import colorsys
 import math
 import random
 from SquarePixels.uimanagement.inventory import Item, player_inventory, item_bar, crafting_grid, crafting_recipes
+from SquarePixels.uimanagement.inventory import Item, player_inventory, item_bar, crafting_grid, crafting_recipes
 import SquarePixels.soundmanagement.music as music
 
 selected = None
@@ -671,6 +672,9 @@ class Player:
                                     item_bar.items[gridpos[0]][gridpos[1]] = None
                         except:
                             None  # Handle errors gracefully
+            for recipe in crafting_recipes:
+                if crafting_grid.items == recipe["pattern"]:
+                    crafting_grid.items = recipe["output"]
             #craftitems = crafting_grid.items
             #for it in craftitems:
             #    for ite in it:

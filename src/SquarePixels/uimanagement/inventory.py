@@ -276,7 +276,7 @@ crafting_grid = Inventory(
     rows=3, col=3, box_size=50, x=50, y=infoObject.current_h / 1.2, border=3
 )
 
-iid = {"wood":Item(0),"stone":Item(1),"leaves":Item(2),"hatchet":Item(3),"dirt":Item(4),"iron":Item(5),"stonesword":Item(6)}
+iid = {"wood":0,"stone":1,"leaves":2,"hatchet":3,"dirt":4,"iron":5,"stonesword":6,}
 crafting_recipes = [
     {
         "pattern": [[(iid["stone"], 1), iid["leaves"], iid["stone"]], 
