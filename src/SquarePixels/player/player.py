@@ -1,12 +1,10 @@
+import numpy as np
 import pygame as pig
 import typing
 import colorsys
 import math
 import random
-from SquarePixels.uimanagement.inventory import Item
-from SquarePixels.uimanagement.inventory import player_inventory
-from SquarePixels.uimanagement.inventory import item_bar
-from SquarePixels.uimanagement.inventory import crafting_grid
+from SquarePixels.uimanagement.inventory import Item, player_inventory, item_bar, crafting_grid, crafting_recipes
 import SquarePixels.soundmanagement.music as music
 
 selected = None
@@ -636,10 +634,11 @@ class Player:
                     quit()
                 if event.type == pig.KEYDOWN:
                     inven = False
+                    print(crafting_grid.items)
                 if event.type == pig.MOUSEBUTTONDOWN:
                     # if right clicked, get a random item
                     if event.button == 3:
-                        selected = [Item(random.randint(0, 3)), 1]
+                        selected = [Item(random.randint(0, 5)), 1]
                     elif event.button == 1:
                         try:
                             pos = pig.mouse.get_pos()
@@ -672,6 +671,36 @@ class Player:
                                     item_bar.items[gridpos[0]][gridpos[1]] = None
                         except:
                             None  # Handle errors gracefully
+            #craftitems = crafting_grid.items
+            #for it in craftitems:
+            #    for ite in it:
+            #        if ite:
+            #            ite[0] = ite[0].id
+            #[[(<SquarePixels.uimanagement.inventory.Item object at 0x000001B1CF881F50>, 1), <SquarePixels.uimanagement.inventory.Item object at 0x000001B1CF881F90>, <SquarePixels.uimanagement.inventory.Item object at 0x000001B1CF881F50>], 
+            # [None, (<SquarePixels.uimanagement.inventory.Item object at 0x000001B1CF881F10>, 1), None], 
+            # [None, (<SquarePixels.uimanagemen0001B1CF881F10>, 1),0001B1CF881F10>, 1), None],
+
+           #craftitems=[[[craftitems[0][0][0], craftitems[0][0][1]], [craftitems[0][1][0], craftitems[0][1][1]],[craftitems[0][2][0], craftitems[0][2][1]]],
+           #            [[craftitems[1][0][0], craftitems[1][0][1]], [craftitems[1][1][0], craftitems[1][1][1]],[craftitems[1][2][0], craftitems[1][2][1]],
+           #            [[craftitems[2][0][0], craftitems[2][0][1]], [craftitems[2][1][0], craftitems[2][1][1]],[craftitems[2][2][0], craftitems[2][2][1]]]]]
+           # Convert the list of lists to a NumPy array
+            grid_np = np.array(crafting_grid.items)
+            
+            # Transpose the array
+            rotated_grid = np.rot90(grid_np, k=-1).tolist()
+            print("items")
+            print(rotated_grid)
+            print("recipe")
+            print(crafting_recipes[0]["pattern"])
+            for recipe in crafting_recipes:
+                if rotated_grid == recipe["pattern"]:
+                    #output=recipe["output"]
+                    #for re in output:
+                    #    for rec in re:
+                    #        if rec:
+                    #            rec[0] = Item(rec[0])
+                    crafting_grid.items = recipe["output"]
+                    print("crafted")
         item_bar.y = infoObject.current_h / 1.2
 
     def draw_trail(self, screen: pig.Surface) -> None:

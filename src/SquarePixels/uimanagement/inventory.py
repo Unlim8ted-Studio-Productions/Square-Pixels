@@ -7,18 +7,30 @@ infoObject = pig.display.Info()
 screen = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
 
 # Create item surfaces
-items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(4)]
+items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(7)]
 wood = pig.image.load(r"Recources\Textures\wood.png")
+leaves = pig.image.load(r"Recources\Textures\leaves.jpg")
+hatchet = pig.image.load(r"Recources\Textures\hatchet.png")
+dirt = pig.image.load(r"Recources\Textures\dirt.jpg")
 stone = pig.image.load(r"Recources\Textures\stone.jpg")
+iron = pig.image.load(r"Recources\Textures\iron.png")
+stonesword = pig.image.load(r"Recources\Textures\ssword.png")
 scale = (25, 25)
 wood = pig.transform.scale(wood, scale)
 stone = pig.transform.scale(stone, scale)
+leaves = pig.transform.scale(leaves, scale)
+hatchet = pig.transform.scale(hatchet, scale)
+dirt = pig.transform.scale(dirt, scale)
+iron = pig.transform.scale(iron, scale)
+stonesword = pig.transform.scale(stonesword, scale)
 items[0].blit(wood, (15, 15, 100, 100))
 items[1].blit(stone, (15, 15, 100, 100))
-# Create a green sword item
-pig.draw.circle(items[2], (0, 255, 0), (25, 25), 25)
-# Create a blue circle item
-pig.draw.circle(items[3], (0, 0, 255), (25, 25), 25)
+items[2].blit(leaves, (15, 15, 100, 100))
+items[3].blit(hatchet, (15, 15, 100, 100))
+items[4].blit(dirt, (15, 15, 100, 100))
+items[5].blit(iron, (15, 15, 100, 100))
+items[6].blit(stonesword, (15, 15, 100, 100))
+
 
 font = pig.font.Font(pig.font.match_font("calibri"), 26)
 
@@ -264,11 +276,15 @@ crafting_grid = Inventory(
     rows=3, col=3, box_size=50, x=50, y=infoObject.current_h / 1.2, border=3
 )
 
-
+iid = {"wood":Item(0),"stone":Item(1),"leaves":Item(2),"hatchet":Item(3),"dirt":Item(4),"iron":Item(5),"stonesword":Item(6)}
 crafting_recipes = [
     {
-        "pattern": [[(0, 1), None, (0, 1)], [None, (1, 1), None], [None, (1, 1), None]],
-        "output": (2, 1),  # Green sword
+        "pattern": [[(iid["stone"], 1), iid["leaves"], iid["stone"]], 
+                    [None, (iid["wood"], 1), None], 
+                    [None, (iid["wood"], 1), None]],
+        "output": [[(iid["stonesword"], 1), None, None],
+                   [None, None, None],
+                   [None, None, None]]
     },
     # Add more recipes as needed
 ]

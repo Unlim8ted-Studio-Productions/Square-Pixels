@@ -48,6 +48,7 @@ if __name__ == "__main__":
     screen: pig.Surface = pig.display.set_mode(
         (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE
     )
+    pig.display.toggle_fullscreen()
     image_folder: str = r"Recources\\NewHorizonsFrames"
     logo.play_intro_video(image_folder, not_skipped, screen, 1)
     play_music(r"Recources\sounds\music\Menu.mp3")

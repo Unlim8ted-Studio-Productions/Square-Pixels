@@ -96,14 +96,14 @@ def render_terrain(
         for y in range(height):
             block_type = terrain[y][x]
             # Calculate the offset for the panoramic effect
-            offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
-            # Apply smoothing to gradually move toward the target position
-            smoothing_factor = 0.1
-            camera_x += (offset_x - camera_x) * smoothing_factor
+          # offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
+          # # Apply smoothing to gradually move toward the target position
+          # smoothing_factor = 0.1
+          # camera_x += (offset_x - camera_x) * smoothing_factor
 
             currentblock = pig.Rect(
                 (
-                    (x + pos_x + camera_x) * tile_size,
+                    (x) * tile_size,
                     (y) * tile_size,
                 ),
                 (tile_size, tile_size),
@@ -168,7 +168,7 @@ def render_terrain(
         (infoObject.current_w, infoObject.current_h), pig.SRCALPHA
     )
 
-    if config.shadefogofwar:
+    if config.fogofwar:
         for rect in hidden_area:
             # Calculate the center point of the black rectangle
             rect_center = rect.center
@@ -189,7 +189,7 @@ def render_terrain(
                 transparency = 255
             # Define a radius for the sphere
 
-            if config.shadefogofwar:
+            if config.shadefogwar:
                 # Create a transparent black color
                 NewColors = Lit.LightAlgorithm(
                     colors, x, y, (playerpos.x), (playerpos.y), DayTime
@@ -218,10 +218,10 @@ def render_terrain(
             ):  # TODO: #55 won't work with scrolling
                 hidden_area.remove(rect)
         # Calculate the offset for the panoramic effect
-        offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
+       # offset_x = (infoObject.current_w / 2 - playerpos.x) / tile_size
         # Apply smoothing to gradually move toward the target position
-        smoothing_factor = 0.1
-        camera_x += (offset_x - camera_x) * smoothing_factor
+       # smoothing_factor = 0.1
+       # camera_x += (offset_x - camera_x) * smoothing_factor
         # Blit the transparent surface onto the main screen
         screen.blit(transparent_surface, ((0 - playerpos.x), 0))
         playerx = playerpos.x
