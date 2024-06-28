@@ -12,6 +12,7 @@ path = os.getcwd()
 # Initialize Pygame
 pygame.init()
 
+background = None
 # Initialize the screen with transparency
 infoObject = pygame.display.Info()
 WIDTH, HEIGHT = 800, 600  # infoObject.current_w, infoObject.current_h
@@ -31,21 +32,14 @@ trails = True
 root = tk.Tk()
 root.withdraw()  # Hide the main tkinter window
 
-# Pygame screen
-screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h))
-pygame.display.set_caption("Character Customization")
-pygame_icon = pygame.image.load(
-    r"Recources\program recources\Screenshot 2023-09-21 181742.png"
-)
-pygame.display.set_icon(pygame_icon)
-background = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+
 font = pygame.font.Font(None, 36)
 
 # Initial position of the background
 bg_x, bg_y = 0, 0
 
-backround = pygame.transform.scale(
-    pygame.image.load(r"Recources\ui\mainmen\backround\cover.png"),
+background = pygame.transform.scale(
+    pygame.image.load(r"Recources\ui\mainmen\background\cover.png"),
     (infoObject.current_w + 100, infoObject.current_h + 80),
 )
 
@@ -83,7 +77,12 @@ button_rects = [
     for idx in range(len(character_thumbnails))
 ]
 
+screen = None
 
+def get_screen(display):
+    global screen
+    screen = display
+    
 def draw_sidebar(buttoncount):
     """
     Draw the sidebar with character thumbnails as buttons.
@@ -181,7 +180,7 @@ def add_shape(x, y, width, height, color):
     shapes.append(shape)
 
 
-def main():
+def main(screen):
     """
     Main game loop for character customization.
 
@@ -189,13 +188,29 @@ def main():
         None
     """
     global head_size, body_height, trails, bg_x, bg_y
+    get_screen(screen)
     running = True
     buttoncount = 0
     hoveredbuttons = []
     drawchar = (False, 0)
+    back = pygame.transform.scale(
+    pygame.image.load(r"Recources\ui\mainmen\background\cover.png"),
+    (infoObject.current_w + 100, infoObject.current_h + 80),)
     while running:
         if trails:
             screen.fill((0, 0, 0))
+        # Calculate the offset for the panoramic effect
+        x, y = pygame.mouse.get_pos()
+        offset_x = (infoObject.current_w / 2 - x) / 20
+        offset_y = (infoObject.current_h / 2 - y) / 20
+
+        # Apply smoothing to gradually move toward the target position
+        smoothing_factor = 0.1
+        bg_x += (offset_x - bg_x) * smoothing_factor
+        bg_y += (offset_y - bg_y) * smoothing_factor
+
+        # Blit the background with the calculated offset
+        screen.blit(back, (round(-50 - bg_x), round(-50 - bg_y)))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -246,7 +261,7 @@ def main():
         bg_y += (offset_y - bg_y) * smoothing_factor
 
         # Blit the background with the calculated offset
-        screen.blit(backround, (round(-50 - bg_x), round(-50 - bg_y)))
+        screen.blit(background, (round(-50 - bg_x), round(-50 - bg_y)))
 
         if drawchar[0]:
             char = character_thumbnails[drawchar[1]]
@@ -311,7 +326,7 @@ buttons = [
     {
         "rect": pygame.Rect(600, 350, 150, 50),
         "text": "Finish",
-        "callback": lambda: finish(),
+        "callback": lambda: finish(screen),
     },
     {
         "rect": pygame.Rect(600, 410, 150, 50),
@@ -331,7 +346,7 @@ buttons = [
     {
         "rect": pygame.Rect(600, 590, 150, 50),
         "text": "Load Character",
-        "callback": lambda: load_character_dialog(),
+        "callback": lambda: load_character_dialog(screen),
     },
 ]
 
@@ -381,7 +396,7 @@ def add_square():
     add_shape(x, y, width, height, color)
 
 
-def finish():
+def finish(screen):
     """
     Finish character customization and export the character.
 
@@ -449,7 +464,7 @@ def save_character_dialog():
         export_character(filename)
 
 
-def load_character_dialog():
+def load_character_dialog(screen):
     """
     Open a file dialog for loading a character image.
 
@@ -461,7 +476,7 @@ def load_character_dialog():
         initialdir=path + r"\\Recources\\characters\\",
     )
     if filename:
-        load_character(filename)
+        load_character(filename, screen)
 
 
 def export_character(filename):
@@ -478,7 +493,7 @@ def export_character(filename):
     pygame.image.save(background, filename)
 
 
-def load_character(filename):
+def load_character(filename, screen):
     """
     Load a character image from the specified file and display it.
 

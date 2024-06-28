@@ -8,7 +8,7 @@ infoObject: object = pygame.display.Info()
 bg_x, bg_y = 0, 0
 
 backround = pygame.transform.scale(
-    pygame.image.load(r"Recources\ui\mainmen\backround\cover.png"),
+    pygame.image.load(r"Recources\ui\mainmen\background\cover.png"),
     (infoObject.current_w + 100, infoObject.current_h + 80),
 )
 
@@ -34,11 +34,11 @@ def transition(screen):
     # Load cloud images
     cloud_images = [
         pygame.transform.scale(
-            pygame.image.load(r"Recources\ui\mainmen\backround\clouds1.png"),
+            pygame.image.load(r"Recources\ui\mainmen\background\clouds1.png"),
             (infoObject.current_w / 4, infoObject.current_h / 4),
         ),
         pygame.transform.scale(
-            pygame.image.load(r"Recources\ui\mainmen\backround\clouds2.png"),
+            pygame.image.load(r"Recources\ui\mainmen\background\clouds2.png"),
             (infoObject.current_w / 4, infoObject.current_h / 4),
         ),
     ]

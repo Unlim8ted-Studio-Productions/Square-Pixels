@@ -4,7 +4,7 @@ import pygame as pig
 pig.init()
 
 infoObject = pig.display.Info()
-screen = pig.display.set_mode((infoObject.current_w, infoObject.current_h))
+screen = pig.display.set_mode((infoObject.current_w, infoObject.current_h), pig.RESIZABLE | pig.OPENGL | pig.DOUBLEBUF)
 
 # Create item surfaces
 items = [pig.Surface((50, 50), pig.SRCALPHA) for x in range(7)]

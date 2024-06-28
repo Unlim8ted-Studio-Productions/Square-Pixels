@@ -44,7 +44,7 @@ infoObject: object = pygame.display.Info()
 WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
 screen_width, screen_height = infoObject.current_w, infoObject.current_h
 screen: pygame.Surface = pygame.display.set_mode(
-    (infoObject.current_w, infoObject.current_h)
+    (infoObject.current_w, infoObject.current_h), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF
 )
 pygame_icon = pygame.image.load(
     r"recources\program recources\Screenshot 2023-09-21 181742.png"

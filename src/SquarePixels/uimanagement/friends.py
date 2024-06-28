@@ -18,7 +18,7 @@ from SquarePixels.uimanagement.elements.input_feild import InputField
 
 infoObject: object = pygame.display.Info()
 screen: pygame.Surface = pygame.display.set_mode(
-    (infoObject.current_w, infoObject.current_h)
+    (infoObject.current_w, infoObject.current_h), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF
 )
 pygame_icon = pygame.image.load(
     r"Recources\program recources\Screenshot 2023-09-21 181742.png"

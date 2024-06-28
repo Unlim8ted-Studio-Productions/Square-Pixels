@@ -1,5 +1,11 @@
-import SquarePixels.render.render as render
 import pygame as pig
+
+infoObject: object = pig.display.Info()
+screen: pig.Surface = pig.display.set_mode(
+    (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE | pig.OPENGL | pig.DOUBLEBUF
+)
+
+import SquarePixels.render.render as render
 import SquarePixels.enemymanagement.enemy_manager as enemy_manager
 from SquarePixels.uimanagement import death, MainMen
 import SquarePixels.soundmanagement.music as music

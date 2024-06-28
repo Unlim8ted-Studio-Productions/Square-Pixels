@@ -55,16 +55,10 @@ BACKGROUND_COLOR = (0, 0, 0)
 FPS = 60
 good = False
 backround = pygame.transform.scale(
-    pygame.image.load(r"Recources\ui\mainmen\backround\cover.png"),
+    pygame.image.load(r"Recources\ui\mainmen\background\cover.png"),
     (infoObject.current_w + 100, infoObject.current_h + 80),
 )
-# Initialize the screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Square Pixel")
-pygame_icon = pygame.image.load(
-    r"Recources\program recources\Screenshot 2023-09-21 181742.png"
-)
-pygame.display.set_icon(pygame_icon)
+
 
 playfabsettings = PlayFabSettings
 playfabsettings.TitleId = "4AAA9"
@@ -84,11 +78,11 @@ bg_x, bg_y = 0, 0
 # Load cloud images
 cloud_images = [
     pygame.transform.scale(
-        pygame.image.load(r"Recources\ui\mainmen\backround\clouds1.png"),
+        pygame.image.load(r"Recources\ui\mainmen\background\clouds1.png"),
         (infoObject.current_w / 4, infoObject.current_h / 4),
     ),
     pygame.transform.scale(
-        pygame.image.load(r"Recources\ui\mainmen\backround\clouds2.png"),
+        pygame.image.load(r"Recources\ui\mainmen\background\clouds2.png"),
         (infoObject.current_w / 4, infoObject.current_h / 4),
     ),
 ]
@@ -160,7 +154,7 @@ class SignUpScreen:
         )
         self.profile_picture = None
 
-    def render(self):
+    def render(self, screen):
         for button in self.buttons:
             button.draw(screen)
         if self.profile_picture:
@@ -170,7 +164,7 @@ class SignUpScreen:
         global current_page, main_page
         current_page = main_page
 
-    def google_login(self):
+    def google_login(self, screen):
         request = {"CreateAccount": True}
         request["TitleId"] = playfabsettings.TitleId
         request[
@@ -179,17 +173,17 @@ class SignUpScreen:
 
         def callback(success, failure):
             if success:
-                display_message("Account created and signed in.", (0, 255, 0))
+                display_message(screen, "Account created and signed in.", (0, 255, 0))
             else:
-                display_message("Account creation failed.")
+                display_message(screen, "Account creation failed.")
                 if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
+                    display_message(screen, "Here's some debug information:")
+                    display_message(screen, str(failure))
 
         result = LoginWithGoogleAccount(request, callback)
 
     # Function to create an account with an email address
-    def create_account(self):
+    def create_account(self, screen):
         global signed_in
         email = self.email_input.text
         password = self.password_input.text
@@ -197,12 +191,12 @@ class SignUpScreen:
 
         def callback(success, failure):
             if success:
-                display_message("Account created and signed in.", (0, 255, 0))
+                display_message(screen, "Account created and signed in.", (0, 255, 0))
             else:
-                display_message("Account creation failed.")
+                display_message(screen, "Account creation failed.")
                 if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
+                    display_message(screen, "Here's some debug information:")
+                    display_message(screen, str(failure))
 
         try:
             conn = http.client.HTTPSConnection("api.eva.pingutil.com")
@@ -232,21 +226,21 @@ class SignUpScreen:
 
                             if result is not None and "SessionTicket" in result:
                                 signed_in = True
-                                display_message(
+                                display_message(screen, 
                                     "Account created and signed in.", (0, 255, 0)
                                 )
                             else:
                                 None
                         else:
-                            display_message("Invalid Email.", (0, 255, 0))
+                            display_message(screen, "Invalid Email.", (0, 255, 0))
                     else:
-                        display_message("Invalid Email Syntax.", (0, 255, 0))
+                        display_message(screen, "Invalid Email Syntax.", (0, 255, 0))
                 else:
-                    display_message("Don't use a disposible email.", (0, 255, 0))
+                    display_message(screen, "Don't use a disposible email.", (0, 255, 0))
             else:
-                display_message("Couldn't check for email validness.", (0, 255, 0))
+                display_message(screen, "Couldn't check for email validness.", (0, 255, 0))
         except Exception as e:
-            display_message(f"Account creation failed: {e}")
+            display_message(screen, f"Account creation failed: {e}")
 
     # Function to upload a profile picture
     def upload_profile_picture(self) -> None:
@@ -314,13 +308,13 @@ class SignInScreen:
         )
         self.remember_me = True
 
-    def render(self):
+    def render(self, screen):
         for button in self.buttons:
             button.draw(screen)
 
     # Function to sign in with an email address
 
-    def sign_in_with_email(self, email=None, password=None):
+    def sign_in_with_email(self, screen, email=None, password=None):
         global signed_in, good, em, p  # , user
         if email == None and password == None:
             email = self.email_input.text
@@ -331,12 +325,12 @@ class SignInScreen:
             global good
             if success:
                 good = True
-                display_message("Account created and signed in.", (0, 255, 0))
+                display_message(screen, "Account created and signed in.", (0, 255, 0))
             else:
-                display_message("Account creation failed.")
+                display_message(screen, "Account creation failed.")
                 if failure:
-                    display_message("Here's some debug information:")
-                    display_message(str(failure))
+                    display_message(screen, "Here's some debug information:")
+                    display_message(screen, str(failure))
 
         try:
             request = {}
@@ -373,13 +367,13 @@ class SignInScreen:
                 #
                 ## playfab.PlayFabClientAPI.GetPlayerProfile
                 # user = {""}
-                display_message("Signed in.", (0, 255, 0))
+                display_message(screen, "Signed in.", (0, 255, 0))
                 return
             else:
                 print("signed in failed")
-                display_message("Sign-in failed.")
+                display_message(screen, "Sign-in failed.")
         except Exception as e:
-            display_message(f"Sign-in failed: {e}")
+            display_message(screen, f"Sign-in failed: {e}")
 
     # Function to toggle the "Remember Me" checkbox
     def toggle_remember_me(self):
@@ -407,6 +401,7 @@ def main_menu(
     previous_button,
     search_input,
     search_button,
+    screen
 ):
     """
     Display the main menu and handle user interactions.
@@ -696,7 +691,7 @@ def open_settings():
 
 
 # Function to display a message on the screen
-def display_message(message, color=(255, 0, 0)):
+def display_message(screen, message, color=(255, 0, 0)):
     global current_message
     current_message = message
     text_surface = font.render(message, True, color)
@@ -726,7 +721,7 @@ class Page:
     def add_button(self, button):
         self.buttons.append(button)
 
-    def render(self):
+    def render(self, screen):
         for button in self.buttons:
             button.draw(screen)
 
@@ -739,14 +734,14 @@ current_page = main_page
 
 
 # Define a function to switch the current page to the sign-up screen
-def switch_to_sign_up():
+def switch_to_sign_up(screen):
     global current_page
     screen.fill(WHITE)
     current_page = SignUpScreen()
 
 
 # Define a function to switch the current page to the sign-in screen
-def switch_to_sign_in():
+def switch_to_sign_in(screen):
     global current_page
     screen.fill(WHITE)
     current_page = SignInScreen()
@@ -758,8 +753,8 @@ def guest():
 
 
 # Add a function to show the sign-in or guest popup
-def show_signin_popup(leaderboard_page):
-    global WIDTH, HEIGHT, screen, BACKGROUND_COLOR, signed_in, current_message
+def show_signin_popup(leaderboard_page, screen):
+    global WIDTH, HEIGHT, BACKGROUND_COLOR, signed_in, current_message
     ########################DEVELOPMENTAL TESTING ONLY##############################
     signin_as_test_user = Button(
         "signin_as_test_user",
@@ -834,7 +829,7 @@ def show_signin_popup(leaderboard_page):
             cloud.move()
             cloud.draw(screen)
 
-        display_message(current_message)
+        display_message(screen, current_message)
         popup_text_render = popup_font.render(popup_text, True, WHITE)
         popup_text2_render = popup_font.render(popup_text2, True, WHITE)
         if current_page == main_page:
@@ -852,7 +847,7 @@ def show_signin_popup(leaderboard_page):
             ########################DEVELOPMENTAL TESTING ONLY##############################
             signin_as_test_user.draw(screen)
             ########################DEVELOPMENTAL TESTING ONLY##############################
-        current_page.render()
+        current_page.render(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -873,7 +868,7 @@ def show_signin_popup(leaderboard_page):
                 signin_as_test_user.handle_event(event)
                 ########################DEVELOPMENTAL TESTING ONLY##############################
         if signed_in != False:
-            leaderboard_data = get_leaderboard(leaderboard_page, display_message)
+            leaderboard_data = get_leaderboard(leaderboard_page, display_message) 
             return leaderboard_data
 
         pygame.display.update()
@@ -924,7 +919,7 @@ def savesettingstofile():
         file.writelines(lines)
 
 
-def mainfunc():
+def mainfunc(screen):
     """
     Main function to run the game.
     """
@@ -932,7 +927,7 @@ def mainfunc():
     # Add these constants to control pagination
     ENTRIES_PER_PAGE = 10
     current_leader_page = 1
-    leaderboard_data = get_leaderboard(current_leader_page, display_message)
+    leaderboard_data = get_leaderboard(current_leader_page, display_message) 
     # Initialize multiplayer and singleplayer buttons
     host_button = Button(
         "Host", WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50, host_multiplayer_game
@@ -948,7 +943,7 @@ def mainfunc():
         100,
         30,
         next_leadeboard_page,
-        [current_leader_page, leaderboard_data, display_message],
+        [current_leader_page, leaderboard_data, display_message]
     )
     previous_button = Button(
         "Previous Page",
@@ -957,7 +952,7 @@ def mainfunc():
         120,
         30,
         previous_leadeboard_page,
-        [current_leader_page, leaderboard_data, display_message],
+        [current_leader_page, leaderboard_data, display_message]
     )
 
     # Add the search button in the display_leaderboard function
@@ -978,7 +973,7 @@ def mainfunc():
                         SignInScreen(), a.readline(0), a.readline(1)
                     )
             except:
-                leaderboard_data = show_signin_popup(current_leader_page)
+                leaderboard_data = show_signin_popup(current_leader_page, screen)
 
         if signed_in == True:
             if not fetch_leaderboard:
@@ -1000,6 +995,7 @@ def mainfunc():
                 previous_button,
                 search_input,
                 search_button,
+                screen
             )
         elif game_state == "multiplayer":
             if show_multiplayer_options:

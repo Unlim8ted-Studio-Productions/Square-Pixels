@@ -45,28 +45,27 @@ if __name__ == "__main__":
     # Call the function to play the video
     logo.play_intro_video(image_folder, not_skipped, screen, 0)
     # start()
-    screen: pig.Surface = pig.display.set_mode(
-        (infoObject.current_w, infoObject.current_h - 32), pig.RESIZABLE
-    )
-    pig.display.toggle_fullscreen()
+    
+    #pig.display.toggle_fullscreen()
     image_folder: str = r"Recources\\NewHorizonsFrames"
     logo.play_intro_video(image_folder, not_skipped, screen, 1)
     play_music(r"Recources\sounds\music\Menu.mp3")
     with open(r"Recources\data\first.txt", "r") as first:
         bool_value = first.readlines()
         if bool(bool_value[0]):
-            import SquarePixels.uimanagement.EllipsesWarning
+            from SquarePixels.uimanagement.EllipsesWarning import warning
+            warning(screen)
 
             # with open(r"Recources\data\first.txt", "w") as first:3423434234234
             #    None564523454324324
             #    first.write("False") disabled for developmental purposes423423423423
 
-    MainMen.mainfunc()
+    MainMen.mainfunc(screen)
     # Rest of game code goes here...
     terrain_gen = tgen.TerrainGenerator(
         width=(-100, infoObject.current_w // 15), height=infoObject.current_h // 15
     )
-    player_sprite = main()
+    player_sprite = main(screen)
     terrain_gen.generate_terrain(screen)
     player = pl.Player(vx, vy, infoObject.current_w - 40, 0)
     DayTime = 0

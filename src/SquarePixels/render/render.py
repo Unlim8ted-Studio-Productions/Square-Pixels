@@ -6,16 +6,62 @@ import random
 import math
 from SquarePixels.render.weather_manager import weather_manager, draw_weather
 import config
+from array import array
+import moderngl
 
-hidden_area = []
+hidden_area = None
 infoObject: object = pig.display.Info()
-# Fill the screen with black rectangles
-for x in range(infoObject.current_w // 20 + 50):
-    for y in range(infoObject.current_h // 20 + 50):
-        black_rect = pig.Rect((x * 20, y * 20, 20, 20))
-        hidden_area.append(black_rect)
+
 playerx = 0
 
+ctx = moderngl.create_context()
+
+
+quad_buffer = ctx.buffer(data=array('f', [
+    # position (x, y), uv coords (x, y)
+    -1.0, 1.0, 0.0, 0.0,  # topleft
+    1.0, 1.0, 1.0, 0.0,   # topright
+    -1.0, -1.0, 0.0, 1.0, # bottomleft
+    1.0, -1.0, 1.0, 1.0,  # bottomright
+]))
+
+vert_shader = '''
+#version 330 core
+
+in vec2 vert;
+in vec2 texcoord;
+out vec2 uvs;
+
+void main() {
+    uvs = texcoord;
+    gl_Position = vec4(vert, 0.0, 1.0);
+}
+'''
+
+frag_shader = '''
+#version 330 core
+
+uniform sampler2D tex;
+uniform float time;
+
+in vec2 uvs;
+out vec4 f_color;
+
+void main() {
+    vec2 sample_pos = vec2(uvs.x + sin(uvs.y * 10 + time * 0.01) * 0.1, uvs.y);
+    f_color = vec4(texture(tex, sample_pos).rg, texture(tex, sample_pos).b * 1.5, 1.0);
+}
+'''
+
+program = ctx.program(vertex_shader=vert_shader, fragment_shader=frag_shader)
+render_object = ctx.vertex_array(program, [(quad_buffer, '2f 2f', 'vert', 'texcoord')])
+
+def surf_to_texture(surf):
+    tex = ctx.texture(surf.get_size(), 4)
+    tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
+    tex.swizzle = 'BGRA'
+    tex.write(surf.get_view('1'))
+    return tex
 
 def render_terrain(
     screen: pig.Surface,
@@ -49,7 +95,7 @@ def render_terrain(
     Returns:
         list: A list containing sky and colliders.
     """
-    global playerx
+    global playerx, hidden_area
     tile_size = 15
     block_images = [
         r"Recources\Textures\grass.jpg",
@@ -76,7 +122,13 @@ def render_terrain(
     place_blocks = [
         13,
     ]
-
+    if not hidden_area:
+        hidden_area=[]
+        # Fill the screen with black rectangles
+        for x in range(abs(width[0])+width[1] // 20 + 50):
+            for y in range(height // 20 + 50):
+                black_rect = pig.Rect((x * 20, y * 20, 20, 20))
+                hidden_area.append(black_rect)
     frame_count = 0  # Count frames for lightning duration
     lightning_duration = 10  # Adjust the duration of the lightning effect
 
@@ -92,6 +144,7 @@ def render_terrain(
         darkness = DayTime + 0.5
     else:
         darkness = DayTime
+   # terrain_surf = pig.Surface((abs(width[0])+width[1], height))
     for x in range(width[0], width[1]):
         for y in range(height):
             block_type = terrain[y][x]
@@ -127,17 +180,34 @@ def render_terrain(
                     Darken = Darken * DayTime
                     color = (211 - Darken, 211 - Darken, 211 - Darken)
                 try:
+                    terrain_surf = pig.Surface(((abs(width[0])+width[1], height)))
                     pig.draw.rect(
-                        screen,
+                        terrain_surf,
                         color,
                         (currentblock),
                     )
+                    frame_tex = surf_to_texture(terrain_surf)
+                    frame_tex.use(0)
+                    program['tex'] = 0
+                    #program['time'] = t
+                    render_object.render(mode=moderngl.TRIANGLE_STRIP)
+
+                    frame_tex.release()
+                    
                 except:
+                    terrain_surf = pig.Surface(((abs(width[0])+width[1], height)))
                     pig.draw.rect(
-                        screen,
-                        (0, 0, 0),
+                        terrain_surf,
+                        (0,0,0),
                         (currentblock),
                     )
+                    frame_tex = surf_to_texture(terrain_surf)
+                    frame_tex.use(0)
+                    program['tex'] = 0
+                    #program['time'] = t
+                    render_object.render(mode=moderngl.TRIANGLE_STRIP)
+
+                    frame_tex.release()
 
                 ## Load and blit the corresponding block image
                 # if block_type < len(block_images):
@@ -155,11 +225,20 @@ def render_terrain(
                 ):
                     colliders.append(currentblock)
             else:
+                terrain_surf = pig.Surface(((abs(width[0])+width[1], height)))
                 if block_type == 10:
-                    screen.blit(block_images[2], currentblock)
+                    terrain_surf.blit(block_images[2], currentblock)
                 if block_type == 11:
-                    screen.blit(block_images[1], currentblock)
+                    terrain_surf.blit(block_images[1], currentblock)
                 colliders.append(currentblock)
+                frame_tex = surf_to_texture(terrain_surf)
+                frame_tex.use(0)
+                program['tex'] = 0
+                #program['time'] = t
+                render_object.render(mode=moderngl.TRIANGLE_STRIP)
+                frame_tex.release()
+        
+
 
     draw_weather(screen)  # TODO: #62 add weather setting
 
