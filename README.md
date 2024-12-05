@@ -1,12 +1,7 @@
 # Square Pixel
 Welcome to Square Pixel!
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+![Contributors](https://img.shields.io/github/contributors/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![Forks](https://img.shields.io/github/forks/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![Stargazers](https://img.shields.io/github/stars/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![Issues](https://img.shields.io/github/issues/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![MIT License](https://img.shields.io/github/license/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) 
 
 
 totally working stats bar definitly not broken for some reason
