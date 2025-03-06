@@ -4,7 +4,6 @@ Welcome to Square Pixel!
 ![Contributors](https://img.shields.io/github/contributors/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![Forks](https://img.shields.io/github/forks/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![Stargazers](https://img.shields.io/github/stars/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![Issues](https://img.shields.io/github/issues/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) ![MIT License](https://img.shields.io/github/license/Unlim8ted-Studio-Productions/Square-Pixels?style=for-the-badge) 
 
 
-totally working stats bar definitly not broken for some reason
 
 ## Table of Contents
 - [Introduction](#introduction)
